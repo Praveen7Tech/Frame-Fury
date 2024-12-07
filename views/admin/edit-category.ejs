@@ -1,0 +1,74 @@
+<%- include("../../views/partials/admin/header") %>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 mt-60">
+            <form method="post" action="/admin/editcategory/<%=category._id%>" id="editCategoryForm">
+                <div class="d-grid text-end mt-30 col-md-5">
+                    <button class="btn btn-primary" type="submit">Update category</button>
+                </div>
+                <div class="mb-4 mt-30">
+                    <label for="product_name" class="form-label">Name</label>
+                    <input type="text" name="categoryName" value="<%=category.name%>" class="form-control border" />
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" class="form-control border" id="categoryDescription"><%=category.description%></textarea>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<%- include("../../views/partials/admin/footer") %>
+<script>
+    const form = document.getElementById('editCategoryForm');
+
+    form.addEventListener('submit', async function (event) {
+        event.preventDefault(); // Prevent the default form submission
+        
+        const formData = new FormData(form);
+        const formObject = Object.fromEntries(formData.entries()); // Convert to an object
+        const actionUrl = form.getAttribute('action'); // Get the action URL
+
+        try {
+            const response = await fetch(actionUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formObject)
+            });
+
+            const result = await response.json();
+
+            if (response.status === 200) {
+                // Success message
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: result.message
+                }).then(() => {
+                    window.location.href = '/admin/category'; // Redirect after success
+                });
+            } else {
+                // Error message
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: result.error || 'An unknown error occurred.'
+                });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong. Please try again later.'
+            });
+        }
+    });
+</script>
+
+
+

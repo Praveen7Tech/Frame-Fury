@@ -1,0 +1,548 @@
+<%- include("../../views/partials/user/header") %>
+
+    <style>
+        .ProductContainer {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            margin-top: 5%;
+        }
+
+        .product-detail {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .product-images {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .main-image-container {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            padding-top: 100%;
+            /* 1:1 Aspect Ratio */
+        }
+
+        .main-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .thumbnail-strip {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            overflow-x: auto;
+        }
+
+        .thumbnail {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .thumbnail.active {
+            border-color: #007bff;
+        }
+
+        .product-info {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .rating {
+            color: #ffc107;
+            font-size: 20px;
+        }
+
+        .price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+            margin: 10px 0;
+        }
+
+        .old-price {
+            text-decoration: line-through;
+            color: #6c757d;
+            margin-left: 10px;
+        }
+
+        .quantity {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .quantity button {
+            background-color: #f8f9fa;
+            border: 1px solid #ced4da;
+            padding: 5px 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .quantity span {
+            padding: 5px 15px;
+            border-top: 1px solid #ced4da;
+            border-bottom: 1px solid #ced4da;
+        }
+
+        .add-to-cart {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .add-to-cart:hover {
+            background-color: #0056b3;
+        }
+
+        .product-meta {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .material-filter li {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .material-filter li a {
+            color: #333;
+            text-decoration: none;
+        }
+
+        .material-filter li.active a {
+            color: #ff4500;
+            /* Highlight the selected material */
+            font-weight: bold;
+        }
+    </style>
+    <main class="main">
+    <div class="page-header breadcrumb-wrap">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/" rel="nofollow">Home</a>
+                <span></span> shop
+                <span></span> <%=product.productName%>
+            </div>
+        </div>
+    </div>
+    <section class="mt-50 mb-50">
+        <div class="container">
+            <div class="row">
+    <div class="ProductContainer">
+        <div class="product-detail">
+            <div class="product-images">
+                <div class="main-image-container" onmousemove="zoomImage(event)" onmouseleave="resetZoom(event)">
+                    <img id="mainImage" src="/uploads/re-image/<%=product.productImage[0]%>" alt="Product Image"
+                        class="main-image" onmouseleave="resetZoom(event)">
+                </div>
+                <div class="thumbnail-strip">
+
+                    <%for(let i=0;i<product.productImage.length;i++){%>
+                        <div>
+                            <img src="/uploads/re-image/<%=product.productImage[i]%>" alt="Product Thumbnail 1"
+                                class="thumbnail active" onclick="changeImage(this)">
+                        </div>
+                        <%}%>
+                            <!-- <img src="/uploads/re-image/product1.jpg" alt="Product Thumbnail 1" class="thumbnail active" onclick="changeImage(this)">
+                    <img src="/uploads/re-image/product2.jpg" alt="Product Thumbnail 2" class="thumbnail" onclick="changeImage(this)">
+                    <img src="/uploads/re-image/product3.jpg" alt="Product Thumbnail 3" class="thumbnail" onclick="changeImage(this)">
+                    <img src="/uploads/re-image/product4.jpg" alt="Product Thumbnail 4" class="thumbnail" onclick="changeImage(this)">
+                    <img src="/uploads/re-image/product5.jpg" alt="Product Thumbnail 5" class="thumbnail" onclick="changeImage(this)"> -->
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-12 col-xs-12">
+                <div class="detail-info">
+                    <h2 class="title-detail">
+                        <%=product.productName%>
+                    </h2>
+                    <div class="product-detail-rating">
+                        <div class="pro-details-brand">
+                            <span> Category: <a href="shop-grid-right.html">
+                                    <%=category.name%>
+                                </a></span>
+                        </div>
+                        <div class="product-rate-cover text-end">
+                            <div class="product-rate d-inline-block">
+                                <div class="product-rating" style="width:90%">
+                                </div>
+                            </div>
+                            <span class="font-small ml-5 text-muted"> (25 reviews)</span>
+                        </div>
+                    </div>
+                    <div class="clearfix product-price-cover">
+                        <div class="product-price primary-color float-left">
+                            <ins><span class="text-brand">
+                                    <%=product.salePrice%>
+                                </span></ins>
+                            <ins><span class="old-price font-md ml-15">
+                                    <%=product.regularPrice%>
+                                </span></ins>
+                            <% if (product.salePrice < product.regularPrice) { %>
+                                <span class="save-price font-md color3 ml-15">
+                                    <% const discount=Math.round(((product.regularPrice - product.salePrice) /
+                                        product.regularPrice) * 100); %>
+                                        <%= discount %> % Off
+                                </span>
+                                <% } %>
+                        </div>
+                    </div>
+                    <div class="bt-1 border-color-1 mt-15 mb-15"></div>
+                    <div class="short-desc mb-30">
+                        <p>
+                            <%=product.description%>>
+                        </p>
+                    </div>
+                    <div class="product_sort_info font-xs mb-30">
+                        <ul>
+                            <li class="mb-10"><i class="fi-rs-crown mr-5"></i> 1 Year AL Jazeera
+                                Brand Warranty</li>
+                            <li class="mb-10"><i class="fi-rs-refresh mr-5"></i> 30 Day Return
+                                Policy</li>
+                            <li><i class="fi-rs-credit-card mr-5"></i> Cash on Delivery available
+                            </li>
+                        </ul>
+                    </div>
+                  
+                    <div class="attr-detail attr-material">
+                        <strong class="mr-10">Material</strong>
+                        <ul class="list-filter material-filter font-small">
+                            <li><a href="#">Acrylic</a></li>
+                            <li><a href="#">Canvas</a></li>
+                            <li><a href="#">Alluminium</a></li>
+                        </ul>
+                    </div>
+
+
+                    <div class="bt-1 border-color-1 mt-30 mb-30"></div>
+                    <div class="detail-extralink">
+                        <div class="detail-qty border radius">
+                            <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
+                            <span class="qty-val">1</span>
+                            <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
+                        </div>
+                        <div class="product-extra-link2">
+                            <button type="submit" class="button button-add-to-cart">Add to
+                                cart</button>
+                            <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i
+                                    class="fi-rs-heart"></i></a>
+                            <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i
+                                    class="fi-rs-shuffle"></i></a>
+                        </div>
+                    </div>
+                    <ul class="product-meta font-xs color-grey mt-50">
+                        <li class="mb-5">SKU: <a href="#">FWM15VKT</a></li>
+                        <li class="mb-5">Tags: <a href="#" rel="tag">frame</a>, <a href="#" rel="tag">Hyper cars</a>, <a
+                                href="#" rel="tag">Limited edition</a> </li>
+                        <li>Availability:<span class="in-stock text-success ml-5">
+                            <%=quantity%> Items InStock</span></li>
+                    </ul>
+                </div>
+                <!-- Detail Info -->
+            </div>
+            
+        </div>
+    </div>
+
+    <h3 class="section-title style-1 mb-30 mt-30">Reviews (3)</h3>
+    <!--Comments-->
+    <div class="comments-area style-2">
+        <div class="row">
+            <div class="col-lg-8">
+                <h4 class="mb-30">Customer questions & answers</h4>
+                <div class="comment-list">
+                    <div class="single-comment justify-content-between d-flex">
+                        <div class="user justify-content-between d-flex">
+                            <div class="thumb text-center">
+                                <img src="assets/imgs/page/avatar-6.jpg" alt="">
+                                <h6><a href="#">Jacky Chan</a></h6>
+                                <p class="font-xxs">Since 2012</p>
+                            </div>
+                            <div class="desc">
+                                <div class="product-rate d-inline-block">
+                                    <div class="product-rating" style="width:90%">
+                                    </div>
+                                </div>
+                                <p>Thank you very fast shipping from Poland only 3days.
+                                </p>
+                                <div class="d-flex justify-content-between">
+                                    <div class="d-flex align-items-center">
+                                        <p class="font-xs mr-30">December 4, 2020 at
+                                            3:12 pm </p>
+                                        <a href="#" class="text-brand btn-reply">Reply
+                                            <i class="fi-rs-arrow-right"></i> </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--single-comment -->
+                    <div class="single-comment justify-content-between d-flex">
+                        <div class="user justify-content-between d-flex">
+                            <div class="thumb text-center">
+                                <img src="assets/imgs/page/avatar-7.jpg" alt="">
+                                <h6><a href="#">Ana Rosie</a></h6>
+                                <p class="font-xxs">Since 2008</p>
+                            </div>
+                            <div class="desc">
+                                <div class="product-rate d-inline-block">
+                                    <div class="product-rating" style="width:90%">
+                                    </div>
+                                </div>
+                                <p>Great low price and works well.</p>
+                                <div class="d-flex justify-content-between">
+                                    <div class="d-flex align-items-center">
+                                        <p class="font-xs mr-30">December 4, 2020 at
+                                            3:12 pm </p>
+                                        <a href="#" class="text-brand btn-reply">Reply
+                                            <i class="fi-rs-arrow-right"></i> </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--single-comment -->
+                    <div class="single-comment justify-content-between d-flex">
+                        <div class="user justify-content-between d-flex">
+                            <div class="thumb text-center">
+                                <img src="assets/imgs/page/avatar-8.jpg" alt="">
+                                <h6><a href="#">Steven Keny</a></h6>
+                                <p class="font-xxs">Since 2010</p>
+                            </div>
+                            <div class="desc">
+                                <div class="product-rate d-inline-block">
+                                    <div class="product-rating" style="width:90%">
+                                    </div>
+                                </div>
+                                <p>Authentic and Beautiful, Love these way more than
+                                    ever expected They are Great earphones</p>
+                                <div class="d-flex justify-content-between">
+                                    <div class="d-flex align-items-center">
+                                        <p class="font-xs mr-30">December 4, 2020 at
+                                            3:12 pm </p>
+                                        <a href="#" class="text-brand btn-reply">Reply
+                                            <i class="fi-rs-arrow-right"></i> </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--single-comment -->
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <h4 class="mb-30">Customer reviews</h4>
+                <div class="d-flex mb-30">
+                    <div class="product-rate d-inline-block mr-15">
+                        <div class="product-rating" style="width:90%">
+                        </div>
+                    </div>
+                    <h6>4.8 out of 5</h6>
+                </div>
+                <div class="progress">
+                    <span>5 star</span>
+                    <div class="progress-bar" role="progressbar" style="width: 50%;"
+                        aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">50%
+                    </div>
+                </div>
+                <div class="progress">
+                    <span>4 star</span>
+                    <div class="progress-bar" role="progressbar" style="width: 25%;"
+                        aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%
+                    </div>
+                </div>
+                <div class="progress">
+                    <span>3 star</span>
+                    <div class="progress-bar" role="progressbar" style="width: 45%;"
+                        aria-valuenow="45" aria-valuemin="0" aria-valuemax="100">45%
+                    </div>
+                </div>
+                <div class="progress">
+                    <span>2 star</span>
+                    <div class="progress-bar" role="progressbar" style="width: 65%;"
+                        aria-valuenow="65" aria-valuemin="0" aria-valuemax="100">65%
+                    </div>
+                </div>
+                <div class="progress mb-30">
+                    <span>1 star</span>
+                    <div class="progress-bar" role="progressbar" style="width: 85%;"
+                        aria-valuenow="85" aria-valuemin="0" aria-valuemax="100">85%
+                    </div>
+                </div>
+                <a href="#" class="font-xs text-muted">How are ratings calculated?</a>
+            </div>
+        </div>
+    </div>
+    <!--comment form-->
+    <div class="comment-form">
+        <h4 class="mb-15">Add a review</h4>
+        <div class="product-rate d-inline-block mb-30">
+        </div>
+        <div class="row">
+            <div class="col-lg-8 col-md-12">
+                <form class="form-contact comment_form" action="#" id="commentForm">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <textarea class="form-control w-100" name="comment"
+                                    id="comment" cols="30" rows="9"
+                                    placeholder="Write Comment"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <input class="form-control" name="name" id="name"
+                                    type="text" placeholder="Name">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <input class="form-control" name="email" id="email"
+                                    type="email" placeholder="Email">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <input class="form-control" name="website" id="website"
+                                    type="text" placeholder="Website">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="button button-contactForm">Submit
+                            Review</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<div class="row mt-60">
+<div class="col-12">
+    <h3 class="section-title style-1 mb-30">Related products</h3>
+</div>
+
+
+
+<!-- 
+related product -->
+<div class="row product-grid-4">
+
+    <% relatedProducts.forEach(related => { %>
+
+    <div class="col-lg-3 col-md-4 col-12 col-sm-6">
+        <div class="product-cart-wrap mb-30">
+            <div class="product-img-action-wrap">
+                <div class="product-img product-img-zoom">
+                    <a href="/productDetails?id=<%= related._id %>">
+                        <img class="default-img" src="/uploads/re-image/resized/<%= related.productImage[0] %>" alt="<%= related.productName %>">
+                        <!-- <img class="hover-img" src="assets/imgs/shop/product-1-2.jpg" alt=""> -->
+                    </a>
+                </div>
+                <div class="product-action-1">
+                    <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
+                    <a aria-label="Add To Wishlist" class="action-btn hover-up" href="/addToWishlist/?id=<%= related._id %>"><i class="fi-rs-heart"></i></a>
+                    <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                </div>
+                <div class="product-badges product-badges-position product-badges-mrg">
+                    <span class="hot">Hot</span>
+                </div>
+            </div>
+            <div class="product-content-wrap">
+                <h2><a href="/productDetails?id=<%= related._id %>"><%= related.productName %></a></h2>
+                <div class="product-price">
+                    <span>$<%= related.salePrice %></span>
+                    <span class="old-price">$<%= related.regularPrice %></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <% }); %>
+</div>
+</div>
+<div class="banner-img banner-big wow fadeIn f-none animated mt-50">
+<img class="border-radius-10" src="assets/imgs/banner/banner-4.webp" alt="">
+<div class="banner-text">
+    <!-- <h4 class="mb-15 mt-40">Repair Services</h4> -->
+    <h2 class="fw-600 mb-20">We're an Apple <br>Authorised Service Provider</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+
+
+    <script>
+        function changeImage(thumbnail) {
+            const mainImage = document.getElementById('mainImage');
+            mainImage.src = thumbnail.src;
+            mainImage.alt = thumbnail.alt;
+
+            // Update active thumbnail
+            document.querySelectorAll('.thumbnail').forEach(thumb => {
+                thumb.classList.remove('active');
+            });
+            thumbnail.classList.add('active');
+        }
+
+        function changeQuantity(change) {
+            const quantityElement = document.getElementById('quantity');
+            let quantity = parseInt(quantityElement.textContent) + change;
+            quantity = Math.max(1, quantity); // Ensure quantity is at least 1
+            quantityElement.textContent = quantity;
+        }
+
+        function addToCart() {
+            const quantity = document.getElementById('quantity').textContent;
+            alert(`Added ${quantity} item(s) to cart!`);
+        }
+
+        function zoomImage(e) {
+            const image = e.target;
+            const zoomer = e.currentTarget;
+            const x = e.offsetX / zoomer.offsetWidth;
+            const y = e.offsetY / zoomer.offsetHeight;
+            const zoomLevel = 2;
+            image.style.transformOrigin = `${x * 100}% ${y * 100}%`;
+            image.style.transform = `scale(${zoomLevel})`;
+        }
+
+        function resetZoom(e) {
+            console.log("mouse leaved");
+
+            const image = e.target;
+            image.style.transformOrigin = 'center center';
+            image.style.transform = 'scale(1)';
+        }
+    </script>
+    <%- include("../../views/partials/user/footer") %>

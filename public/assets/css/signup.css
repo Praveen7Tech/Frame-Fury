@@ -1,0 +1,376 @@
+/* 
+POPPINS FONT */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+* {
+    font-family: 'Poppins', sans-serif;
+}
+
+.wrapper {
+    background: #ececec;
+    padding: 0 20px 0 20px;
+}
+
+.main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.side-image {
+    background-image: url("/assets/imgs/buggati.jpg");
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    border-radius: 10px 0 0 10px;
+    position: relative;
+}
+
+.row {
+    width:  700px;
+    height: 586px;
+    border-radius: 10px;
+    background: #fff;
+    padding: 0px;
+    box-shadow: 5px 5px 10px 1px rgba(0,0,0,0.2);
+}
+
+.text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.text p {
+    color: #fff;
+    font-size: 18px; 
+}
+
+i {
+    font-weight: 400;
+    font-size: 14px;
+}
+
+.right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.input-box {
+    width: 300px;
+    box-sizing: border-box;
+}
+
+img {
+    width: 35px;
+    position: absolute;
+    top: 30px;
+    left: 30px;
+}
+
+.input-box header {
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 18px;
+}
+
+.input-field {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    padding: 0 10px 0 10px;
+}
+
+.input {
+    height: 40px;
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    outline: none;
+    margin-bottom: 15px;
+    color: #40414a;
+    font-size: 14px;
+}
+
+.input-box .input-field label {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    pointer-events: none;
+    transition: .5s;
+    font-size: 14px;
+}
+
+.input-field input:focus ~ label,
+.input-field input:valid ~ label {
+    top: -10px;
+    font-size: 12px;
+    color: #5d5076;
+}
+
+.input-field .input:focus, .input-field .input:valid {
+    border-bottom: 1px solid #743ae1;
+}
+
+.submit {
+    border: none;
+    outline: none;
+    height: 40px;
+    background: #ececec;
+    border-radius: 5px;
+    transition: .4s;
+    font-size: 14px;
+}
+
+.submit:hover {
+    background: rgba(37, 95, 156, 0.937);
+    color: #fff;
+}
+
+.signin {
+    text-align: center;
+    font-size: small;
+    margin-top: 20px;
+}
+
+span a {
+    text-decoration: none;
+    font-weight: 700;
+    color: #000;
+    transition: .5s;
+}
+
+span a:hover {
+    text-decoration: underline;
+    color: #000;
+}
+
+.google-login {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.google-btn {
+    width: 100%;
+    height: 40px;
+    background-color: #db4437;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.google-btn:hover {
+    background-color: #c1351d;
+}
+
+.google-logo {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}
+
+@media only screen and (max-width: 768px) {
+    .side-image {
+        border-radius: 10px 10px 0 0;
+    }
+
+    .row {
+        max-width: 420px;
+        width: 100%;
+    }
+}
+
+.error-message{
+    color: red;
+    font-size: 0.75rem;
+    display: none;
+}
+
+.dropdown{
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content{
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    right: 0;
+}
+
+.dropdown-content a{
+    color: #000;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    width: 100px;
+}
+.header{
+    position: relative;
+    z-index: 500;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: #333;
+}
+
+.bg-container {
+    background-image: url('/images/buggati.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.transparent-container {
+    background-color: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+}
+
+.signup-card {
+    max-width: 400px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(5px);
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+}
+
+.form-control {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #4a77ff;
+    box-shadow: 0 0 0 3px rgba(74, 119, 255, 0.1);
+}
+
+.form-control::placeholder {
+    color: #666;
+}
+
+.btn {
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.btn-primary {
+    background-color: #4a77ff;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #3a67ff;
+    transform: translateY(-1px);
+}
+
+.btn-google {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    color: #333;
+}
+
+.btn-google:hover {
+    background-color: #f8f9fa;
+    border-color: #d0d0d0;
+}
+
+.divider {
+    position: relative;
+}
+
+.divider::before,
+.divider::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.divider span {
+    font-size: 0.8rem;
+    color: #333;
+}
+
+.login-link {
+    color: #4a77ff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.login-link:hover {
+    text-decoration: underline;
+}
+
+/* Error states */
+.form-control.is-invalid {
+    border-color: #dc3545;
+    background-image: none;
+}
+
+.invalid-feedback {
+    font-size: 0.875rem;
+}
+
+@media (max-width: 576px) {
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .transparent-container {
+        background-color: transparent;
+        backdrop-filter: none;
+    }
+    
+    .signup-card {
+        background-color: rgba(255, 255, 255, 0.95);
+    }
+}
+
+.error-message{
+    color: red;
+    font-size: 0.75rem;
+    display: none;
+}
+
