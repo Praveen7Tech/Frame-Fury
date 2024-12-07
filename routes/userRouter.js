@@ -3,6 +3,7 @@ const router = express.Router();
 const passport =require("passport")
 const userController = require("../controllers/user/userController")
 const productController = require("../controllers/user/productController")
+const profileController = require("../controllers/user/profileController")
 const {userAuth, adminAuth} = require("../middlewares/auth")
 
 router.get("/pageNotFound",userController.pageNotFound)
@@ -26,6 +27,14 @@ router.get("/logout",userController.logout)
 
 // Product details
 router.get("/productDetails",userAuth,productController.productDetails)
+
+// Profile management
+router.get("/userProfile",userAuth,profileController.profile);
+router.get("/changeEmail", userAuth,profileController.changeEmail)
+router.post("/changeEmail",userAuth,profileController.verifyEmail)
+
+router.post("/verify-email-otp",userAuth,profileController.verifyEmailOtp)
+router.post("/updateEmail",userAuth,profileController.updateEmail)
 
 
 

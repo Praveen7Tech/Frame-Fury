@@ -63,7 +63,7 @@ async function sendVerificationEmail(email, otp) {
         })
 
         const info = await transporter.sendMail({
-            from: process.env.ODEMAILER_EMAIL,
+            from: process.env.NODEMAILER_EMAIL,
             to: email,
             subject: "verify your account",
             text: `Your OTP is : ${otp}`,
@@ -202,7 +202,7 @@ const login = async (req, res) => {
             return res.render("login", { message: "Incorrect password" });
         }
 
-        req.session.user = { _id: findUser._id, name: findUser.name }
+        req.session.user = { _id: findUser._id, name: findUser.name ,email:findUser.email}
         res.redirect("/")
     } catch (error) {
         console.error("Login error", error);
