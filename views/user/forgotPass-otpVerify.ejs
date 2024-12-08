@@ -186,7 +186,7 @@
                 <div class="heading_s1">
                     <h3>Email Verification Page</h3>
                 </div>
-                <form id="otpForm" action="/verify-otp" method="post" onsubmit="return validateOTPForm()">
+                <form id="otpForm" action="/forgotPassword-otpVerify" method="post" onsubmit="return validateOTPForm()">
                     <div class="form-group">
                         <label for="otp">Enter OTP:</label>
                         <input type="text" id="otp" name="otp" class="form-control" required maxlength="6"
@@ -245,7 +245,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "/verify-otp",
+                url: "/forgotPassword-otpVerify",
                 data: { otp: otpInput },
                 success: function (response) {
                     if (response.success) {
@@ -260,7 +260,7 @@
                     } else {
                         Swal.fire({
                             icon: "error",
-                            title: "Error",
+                            title: "Invalid OTP!",
                             text: response.message,
                         })
                     }
@@ -268,8 +268,8 @@
                 error: function () {
                     Swal.fire({
                         icon: "error",
-                        title: "Invalid OTP",
-                        text: "Please try again.."
+                        title: "Error",
+                        text: "Failed to verify OTP, Please try again.."
                     });
                 }
             });
@@ -285,7 +285,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "resend-otp",
+                url: "/resend-forgot-otp",
                 success: function (response) {
                     if (response.success) {
                         Swal.fire({

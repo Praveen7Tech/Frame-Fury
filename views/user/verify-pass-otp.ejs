@@ -1,0 +1,205 @@
+<style>
+    /* Updated page styling */
+    body,
+    html {
+        height: 100%;
+        margin: 0;
+        font-family: "Nunito Sans", sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .otp-container {
+        max-width: 400px;
+        width: 100%;
+        padding: 40px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 20px;
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+        backdrop-filter: blur(4px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        animation: fadeIn 0.5s ease-in-out;
+        text-align: center;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    h3 {
+        font-size: 28px;
+        font-weight: 700;
+        color: #4a4a4a;
+        margin-bottom: 30px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+        text-align: left;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #555;
+    }
+
+    .otp-input {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        border-radius: 8px;
+        border: 2px solid #ddd;
+        text-align: center;
+        transition: border-color 0.3s ease;
+    }
+
+    .otp-input:focus {
+        border-color: #667eea;
+        outline: none;
+    }
+
+    .btn-primary {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .otp-timer {
+        margin: 20px 0;
+        font-size: 14px;
+        color: #6c757d;
+    }
+
+    .resend-btn {
+        font-size: 14px;
+        color: #667eea;
+        text-decoration: underline;
+        cursor: pointer;
+        background: none;
+        border: none;
+        margin-top: 15px;
+    }
+
+    .resend-btn:hover {
+        color: #764ba2;
+    }
+
+    .alert-danger {
+        margin-top: 20px;
+        background-color: #ffe5e5;
+        color: #ff6b6b;
+        padding: 10px;
+        border-radius: 8px;
+    }
+
+    .text-muted {
+        color: #6c757d;
+        margin-top: 25px;
+        font-size: 14px;
+    }
+
+    .text-muted a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .text-muted a:hover {
+        color: #764ba2;
+    }
+</style>
+
+<div class="otp-container">
+    <h3>Email Verification</h3>
+    <form action="/verify-pass-otp" method="post">
+        <div class="form-group">
+            <label for="otp">Enter OTP:</label>
+            <input type="text" id="otp" name="otp" class="otp-input" required maxlength="6" pattern="\d*" />
+        </div>
+        <button type="submit" class="btn-primary">Verify OTP</button>
+        <div class="otp-timer">
+            <span id="otpTimer">OTP Expires in: 4:59</span>
+        </div>
+        <button type="button" onclick="resendOTP()" class="resend-btn">Resend OTP</button>
+        <% if (locals.message && message.length > 0) { %>
+            <div class="alert alert-danger">
+                <%= message %>
+            </div>
+        <% } %>
+    </form>
+   
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+ function startOTPTimer(durationInSeconds) {
+   let timer = durationInSeconds;
+   const timerElement = document.getElementById('otpTimer');
+   const countdown = setInterval(function () {
+     const minutes = Math.floor(timer / 60);
+     const seconds = timer % 60;
+
+
+     timerElement.textContent = `OTP Expires in: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+
+     if (--timer < 0) {
+       clearInterval(countdown);
+       timerElement.textContent = 'OTP Expired';
+     }
+   }, 1000);
+ }
+
+
+ function resendOTP() {
+   $.ajax({
+     type: 'POST',
+     url: '/resend-otp',
+     success: function (response) {
+       if (response.success) {
+         startOTPTimer(60);
+       } else {
+         alert('Failed to resend OTP. Please try again.');
+       }
+     },
+     error: function () {
+       alert('Error occurred while resending OTP. Please try again.');
+     }
+   });
+ }
+ startOTPTimer(60);
+</script>
+
+
+
+
+

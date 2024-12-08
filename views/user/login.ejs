@@ -12,7 +12,7 @@
     <div class="container main">
         <div class="row">
             <div class="col-md-6 side-image">
-               
+                <!-- Add your side image or leave empty -->
             </div>
 
             <div class="col-md-6 right">
@@ -20,41 +20,41 @@
                    <header>Log-in</header>
                 <form id="loginform" action="/login" method="post">
                    
-                    
                    <div class="input-field">
-                        <input type="text" class="input" id="email" name="email" required="" >
+                        <input type="text" class="input" id="email" name="email" required="">
                         <label for="email">Email</label> 
                         <div id="error1" class="error-message"></div>
                     </div> 
                    
                    <div class="input-field">
-                        <input type="password" class="input" id="password" name="password" >
+                        <input type="password" class="input" id="password" name="password">
                         <label for="pass">Password</label>
                         <div id="error2" class="error-message"></div>
                     </div> 
 
-                    <%if(locals.message && message.length>0){%>
+                    <%if(locals.message && message.length > 0) { %>
                         <div class="alert alert-danger text-center">
-
-                            <%=message%>
-                      
+                            <%= message %>
                         </div>
-
-                    <%}%>
+                    <% } %>
                   
                    <div class="input-field">
-                    
                         <input type="submit" class="submit" value="Sign Up">
-                       
                    </div> 
+
                    <div class="signin">
                     <span>Create a new account? <a href="/signup">Signup here</a></span>
                    </div>
+
                    <div class="google-login">
                         <a href="/auth/google" class="google-btn">
-                            <!-- <img src="google-logo.png" alt="Google Logo" class="google-logo"> -->
                             Sign up with Google
                         </a>
+                   </div>
+
+                   <!-- Forgot Password Section -->
+                   <div class="forgot-password mt-3 text-center">
+                        <a href="/forgot-password" class="forgot-link">Forgot Password?</a>
                    </div>
                 </form>   
                 </div>  

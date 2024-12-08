@@ -9,6 +9,7 @@ const {userAuth, adminAuth} = require("../middlewares/auth")
 router.get("/pageNotFound",userController.pageNotFound)
 router.get("/",userController.loadHomepage)
 
+//signup
 router.get("/signup",userController.loadSignup)
 router.post("/signup",userController.signup)
 
@@ -21,20 +22,42 @@ router.get("/auth/google/callback", passport.authenticate("google",{failureRedir
     res.redirect("/")
 });
 
+//login
 router.get("/login",userController.loadLogin)
 router.post("/login",userController.login)
 router.get("/logout",userController.logout)
+
+// forget password
+router.get("/forgot-password",profileController.forgetPassPage)
+router.post("/forgotPassword",profileController.forgotPassEmailVerify)
+router.post("/forgotPassword-otpVerify",profileController.forgotPasswordOTPverify)
+router.get("/reset-password",profileController.resetPasswordPage)
+router.post("/resend-forgot-otp",profileController.forgotPassResendOtp)
+router.post("/reset-password",profileController.resetPassword)
 
 // Product details
 router.get("/productDetails",userAuth,productController.productDetails)
 
 // Profile management
 router.get("/userProfile",userAuth,profileController.profile);
+
+// change email
 router.get("/changeEmail", userAuth,profileController.changeEmail)
 router.post("/changeEmail",userAuth,profileController.verifyEmail)
-
 router.post("/verify-email-otp",userAuth,profileController.verifyEmailOtp)
 router.post("/updateEmail",userAuth,profileController.updateEmail)
+
+// change password
+router.get("/changePassword",userAuth,profileController.changePassword)
+router.post("/changePassword",userAuth,profileController.changePasswordVerify)
+router.post("/verify-pass-otp",userAuth,profileController.verifyPassOtp)
+router.post("/updatePassword",userAuth,profileController.updatePassword)
+
+// Address management
+router.get("/addAddress",userAuth,profileController.addressPage)
+router.post("/addAddress",userAuth,profileController.addAddress)
+router.get("/editAddress",userAuth,profileController.editAddress)
+router.post("/editAddress",userAuth,profileController.updateAddress)
 
 
 
