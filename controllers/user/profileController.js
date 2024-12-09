@@ -414,8 +414,8 @@ const updateAddress = async(req,res)=>{
             {$set:{"address.$":{
                 _id:addressId,
                 addressType:data.addressType,
-                name:data.name.join(''),
-                city:data.landMark,
+                name:data.name,
+                city:data.city,
                 landMark:data.landMark,
                 state:data.state,
                 pincode:data.pincode,
@@ -427,6 +427,25 @@ const updateAddress = async(req,res)=>{
         res.redirect("/userProfile")
     } catch (error) {
         console.error(("Error in updating Address",error));
+        res.redirect("/pageNotFound")
+    }
+}
+
+const deleteAddress = async(req,res)=>{
+    try {
+        const addressId = req.query.id
+        const findAddress = await Address.findOne({"address._id":addressId});
+
+        if(!findAddress){
+            return res.status(404).send("Canot find address..!")
+        }
+
+        await Address.updateOne({"address._id":addressId},
+            {$pull:{address:{_id:addressId}}}
+        )
+        res.redirect("/userProfile")
+    } catch (error) {
+        console.error("Error in delete address",error);
         res.redirect("/pageNotFound")
     }
 }
@@ -451,5 +470,6 @@ module.exports ={
     addressPage,
     addAddress,
     editAddress,
-    updateAddress
+    updateAddress,
+    deleteAddress
 }

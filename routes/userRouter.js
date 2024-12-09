@@ -7,7 +7,12 @@ const profileController = require("../controllers/user/profileController")
 const {userAuth, adminAuth} = require("../middlewares/auth")
 
 router.get("/pageNotFound",userController.pageNotFound)
+// hope page
 router.get("/",userController.loadHomepage)
+router.get("/shoppingPage",userAuth,userController.shoppingPage)
+router.get("/filter",userAuth,userController.filterProduct)
+router.get("/filterPrice",userAuth,userController.filterByPrice)
+router.post("/search",userAuth,userController.SearchProducts)
 
 //signup
 router.get("/signup",userController.loadSignup)
@@ -58,6 +63,7 @@ router.get("/addAddress",userAuth,profileController.addressPage)
 router.post("/addAddress",userAuth,profileController.addAddress)
 router.get("/editAddress",userAuth,profileController.editAddress)
 router.post("/editAddress",userAuth,profileController.updateAddress)
+router.get("/deleteAddress",userAuth,profileController.deleteAddress)
 
 
 

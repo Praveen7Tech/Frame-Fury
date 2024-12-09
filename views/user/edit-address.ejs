@@ -36,7 +36,7 @@
         <div class="col-lg-8">
             <div class="form-section">
                 <h5>Edit Your Address</h5>
-                <form action="/editAddress" method="POST">
+                <form action="/editAddress?id=<%= address._id.toLocaleString()%>" method="POST">
                     <div class="mb-3">
                         <label for="addressType" class="form-label">Address Type</label>
                         <input type="text" class="form-control" id="addressType" name="addressType" placeholder="Enter your name" value="<%=address.addressType%>" required>
