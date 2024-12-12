@@ -17,7 +17,7 @@ const productDetails = async (req, res) => {
         const relatedProducts = await Product.find({
             category: findCategory._id,
             _id: { $ne: productId }, // Exclude the current product
-        }).limit(4); // Limit the number of related products
+        }).limit(4); 
 
         res.render("product-details", {
             user: userData,
@@ -25,6 +25,7 @@ const productDetails = async (req, res) => {
             relatedProducts: relatedProducts, //  related products to the view
             quantity: product.quantity,
             category: findCategory,
+            productId
         });
     } catch (error) {
         console.error("Error fetching product details", error);

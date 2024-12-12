@@ -1,5 +1,8 @@
 <%-include("../../views/partials/user/header")%>
 
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
     <main class="main">       
         <section class="home-slider position-relative pt-50">
             <div class="hero-slider-1 dot-style-1 dot-style-1-position-1">
@@ -132,6 +135,7 @@
                         <!-- PRODUCT SECTION -->
                         <div class="row product-grid-4">
                             <%for(let i=0;i<products.length;i++){%>
+                                
                             <div class="col-lg-3 col-md-4 col-12 col-sm-6">
                                 <div class="product-cart-wrap mb-30">
                                     <div class="product-img-action-wrap">
@@ -169,8 +173,13 @@
                                             <span><%=products[i].salePrice%>> </span>
                                             <span class="old-price"><%=products[i].regularPrice%>></span>
                                         </div>
-                                        <div class="product-action-1 show">
+                                        <!-- <div class="product-action-1 show">
                                             <a aria-label="Add To Cart" class="action-btn hover-up" href="/addToCart/id=<%=products[i]._id%>"><i class="fi-rs-shopping-bag-add"></i></a>
+                                        </div> -->
+                                        <div class="product-action-1 show">
+                                            <a aria-label="Add To Cart" class="action-btn hover-up"
+                                                href="#"><i class="fi-rs-shopping-bag-add" onclick="addToCart('<%=products[i]._id%>')"></i>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -872,3 +881,42 @@
    
 
     <%-include("../../views/partials/user/footer")%>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+
+        function addToCart(productId){
+
+            $.ajax({
+                url:"/addToCart",
+                method:"POST",
+                data:{productId:productId},
+                success:(response)=>{
+                    if(response.status){
+                        Swal.fire({
+                            title:"Added To Cart",
+                            text:"The Product Has been Added to Your Cart",
+                            icon:"Success",
+                            timer:2000
+                        })
+                    }else{
+                        Swal.fire({
+                            title:"Product Alredy in Cart",
+                            text:response.message,
+                             icon:"info",
+                             timer:2000
+                        })
+                    }
+                },
+                error:(error)=>{
+                    Swal.fire({
+                        title:"Error",
+                        text:"Error Adding the Poduct to your Cart..!",
+                        icon:"error",
+                        timer:2000
+                    })
+                }
+            })
+        }
+    </script>

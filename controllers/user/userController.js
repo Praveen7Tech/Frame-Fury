@@ -374,8 +374,10 @@ const SearchProducts = async(req,res)=>{
         
         let searchResult = [];
         if(req.session.filterProduct && req.session.filterProduct.length > 0){
+            console.log("session filter product-",req.session.filterProduct);
+            
             searchResult = req.session.filterProduct.filter(product =>
-                product.productName.toLowerCase().includes(search.toLowerCase( ))
+                product.productName.toLowerCase().includes(search.toLowerCase())
             )
         }else{
             searchResult = await Product.find({
@@ -391,7 +393,7 @@ const SearchProducts = async(req,res)=>{
         searchResult.sort((a,b)=> new Date(b.createdOn)- new Date(a.createdOn))
 
         let itemPerPage = 10;
-        let currentPage= parseInt(req.query.page);
+        let currentPage= parseInt(req.query.page) || 1;
         let startIndex = (currentPage-1)* itemPerPage;
         let endIndex = startIndex + itemPerPage;
         let totalPages= Math.ceil(searchResult.length / itemPerPage);
