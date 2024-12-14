@@ -73,11 +73,12 @@ router.post("/addToCart",userAuth,cartController.addToCart)
 router.get("/removeFromCart",userAuth,cartController.removeProduct)
 router.post("/updateCartQuantity",userAuth,cartController.updateCartQuantity)
 
-//checkout management
+    //checkout management
 router.get("/checkOut",userAuth,checkOutController.checkOutPage)
+router.post("/placeOrder",userAuth,checkOutController.placeOrder)
 
 
 
 
 
-module.exports = router;
+    module.exports = router;
