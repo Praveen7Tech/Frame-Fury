@@ -106,13 +106,19 @@
         background-color: #17a2b8;
     }
 
-    .badge.delivered {
+    .badge.deliverd {
         background-color: #28a745;
+    }
+    .badge.cancelled {
+        background-color: #dc3545; /* Red for Cancelled */
+    }
+
+    .badge.confirmed {
+        background-color: #ec9e17; /* Orange for Confirmed */
     }
 
     .payment-method {
-        color: #6c757d;
-        font-style: italic;
+        color: #29a738;  
     }
 
     .timestamp {
@@ -145,9 +151,9 @@
     
     <div class="order-details">
         <h3>Order info</h3>
-        <p><strong>Order ID:</strong> <%=order._id%></p>
-        <p><strong>Order Created At:</strong> <span class="timestamp"><%=new Date(order.createdAt).toLocaleString()%></span></p>
-        <p><strong>Order Status:</strong> 
+        <p><strong>Order ID : </strong> <%=order._id%></p>
+        <p><strong>Order Created At : </strong> <span class="timestamp"><%=new Date(order.createdAt).toLocaleString()%></span></p>
+        <p><strong>Order Status : </strong> 
             <span class="badge <%=order.orderStatus.toLowerCase()%>"><%=order.orderStatus%></span>
         </p>
 
@@ -156,13 +162,13 @@
         <p><strong>Email:</strong> <%=order.userId.email%></p>
 
         <h3>Shipping Address</h3>
-        <p><strong>Address Type:</strong> <%= addressDetails.addressType %></p>
-        <p><strong>Name:</strong> <%=addressDetails.name%></p>
-        <p><strong>City:</strong> <%=addressDetails.city%></p>
-        <p><strong>Land Mark:</strong> <%=addressDetails.landMark%></p>
-        <p><strong>State:</strong> <%=addressDetails.state%></p>
-        <p><strong>Zip Code:</strong> <%=addressDetails.pincode%></p>
-        <p><strong>Phone:</strong> <%=addressDetails.phone%></p>
+        <p><strong>Address Type : </strong> <%= addressDetails.addressType %></p>
+        <p><strong>Name : </strong> <%=addressDetails.name%></p>
+        <p><strong>City : </strong> <%=addressDetails.city%></p>
+        <p><strong>Land Mark : </strong> <%=addressDetails.landMark%></p>
+        <p><strong>State : </strong> <%=addressDetails.state%></p>
+        <p><strong>Zip Code : </strong> <%=addressDetails.pincode%></p>
+        <p><strong>Phone : </strong> <%=addressDetails.phone%></p>
 
         <h3>Order Items</h3>
         <ul>
@@ -171,9 +177,9 @@
                     <div class="item">
                         <img src="/uploads/re-image/<%=item.productId.productImage[0]%>" alt="Product Image" width="100">
                         <div>
-                            <p><strong>Product Name:</strong> <%=item.productId.productName%></p>
-                            <p><strong>Quantity:</strong> <%=item.quantity%></p>
-                            <p><strong>Price:</strong> <%=item.price%> /-</p>
+                            <p><strong>Product Name : </strong> <%=item.productId.productName%></p>
+                            <p><strong>Quantity : </strong> <%=item.quantity%></p>
+                            <p><strong>Price : </strong> <%=item.price%> /-</p>
                         </div>
                     </div>
                 </li>
@@ -181,8 +187,11 @@
         </ul>
 
         <h3>Payment Details</h3>
-        <p class="payment-method"><strong>Payment Method:</strong><%=order.paymentMethod%></p>
+        <p class="payment-method"><strong>Payment Method : </strong><%=order.paymentMethod%></p>
+        <p class="payment-method"><strong>Delivery Option : </strong><%=order.deliveryMethod%></p>
+        <p class="payment-method"><strong>Delivery Charge : </strong><%=order.deliveryCharge%></p>
         <p><strong>Subtotal:</strong> <%=order.subTotal%> /-</p>
+        <p><strong>Total:</strong> <%=order.total%> /-</p>
   
     </div>
 

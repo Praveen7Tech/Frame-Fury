@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+    <style>
+        .order-status {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .status-processing {
+            color: #ffc107;
+        }
+
+        .product-image {
+            max-width: 100px;
+            height: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Order Details</h1>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h2 class="card-title">Order Summary</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Order Number:</strong>
+                            <%=order._id%>
+                        </p>
+                        <p><strong>Order Date:</strong>
+                            <%=new Date(order.createdAt).toLocaleString()%>
+                        </p>
+                        <p><strong>Customer Name:</strong>
+                            <%=user.name%>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Total Amount:</strong>
+                            <%=order.total%>
+                        </p>
+                        <p><strong>Payment Method:</strong>
+                            <%=order.paymentMethod%>
+                        </p>
+                        <p class="order-status">Status: <span class="orderStatus">
+                                <%=order.orderStatus%>
+                            </span></p>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <button type="button" id="cancelOrder" class="btn btn-danger">
+                            Cancel Order
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h2 class="card-title">Product Details</h2>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% order.items.forEach(item=> { %>
+                                <tr>
+                                    <td>
+                                        <img src="/uploads/re-image/<%=item.productId.productImage[0]%>"
+                                            alt="Product Image" class="product-image">
+                                    </td>
+                                    <td>
+                                        <%=item.productId.productName%>
+                                    </td>
+                                    <td>
+                                        <%=item.price%>
+                                    </td>
+                                    <td>
+                                        <%=item.quantity%>
+                                    </td>
+                                    <td>
+                                        <%=item.price * item.quantity%>
+                                    </td>
+                                </tr>
+
+                                <%})%>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h2 class="card-title">Shipping Information</h2>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Name:</strong>
+                            <%=address.name%>
+                        </p>
+                        <p><strong>Address:</strong>
+                            <%=address.landMark%>
+                        </p>
+                        <p><strong>City:</strong>
+                            <%=address.city%>
+                        </p>
+                        <p><strong>State:</strong>
+                            <%=address.state%>
+                        </p>
+                        <p><strong>Zip Code:</strong>
+                            <%=address.pincode%>
+                        </p>
+                        <p><strong>Country:</strong> India</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h2 class="card-title">Payment Details</h2>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Payment Method:</strong>
+                            <%=order.paymentMethod%>
+                        </p>
+                        <p><strong>Card Type:</strong> Visa</p>
+                        <p><strong>Card Number:</strong> **** **** **** 1234</p>
+                        <p><strong>Subtotal:</strong>
+                            <%=order.subTotal%>
+                        </p>
+                        <p><strong>Shipping:</strong>
+                            <%=order.deliveryCharge%>
+                        </p>
+                        <p><strong>Tax:</strong> 0%</p>
+                        <p><strong>Total:</strong>
+                            <%=order.total%>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.js"></script>
+
+    <script>
+
+
+        document.getElementById("cancelOrder").addEventListener("click", function () {
+            Swal.fire({
+                icon: "Warning...",
+                title: "Are you sure",
+                text: "you can't retrive this order",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Cancel Order.",
+
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    cancelOrder()
+                }
+            })
+        })
+
+        function cancelOrder() {
+            const url = "/orderCancel/<%=order._id%>"
+
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if ({ success: true }) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: data.message,
+                            text: `Order <%=order._id%> has been cancelled.`,
+                            confirmButtonText: 'OK'
+                        })
+                            .then(() => {
+                                document.querySelector("orderStatus").textContent = "Cancelled";
+                                document.querySelector("orderStatus").classList.remove("orderStatus");
+                                document.querySelector("orderStatus").classList.add("text-danger");
+
+                                document.querySelector("cancelOrder").disabled = true;
+                            })
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error...!",
+                            text: data.message,
+                            confirmButtonText: "Try again.."
+                        })
+                    }
+                }).catch(error => {
+                    // Error alert for network or server issues
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'An error occurred while cancelling the order.',
+                        icon: 'error',
+                        confirmButtonText: 'Try Again'
+                    });
+                });
+        }
+
+    </script>
+</body>
+
+</html>

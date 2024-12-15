@@ -1,5 +1,6 @@
 const User = require("../../models/userSchema");
-const Address = require("../../models/addressSchema")
+const Address = require("../../models/addressSchema");
+const Order = require("../../models/orderSchema")
 const nodemailer = require("nodemailer");
 const dotenv = require("dotenv");
 const bcrypt = require("bcrypt");
@@ -12,7 +13,11 @@ const profile = async(req,res)=>{
         const userId = req.session.user
         const userData = await User.findById(userId)
         const addressData = await Address.findOne({userId:userId})
-        res.render("profile",{user:userData , userAddress:addressData})
+
+        const orderData = await Order.find({userId:userId}).sort({createdAt:-1}).exec()
+        // console.log("orders : ",orderData);
+        
+        res.render("profile",{user:userData , userAddress:addressData, orders:orderData})
     } catch (error) {
         console.error("Error in fetching user profile",error);
         res.redirect("/pageNotFound")   

@@ -31,12 +31,28 @@ const orderSchema = new Schema({
         },
 
     }],
+    categoryId:{
+        type:Schema.Types.ObjectId,
+        ref:"Category"
+    },
     paymentMethod:{
         type:String,
         enum:["COD","Online"]
     },
     subTotal:{
         type:Number,
+        required:true
+    },
+    total:{
+        type:Number,
+        required:true
+    },
+    deliveryCharge:{
+        type:Number,
+        required:true
+    },
+    deliveryMethod:{
+        type:String,
         required:true
     },
     orderStatus:{

@@ -8,18 +8,14 @@ const Address = require("../../models/addressSchema");
 const checkOutPage = async(req,res)=>{
     try {
         const userId = req.session.user;
-        const cart = await Cart.findOne({userId}).populate("items.productId")
-        const userAddress = await Address.findOne({userId})
-
-        // console.log("cart-",cart);
-        const shiipingCost = 0;
-        const subTotal = cart.items.reduce((sum, items)=> sum + items.totalPrice ,0);
-        const total = subTotal + shiipingCost;
-       
-        //console.log("address-",address);
         
-        // console.log("subTotal",subTotal);
-        // console.log("Total",total)
+        const cart = await Cart.findOne({userId}).populate("items.productId")
+        const userAddress = await Address.findOne({userId});
+        
+        const subTotal = cart.items.reduce((sum, items)=> sum + items.totalPrice ,0);
+        let shiipingCost =0
+        
+        const total = subTotal + shiipingCost;
 
         res.render("checkout",{
             user:userId,
@@ -36,8 +32,10 @@ const checkOutPage = async(req,res)=>{
 
 const placeOrder = async (req, res) => {
     try {
-        const { selectedAddress, paymentMethod } = req.body;
+        const { selectedAddress, paymentMethod, deliveryMethod } = req.body;
         const userId = req.session.user;
+        console.log("deliver - ",deliveryMethod);
+        
 
         const userAddress = await Address.findOne(
             { userId, "address._id": selectedAddress },
@@ -54,12 +52,22 @@ const placeOrder = async (req, res) => {
             return res.status(400).json({ success: false, message: "Cart is empty" });
         }
 
+        
         const subTotal = cart.items.reduce((sum, item) => sum + item.totalPrice, 0);
-        const total = subTotal; // Add shippingCost if required
+
+        let deliveryCharge =0;
+        if(deliveryMethod === "fast"){
+            deliveryCharge = 80;
+        }
+        const total = subTotal + deliveryCharge
+        console.log("total-",total);
+        
 
         const order = new Order({
             userId,
             addressId: selectedAddress,
+            deliveryCharge,
+            deliveryMethod,
             subTotal,
             total,
             paymentMethod,

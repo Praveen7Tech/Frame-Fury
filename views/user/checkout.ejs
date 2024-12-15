@@ -23,7 +23,7 @@
                             <div class="form-group">
                                 <input type="text" name="lname" placeholder="Last Name *" required>
                             </div>
-                           
+
 
                             <% if (addresses && addresses.length> 0) { %>
                                 <h5>Select Shipping Address:</h5>
@@ -109,17 +109,18 @@
                                                             </tr>
                                                             <tr>
                                                                 <th>Shipping</th>
-                                                                <td colspan="2">Free Shipping</td>
+                                                                <td colspan="2" id="shippingCharge">0.00</td>
                                                             </tr>
                                                             <tr>
                                                                 <th>Total</th>
-                                                                <td colspan="2" class="font-xl text-brand fw-900">
+                                                                <td colspan="2" id="totalAmount" class="font-xl text-brand fw-900">
                                                                     <%= total.toFixed(2) %>
                                                                 </td>
                                                             </tr>
                                     </tbody>
                                 </table>
                             </div>
+                            <br>
 
                             <!-- Payment Methods -->
                             <h5>Payment</h5>
@@ -140,9 +141,26 @@
                                     <label class="form-check-label" for="paypal">PayPal</label>
                                 </div>
                             </div>
+                            <br>
 
-                            <button type="submit" id="placeOrderButton"
-                                class="btn btn-fill-out btn-block mt-30">Place
+                            <!-- Delivery Options -->
+                            <h5>Delivery Options</h5>
+                            <div class="delivery_option">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="deliveryMethod"
+                                        id="regularDelivery" value="regular" checked>
+                                    <label class="form-check-label" for="regularDelivery">Regular Delivery (Free
+                                        Shipping)</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="deliveryMethod" id="fastDelivery"
+                                        value="fast">
+                                    <label class="form-check-label" for="fastDelivery">Fast Delivery (+80.00)</label>
+                                </div>
+                            </div>
+
+
+                            <button type="submit" id="placeOrderButton" class="btn btn-fill-out btn-block mt-30">Place
                                 Order</button>
                         </div>
                     </div>
@@ -162,17 +180,18 @@
 
                 try {
                     const selectedAddress = document.querySelector("input[name='selectedAddress']:checked").value;
-
                     const paymentMethod = document.querySelector("input[name='paymentMethod']:checked").value;
+                    const deliveryMethod = document.querySelector("input[name='deliveryMethod']:checked").value;
                     console.log("Selected Address:", selectedAddress);
                     console.log("Payment Method:", paymentMethod);
-
+                    console.log("delivery method:",deliveryMethod);
                     
+
 
                     const response = await fetch("/placeOrder", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ selectedAddress, paymentMethod }),
+                        body: JSON.stringify({ selectedAddress, paymentMethod, deliveryMethod }),
                     });
 
                     const data = await response.json();
@@ -204,5 +223,27 @@
                     });
                 }
             }
+
+
+            document.addEventListener("DOMContentLoaded",function(){
+                const deliveryOption = document.querySelectorAll("input[name='deliveryMethod']");
+                const shippingCharge = document.getElementById("shippingCharge");
+                const totalAmout = document.getElementById("totalAmount");
+                const Subtotal = <%= subTotal.toFixed(2)%>
+
+                deliveryOption.forEach(option =>{
+                    option.addEventListener("change", function(){
+                        let deliveryCharge =0;
+
+                        if(this.value === "fast"){
+                            deliveryCharge = +80.00;
+                        }
+
+                        shippingCharge.textContent = deliveryCharge.toFixed(2);
+                        const updatedTotal = Subtotal + deliveryCharge;
+                        totalAmout.textContent = updatedTotal.toFixed(2);
+                    })
+                })
+            })
 
         </script>
