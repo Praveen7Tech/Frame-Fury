@@ -321,42 +321,58 @@ const filterProduct = async (req,res)=>{
 }
 
 
-const filterByPrice = async (req,res)=>{
+const filterByPrice = async (req, res) => {
     try {
         const user = req.session.user;
-        const userData = await User.findOne({_id:user});
-        const categories = await Category.find({isListed:true}).lean();
+        const userData = await User.findOne({ _id: user });
+        const categories = await Category.find({ isListed: true }).lean();
 
-        let findProducts = await Product.find({
-            salePrice:{$gt:req.query.gt, $lt:req.query.lt},
-            isBlocked:false,
-            quantity:{$gt:0}
-        }).lean();
+        let minPrice = parseFloat(req.query.gt) || 0;
+        let maxPrice = parseFloat(req.query.lt) || Number.MAX_SAFE_INTEGER;
+        let sortOption = {};
 
-        findProducts.sort((a, b)=> new Date(b.createdOn)- new Date(a.createdOn));
+        if (req.query.sort === "lowToHigh") {
+            sortOption = { salePrice: 1 };
+        } else if (req.query.sort === "highToLow") {
+            sortOption = { salePrice: -1 };
+        }
 
         let itemPerPage = 10;
         let currentPage = parseInt(req.query.page) || 1;
-        let startIndex = (currentPage-1)* itemPerPage;
-        let endIndex = startIndex + itemPerPage;
-        let  totalPages = Math.ceil(findProducts.length /itemPerPage);
-        const currentProduct = findProducts.slice(startIndex,endIndex);
 
-        req.session.filterProduct = findProducts;
-        res.render("shopping-page",{
-            user:userData,
-            products:currentProduct,
-            category:categories,
+        let findProducts = await Product.find({
+            salePrice: { $gt: minPrice, $lt: maxPrice },
+            isBlocked: false,
+            quantity: { $gt: 0 }
+        })
+        .sort(sortOption)
+        .skip((currentPage - 1) * itemPerPage)
+        .limit(itemPerPage)
+        .lean();
+
+        // Get total products count for pagination
+        let totalProducts = await Product.countDocuments({
+            salePrice: { $gt: minPrice, $lt: maxPrice },
+            isBlocked: false,
+            quantity: { $gt: 0 }
+        });
+
+        let totalPages = Math.ceil(totalProducts / itemPerPage);
+
+        // Render response
+        res.render("shopping-page", {
+            user: userData,
+            products: findProducts,
+            category: categories,
             totalPages,
             currentPage
-
-        })
+        });
     } catch (error) {
-        console.error("Error in filterby price",error);
-        res.redirect("/pageNotfound")
-        
+        console.error("Error in filterByPrice:", error);
+        res.redirect("/pageNotFound");
     }
-}
+};
+
 
 const SearchProducts = async(req,res)=>{
     try {

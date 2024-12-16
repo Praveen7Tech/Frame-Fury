@@ -55,6 +55,9 @@
                                         </ul>
                                     </div>
                                 </div>
+
+                                <!-- filter based on price low to high -->
+
                                 <div class="sort-by-cover">
                                     <div class="sort-by-product-wrap">
                                         <div class="sort-by">
@@ -67,8 +70,8 @@
                                     <div class="sort-by-dropdown">
                                         <ul>
                                             <li><a class="active" href="#">Featured</a></li>
-                                            <li><a href="#">Price: Low to High</a></li>
-                                            <li><a href="#">Price: High to Low</a></li>
+                                            <li><a href="/filterPrice?sort=lowToHigh">Price: Low to High</a></li>
+                                            <li><a href="/filterPrice?sort=highToLow">Price: High to Low</a></li>
                                             <li><a href="#">Release Date</a></li>
                                             <li><a href="#">Avg. Rating</a></li>
                                         </ul>
@@ -157,6 +160,7 @@
                             </nav>
                         </div>
                     </div>
+                    <!-- filter by category -->
                     <div class="col-lg-3 primary-sidebar sticky-sidebar">
                         <div class="widget-category mb-30">
                             <h5 class="section-title style-1 mb-30 wow fadeIn animated">Category</h5>
@@ -165,7 +169,7 @@
                                     <li><a href="/filter?category=<%=category[i]._id%>">
                                             <%=category[i].name%>
                                         </a></li>
-                                    <%}%>
+                                 <%}%>
                             </ul>
                         </div>
                         <!-- Fillter By Price -->

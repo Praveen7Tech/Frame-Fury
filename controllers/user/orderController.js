@@ -29,14 +29,14 @@ const orderCancel = async(req,res)=>{
         const orderId = req.params.orderId;
         const order = await Order.findById(orderId);
 
-        if(order.orderStatus === "Pending"){
+        if(order.orderStatus === "Pending" || order.orderStatus === "Confirmed"){
             order.orderStatus = "Cancelled"
             await order.save();
 
             console.log("order cancelled succussfully...");
             
             res.status(200).json({success:true,message:"Order Cancelled successfully"})
-        }else{
+        }else if(order.orderStatus === "Shipped"){
             res.status(400).json({success:false,message:"Order Can't Cancel, Shipping started.."})
         }
 

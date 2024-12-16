@@ -12,6 +12,8 @@ const {userAuth, adminAuth} = require("../middlewares/auth")
 router.get("/pageNotFound",userController.pageNotFound)
 // hope page
 router.get("/",userController.loadHomepage)
+
+//shopping page
 router.get("/shoppingPage",userAuth,userController.shoppingPage)
 router.get("/filter",userAuth,userController.filterProduct)
 router.get("/filterPrice",userAuth,userController.filterByPrice)

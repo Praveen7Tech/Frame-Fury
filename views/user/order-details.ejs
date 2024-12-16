@@ -59,9 +59,11 @@
                 </div>
                 <div class="row mt-3">
                     <div class="col-12">
-                        <button type="button" id="cancelOrder" class="btn btn-danger">
+                    <%if(order.orderStatus !== "Cancelled" && order.orderStatus !== "Deliverd"){%>    
+                        <button type="button" id="cancelOrderButton" class="btn btn-danger">
                             Cancel Order
                         </button>
+                    <%}%>    
                     </div>
                 </div>
             </div>
@@ -170,7 +172,7 @@
     <script>
 
 
-        document.getElementById("cancelOrder").addEventListener("click", function () {
+        document.getElementById("cancelOrderButton").addEventListener("click", function () {
             Swal.fire({
                 icon: "Warning...",
                 title: "Are you sure",
@@ -198,30 +200,34 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    if ({ success: true }) {
+                    if (data.success) {
                         Swal.fire({
                             icon: 'success',
                             title: data.message,
                             text: `Order <%=order._id%> has been cancelled.`,
                             confirmButtonText: 'OK'
                         })
-                            .then(() => {
-                                document.querySelector("orderStatus").textContent = "Cancelled";
-                                document.querySelector("orderStatus").classList.remove("orderStatus");
-                                document.querySelector("orderStatus").classList.add("text-danger");
-
-                                document.querySelector("cancelOrder").disabled = true;
-                            })
+                        .then(() => {
+                        const orderStatusElement = document.querySelector(".orderStatus");
+                        if (orderStatusElement) {
+                            orderStatusElement.textContent = "Cancelled";
+                            orderStatusElement.classList.remove("orderStatus");
+                            orderStatusElement.classList.add("text-danger");
+                        }
+                        const cancelOrderButton = document.querySelector("#cancelOrderButton");
+                        if (cancelOrderButton) {
+                            cancelOrderButton.disabled = true;
+                        }
+                    });
                     } else {
                         Swal.fire({
                             icon: "error",
                             title: "Error...!",
                             text: data.message,
-                            confirmButtonText: "Try again.."
+                            confirmButtonText: "Ok.."
                         })
                     }
                 }).catch(error => {
-                    // Error alert for network or server issues
                     Swal.fire({
                         title: 'Error!',
                         text: 'An error occurred while cancelling the order.',

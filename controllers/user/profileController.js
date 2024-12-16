@@ -331,16 +331,18 @@ const updatePassword = async(req,res)=>{
 }
 
 
-const addressPage = async(req,res)=>{
+const addressPage = async (req, res) => {
     try {
         const user = req.session.user;
-        res.render("add-address",{user:user})
+        const { redirectTo } = req.query || 'userProfile'; 
+        res.render("add-address", { user: user, redirectTo: redirectTo });
     } catch (error) {
-        res.redirect("/pageNotFound")
+        res.redirect("/pageNotFound");
     }
-}
+};
 
-const addAddress = async(req,res)=>{
+
+const addAddress = async (req, res) => {
     try {
         const {
             addressType,
@@ -350,32 +352,39 @@ const addAddress = async(req,res)=>{
             state,
             pincode,
             phone,
-            altPhone
-        } = req.body
+            altPhone,
+            redirectTo
+        } = req.body;
 
         const userId = req.session.user;
-        const userData = await User.findOne({_id:userId});
-        const userAddress = await Address.findOne({userId:userData._id});
-         
-        if(!userAddress){
+        const userData = await User.findOne({ _id: userId });
+        const userAddress = await Address.findOne({ userId: userData._id });
+
+        if (!userAddress) {
             const newAddress = new Address({
-                userId:userData._id,
-                address:[{addressType,name,city,landMark,state,pincode,phone,altPhone}]
-            })
+                userId: userData._id,
+                address: [{ addressType, name, city, landMark, state, pincode, phone, altPhone }]
+            });
 
             await newAddress.save();
-        }else{
-            userAddress.address.push({addressType,name,city,landMark,state,pincode,phone,altPhone});
-            await userAddress.save()
+        } else {
+            userAddress.address.push({ addressType, name, city, landMark, state, pincode, phone, altPhone });
+            await userAddress.save();
         }
-        console.log("address : ",userAddress);
-        
-        res.redirect("/userProfile")
+        console.log("Address added successfully");
+
+        // Redirecting to checkout and user profile
+        if (redirectTo === 'checkout') {
+            return res.redirect('/checkout');
+        } else {
+            return res.redirect('/userProfile');
+        }
     } catch (error) {
-        console.error(("Error in address adding"));
-        res.redirect("/pageNotFound")
+        console.error("Error adding address:", error);
+        res.redirect("/pageNotFound");
     }
-}
+};
+
 
 
 const editAddress = async(req,res)=>{
