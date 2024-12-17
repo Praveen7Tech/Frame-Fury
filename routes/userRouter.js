@@ -19,6 +19,9 @@ router.get("/filter",userAuth,userController.filterProduct)
 router.get("/filterPrice",userAuth,userController.filterByPrice)
 router.post("/search",userAuth,userController.SearchProducts)
 
+//sort by alphabetic order
+router.get("/filterByName",userAuth,userController.filterByName)
+
 //signup
 router.get("/signup",userController.loadSignup)
 router.post("/signup",userController.signup)

@@ -24,10 +24,11 @@ const loadHomepage = async (req, res) => {
       isBlocked: false,
       category: { $in: categories.map(category => category._id) },
       quantity: { $gt: 0 },
-    });
+    }).sort({createdOn:-1})
 
-    // Sort products by latest uploads
-    productData.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
+   
+    console.log("acesnding-",productData);
+    
 
     res.render("home", { user, products: productData });
   } catch (error) {
@@ -433,6 +434,52 @@ const SearchProducts = async(req,res)=>{
     }
 }
 
+
+const filterByName = async (req, res) => {
+    try {
+        const user = req.session.user;
+        const Order = req.query.sort;
+
+        const userData = await User.findById(user._id);
+
+        const categories = await Category.find({ isListed: true });
+        console.log("order-", Order);
+        console.log("userData-", userData);
+        console.log("categories-", categories);
+
+        let products;
+        if (Order === "aA-zZ") {
+            products = await Product.find({isBlocked:false}).collation({ locale: 'en' }).sort({ productName: 1 });
+        } else if (Order === "zZ-aA") {
+            products = await Product.find({isBlocked:false}).collation({ locale: 'en' }).sort({ productName: -1 });
+        }else if(Order === "featured"){
+            products =await Product.find({isBlocked:false})
+        }
+         else {
+            products = await Product.find({ isBlocked: false });
+        }
+        console.log("product-", products);
+
+        const itemPerPage = 12;
+        const currentPages = parseInt(req.query.page) || 1;
+        const totalProducts = await Product.countDocuments({ isBlocked: false });
+        const totalPages = Math.ceil(totalProducts / itemPerPage);
+
+        res.render("shopping-page", {
+            user: userData,
+            products,
+            category: categories,
+            currentPage:currentPages,
+            totalPages
+        });
+
+    } catch (error) {
+        console.error("Error in product filtering by alphabetic order", error);
+        res.redirect("/pageNotFound");
+    }
+};
+
+
 module.exports = {
     loadHomepage,
     pageNotFound,
@@ -446,5 +493,6 @@ module.exports = {
     shoppingPage,
     filterProduct,
     filterByPrice,
-    SearchProducts
+    SearchProducts,
+    filterByName
 }

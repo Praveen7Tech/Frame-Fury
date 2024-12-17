@@ -33,10 +33,10 @@ const productSchema = new Schema({
         type : Number,
         default : true
     },
-    meterial:{
-        type : [String],
-        required : false
-    },
+    // meterial:{
+    //     type : [String],
+    //     required : false
+    // },
     productImage:{
         type :[String],
         required : true
@@ -50,6 +50,10 @@ const productSchema = new Schema({
         enum : ["Available", "Out of Stock", "Discountinued"],
         required : true,
         default : "Available"
+    },
+    createdOn:{
+        type:Date,
+        default:Date.now
     }
 },{Timestamp:true})
 
