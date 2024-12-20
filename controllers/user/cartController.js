@@ -1,6 +1,7 @@
 const User = require("../../models/userSchema");
 const Product = require("../../models/productSchema");
-const Cart = require("../../models/cartSchema")
+const Cart = require("../../models/cartSchema");
+const Category = require("../../models/categorySchema");
 
 
 const cartPage = async (req, res) => {
@@ -9,10 +10,24 @@ const cartPage = async (req, res) => {
 
         const cart = await Cart.findOne({ userId }).populate("items.productId");
         const user = await User.findById(userId);
+        const categories = await Category.find({ isListed: true });
+        
+        
+        const listedCategory = categories.map(category => category._id.toString());
+        console.log("Listed Categories:", listedCategory);
 
+        const findProduct = cart.items.filter(item => {
+            const product = item.productId;
+            return (
+                product.isBlocked === false && 
+                listedCategory.includes(product.category.toString())
+            );
+        });
+
+        console.log("Valid Items in Cart:", findProduct);
         res.render("cart", {
             user,
-            cart: cart ? cart.items : [],
+            cart: findProduct, 
         });
     } catch (error) {
         console.error("Error in showing cart page", error);
@@ -76,7 +91,6 @@ const addToCart = async (req, res) => {
         return res.status(500).json({ status: false, message: "Server Error!" });
     }
 };
-
 
 
 

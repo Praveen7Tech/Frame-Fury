@@ -2953,6 +2953,11 @@ table .product-thumbnail img {
   padding: 20px;
 }
 
+.lambo-video{
+  width: 247px;
+  height: 341px;
+}
+
 .banner-img {
   position: relative;
   clear: both;

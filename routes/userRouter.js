@@ -7,7 +7,7 @@ const profileController = require("../controllers/user/profileController")
 const cartController = require("../controllers/user/cartController")
 const checkOutController = require("../controllers/user/checkoutcontroller")
 const orderController = require("../controllers/user/orderController")
-const {userAuth, adminAuth} = require("../middlewares/auth")
+const {userAuth} = require("../middlewares/auth")
 
 router.get("/pageNotFound",userController.pageNotFound)
 // hope page
@@ -31,9 +31,20 @@ router.post("/resend-otp",userController.resendOtp)
 
 // passport route
 router.get("/auth/google",passport.authenticate("google",{scope:["profile","email"]}));
-router.get("/auth/google/callback", passport.authenticate("google",{failureRedirect:"/signup"}),(req,res)=>{
-    res.redirect("/")
-});
+router.get(
+    "/auth/google/callback",
+    passport.authenticate("google", { failureRedirect: "/signup" }),
+    (req, res) => {
+      console.log("Authenticated User:", req.user); // Debug user data
+      if (req.user) {
+        req.session.user = req.user;
+        res.redirect("/"); 
+      } else {
+        res.redirect("/signup");
+      }
+    }
+  );
+  
 
 //login
 router.get("/login",userController.loadLogin)
@@ -53,6 +64,7 @@ router.get("/productDetails",userAuth,productController.productDetails)
 
 // Profile management
 router.get("/userProfile",userAuth,profileController.profile);
+router.post("/profileUpdate",userAuth,profileController.profileUpdate)
 
 // change email
 router.get("/changeEmail", userAuth,profileController.changeEmail)

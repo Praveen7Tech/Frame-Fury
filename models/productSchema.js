@@ -33,10 +33,7 @@ const productSchema = new Schema({
         type : Number,
         default : true
     },
-    // meterial:{
-    //     type : [String],
-    //     required : false
-    // },
+    
     productImage:{
         type :[String],
         required : true

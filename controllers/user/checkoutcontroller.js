@@ -3,23 +3,32 @@ const User = require("../../models/userSchema");
 const Cart = require("../../models/cartSchema");
 const Order = require("../../models/orderSchema")
 const Address = require("../../models/addressSchema");
+const Category = require("../../models/categorySchema")
 
 
 const checkOutPage = async(req,res)=>{
     try {
         const userId = req.session.user;
-        
         const cart = await Cart.findOne({userId}).populate("items.productId")
         const userAddress = await Address.findOne({userId});
+        const categories = await Category.find({isListed:true})
+        const listedCategory = categories.map(category=> category._id.toString())
+
+        const findProduct = cart.items.filter(item=>{
+            const product = item.productId
+            return (product.isBlocked === false && listedCategory.includes(product.category.toString()))
+        });
         
-        const subTotal = cart.items.reduce((sum, items)=> sum + items.totalPrice ,0);
+        const subTotal = findProduct.reduce((sum, items)=> sum + items.totalPrice ,0);
         let shiipingCost =0
         
         const total = subTotal + shiipingCost;
 
+        
+
         res.render("checkout",{
             user:userId,
-            cart:cart ? cart.items:[],
+            cart:findProduct ? findProduct:[],
             addresses: userAddress ? userAddress.address:[],
             subTotal,
             total
@@ -34,9 +43,7 @@ const placeOrder = async (req, res) => {
     try {
         const { selectedAddress, paymentMethod, deliveryMethod } = req.body;
         const userId = req.session.user;
-        console.log("deliver - ",deliveryMethod);
         
-
         const userAddress = await Address.findOne(
             { userId, "address._id": selectedAddress },
             { "address.$": 1 }  
@@ -45,15 +52,21 @@ const placeOrder = async (req, res) => {
         if (!userAddress) {
             return res.status(400).json({ success: false, message: "Invalid address selected" });
         }
-        
 
         const cart = await Cart.findOne({ userId }).populate("items.productId");
-        if (!cart || cart.items.length === 0) {
+        const category = await Category.find({isListed:true});
+        const listedCategory = category.map(category=> category._id.toString());
+
+        const findProduct = cart.items.filter(item=>{
+            const product = item.productId;
+            return ( product.isBlocked===false && listedCategory.includes(product.category.toString()))
+        });
+
+        if (!findProduct || findProduct.length === 0) {
             return res.status(400).json({ success: false, message: "Cart is empty" });
         }
 
-        
-        const subTotal = cart.items.reduce((sum, item) => sum + item.totalPrice, 0);
+        const subTotal = findProduct.reduce((sum, item) => sum + item.totalPrice, 0);
 
         let deliveryCharge =0;
         if(deliveryMethod === "fast"){
@@ -71,7 +84,7 @@ const placeOrder = async (req, res) => {
             subTotal,
             total,
             paymentMethod,
-            items: cart.items
+            items: findProduct
         });
 
         await order.save();

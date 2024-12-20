@@ -1,5 +1,6 @@
 const Order = require("../../models/orderSchema")
-const Address = require("../../models/addressSchema")
+const Address = require("../../models/addressSchema");
+const Product = require("../../models/productSchema");
 
 const orderDetails = async(req,res)=>{
     try {
@@ -28,8 +29,21 @@ const orderCancel = async(req,res)=>{
     try {
         const orderId = req.params.orderId;
         const order = await Order.findById(orderId);
+        console.log("order : ",order);
+        
 
         if(order.orderStatus === "Pending" || order.orderStatus === "Confirmed"){
+
+            const promiseAll =order.items.map(async(item)=>{
+                const product =await Product.findById(item.productId);
+                if(product){
+                    product.quantity += item.quantity
+                    await product.save()
+                }
+            })
+
+            await Promise.all(promiseAll);
+
             order.orderStatus = "Cancelled"
             await order.save();
 

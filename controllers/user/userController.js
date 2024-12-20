@@ -27,10 +27,10 @@ const loadHomepage = async (req, res) => {
     }).sort({createdOn:-1})
 
    
-    console.log("acesnding-",productData);
+    // console.log("acesnding-",productData);
     
 
-    res.render("home", { user, products: productData });
+    res.render("home", { user, products: productData ,category:categories});
   } catch (error) {
     console.error("Home page not found", error.message);
     res.status(500).send("Server error");
@@ -235,6 +235,8 @@ const shoppingPage = async(req,res)=>{
         const userData = await User.findOne({_id:user});
         const categories = await Category.find({isListed:true});
         const categoryId = categories.map((category) => category._id.toString());
+        console.log("categoryID-",categoryId);
+        
         const page = parseInt(req.query.page) || 1;
         const limit =12;
         const skip = (page-1)*limit;
@@ -327,6 +329,7 @@ const filterByPrice = async (req, res) => {
         const user = req.session.user;
         const userData = await User.findOne({ _id: user });
         const categories = await Category.find({ isListed: true }).lean();
+        const categoryListed =categories.map(category=> category._id)
 
         let minPrice = parseFloat(req.query.gt) || 0;
         let maxPrice = parseFloat(req.query.lt) || Number.MAX_SAFE_INTEGER;
@@ -344,7 +347,8 @@ const filterByPrice = async (req, res) => {
         let findProducts = await Product.find({
             salePrice: { $gt: minPrice, $lt: maxPrice },
             isBlocked: false,
-            quantity: { $gt: 0 }
+            quantity: { $gt: 0 },
+            category:{$in:categoryListed}
         })
         .sort(sortOption)
         .skip((currentPage - 1) * itemPerPage)
@@ -355,7 +359,8 @@ const filterByPrice = async (req, res) => {
         let totalProducts = await Product.countDocuments({
             salePrice: { $gt: minPrice, $lt: maxPrice },
             isBlocked: false,
-            quantity: { $gt: 0 }
+            quantity: { $gt: 0 },
+            category:{$in:categoryListed}
         });
 
         let totalPages = Math.ceil(totalProducts / itemPerPage);
@@ -443,22 +448,21 @@ const filterByName = async (req, res) => {
         const userData = await User.findById(user._id);
 
         const categories = await Category.find({ isListed: true });
-        console.log("order-", Order);
-        console.log("userData-", userData);
-        console.log("categories-", categories);
+        const categoryListed = categories.map(category => category._id)
+         console.log("categories-", categoryListed);
 
         let products;
         if (Order === "aA-zZ") {
-            products = await Product.find({isBlocked:false}).collation({ locale: 'en' }).sort({ productName: 1 });
+            products = await Product.find({isBlocked:false,category:{$in:categoryListed}}).collation({ locale: 'en' }).sort({ productName: 1 });
         } else if (Order === "zZ-aA") {
-            products = await Product.find({isBlocked:false}).collation({ locale: 'en' }).sort({ productName: -1 });
+            products = await Product.find({isBlocked:false,category:{$in:categoryListed}}).collation({ locale: 'en' }).sort({ productName: -1 });
         }else if(Order === "featured"){
-            products =await Product.find({isBlocked:false})
+            products =await Product.find({isBlocked:false,category:{$in:categoryListed}})
         }
          else {
-            products = await Product.find({ isBlocked: false });
+            products =await Product.find({isBlocked:false,category:{$in:categoryListed} });
         }
-        console.log("product-", products);
+        //console.log("product-", products);
 
         const itemPerPage = 12;
         const currentPages = parseInt(req.query.page) || 1;

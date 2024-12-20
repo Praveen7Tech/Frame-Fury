@@ -10,39 +10,84 @@
     <meta property="og:type" content="">
     <meta property="og:url" content="">
     <meta property="og:image" content="">
-    <link rel="shortcut icon" type="image/x-icon" href="#">
+    <link rel="shortcut icon" type="image/x-icon" href="backend/assets/imgs/theme/ecom-logo.jpg">
     <link href="backend/assets/css/main.css" rel="stylesheet" type="text/css" />
     <link href="/backend/assets/css/main.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.6/dist/sweetalert2.min.css">
 <script src="https://kit.fontawesome.com/16d4885483.js" crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <style>
-body {
-    background-color: #ffffff;
-}
-.navbar {
-    background-color: #8da7ab;
-}
-.navbar-aside {
-    background-color: #b0d5de;
-}
+/* Add a smooth transition for hover effects */
 .menu-item a.menu-link {
-    color: #310505;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    position: relative;
+    text-decoration: none;
 }
 
-.menu-item a.menu-link:hover,
+/* Add an icon background */
+.menu-item a.menu-link i {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    background-color: #e3e6e8;
+    border-radius: 50%;
+    margin-right: 10px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+/* On hover, change background color and scale the icon */
+.menu-item a.menu-link:hover i {
+    background-color: #6e7e6e;
+    transform: scale(1.2);
+}
+
+/* Add hover effect for the link */
+.menu-item a.menu-link:hover {
+    background-color: #526852;
+    color: #ffffff;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    transform: translateX(5px);
+}
+
+/* Active link styling */
 .menu-item a.menu-link.active {
-    background-color: #6e7e6e; 
+    background-color: #6e7e6e;
     color: #ffffff;
-}
-.dropdown-menu {
-    background-color: #bb9aaf;
+    font-weight: bold;
 }
 
-.dropdown-item:hover {
-    background-color: #33053d;
-    color: #ffffff;
+/* Add subtle border and shadow */
+.menu-aside {
+    padding: 20px;
+    border-right: 2px solid #d3d3d3;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
+
+/* Style the dropdown menu items */
+.dropdown-menu {
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+    animation: fadeIn 0.3s ease;
+}
+
+/* Keyframes for fade-in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 
 </style>
 </head>
@@ -51,7 +96,7 @@ body {
     <aside class="navbar-aside" id="offcanvas_aside">
         <div class="aside-top">
             <a href="#" class="brand-wrap">
-                <!-- <img src="backend/assets/imgs/theme/logo.png"  class="logo" alt="Men Fashion Dashboard"> -->
+                <img src="/backend/assets/imgs/theme/logo.png"  class="logo" alt="Frame Fury">
             </a>
             <div>
                 <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
@@ -76,10 +121,7 @@ body {
                     </a>
 
                 </li>
-                <!-- <li class="menu-item">
-                    <a class="menu-link" href="/admin/brands"> <i class="icon material-icons md-stars"></i>
-                        <span class="text">Brands</span> </a>
-                </li> -->
+               
                 <li class="menu-item">
                     <a class="menu-link" href="/admin/addProducts"> <i class="icon material-icons md-add_box"></i>
                         <span class="text">Add product</span>
@@ -115,16 +157,8 @@ body {
             <div class="col-nav">
                 <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i class="material-icons md-apps"></i> </button>
                 <ul class="nav">
-                    <!-- <li class="dropdown nav-item">
-                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="backend/assets/imgs/people/avatar2.jpg" alt="User"></a> -->
-                        <div >
-                            <!-- <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit Profile</a>
-                            <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account Settings</a> -->
-                            <!-- <a class="dropdown-item" href="#"><i class="material-icons md-account_balance_wallet"></i>Wallet</a> -->
-                            <!-- <a class="dropdown-item" href="#"><i class="material-icons md-receipt"></i>Billing</a> -->
-                            <!-- <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help center</a> -->
-                            <!-- <div class="dropdown-divider"></div> -->
-                            <a class="dropdown-item text-danger" href="admin/logout"><i class="material-icons md-exit_to_app"></i>Logout</a>
+                        <div > 
+                            <a class="dropdown-item text-danger" href="/admin/logout"><i class="material-icons md-exit_to_app"></i>Logout</a>
                         </div>
                     </li>
                 </ul>

@@ -464,6 +464,22 @@ const deleteAddress = async(req,res)=>{
     }
 }
 
+const profileUpdate = async(req,res)=>{
+    try {
+        const {name,phone} =req.body;
+        const userId = req.session.user;
+        console.log("naame-",name);
+        console.log("phone-",phone);
+        
+
+        await User.findByIdAndUpdate(userId,{name,phone});
+        res.redirect("/userProfile")
+    } catch (error) {
+        console.error("Error in profile update");
+        res.status(500).send("something went wrong please try again later")
+    }
+}
+
 
 module.exports ={
     profile,
@@ -485,5 +501,6 @@ module.exports ={
     addAddress,
     editAddress,
     updateAddress,
-    deleteAddress
+    deleteAddress,
+    profileUpdate
 }

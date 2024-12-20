@@ -2,9 +2,122 @@
 <section class="content-main">
     <div class="content-header">
         <div>
-            <h2 class="content-title card-title">Dashboard </h2>
+            <h2 class="content-title card-title">Dashboard</h2>
         </div>
-       
+    </div>
+
+    <!-- Main Dashboard Content -->
+    <div class="content-body">
+        <div class="row">
+            <!-- Sales Overview Card -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Sales Overview</h5>
+                        <p class="card-text">Total Sales This Month</p>
+                        <h3 class="text-success">$15,345</h3>
+                        <p class="text-muted">Compared to last month: <span class="text-success">+12%</span></p>
+                    </div>
+                    <div class="card-footer text-end">
+                        <a href="#" class="btn btn-primary btn-sm">View Details</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Users Card -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Active Users</h5>
+                        <p class="card-text">Users Currently Active</p>
+                        <h3 class="text-primary">325</h3>
+                        <p class="text-muted">Peak Today: <span class="text-primary">500</span></p>
+                    </div>
+                    <div class="card-footer text-end">
+                        <a href="#" class="btn btn-primary btn-sm">View Analytics</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Revenue Card -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Revenue</h5>
+                        <p class="card-text">This Week</p>
+                        <h3 class="text-warning">$7,890</h3>
+                        <p class="text-muted">Compared to last week: <span class="text-danger">-3%</span></p>
+                    </div>
+                    <div class="card-footer text-end">
+                        <a href="#" class="btn btn-primary btn-sm">View Revenue</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <!-- Recent Orders Table -->
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Recent Orders</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>#1001</td>
+                                    <td>John Doe</td>
+                                    <td>Dec 15, 2024</td>
+                                    <td><span class="badge bg-success">Completed</span></td>
+                                    <td>$150</td>
+                                </tr>
+                                <tr>
+                                    <td>#1002</td>
+                                    <td>Jane Smith</td>
+                                    <td>Dec 14, 2024</td>
+                                    <td><span class="badge bg-warning">Pending</span></td>
+                                    <td>$250</td>
+                                </tr>
+                                <tr>
+                                    <td>#1003</td>
+                                    <td>Sam Wilson</td>
+                                    <td>Dec 13, 2024</td>
+                                    <td><span class="badge bg-danger">Cancelled</span></td>
+                                    <td>$100</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Feedback Card -->
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">User Feedback</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>"Great service and fast delivery!" - <strong>Emily</strong></p>
+                        <p>"User-friendly platform and easy to navigate." - <strong>Michael</strong></p>
+                        <p>"Customer support was very helpful." - <strong>Sarah</strong></p>
+                    </div>
+                    <div class="card-footer text-end">
+                        <a href="#" class="btn btn-primary btn-sm">View All Feedback</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 <%- include("../../views/partials/admin/footer") %>

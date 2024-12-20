@@ -28,24 +28,38 @@
       background-color: #f29a47; /* Orange for Confirmed */
       color: #fff;
     }
+    /* Additional styling */
+    .order-image {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      margin-right: 10px;
+    }
+    .product-details {
+      display: flex;
+      align-items: center;
+    }
+    .table td, .table th {
+      vertical-align: middle; /* Ensures vertical alignment */
+      text-align: center;
+    }
   </style>
-  
 </head>
 <body>
   <%- include("../../views/partials/admin/header") %>
 
   <div class="container mt-5">
-    <h1 class="mb-4">Order List</h1>
+    <h1 class="mb-4 text-center">Order List</h1>
     <table class="table table-bordered table-hover">
       <thead class="table-dark">
         <tr>
-          <th>Order ID</th>
-          <th>Customer</th>
-          <th>Products</th>
-          <th>Total Amount</th>
-          <th>Payment Method</th>
-          <th>Status</th>
-          <th>Actions</th>
+          <th style="width: 10%;">Order ID</th>
+          <th style="width: 15%;">Customer</th>
+          <th style="width: 25%;">Products</th>
+          <th style="width: 10%;">Total Amount</th>
+          <th style="width: 15%;">Payment Method</th>
+          <th style="width: 15%;">Status</th>
+          <th style="width: 10%;">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -55,36 +69,31 @@
               <td><%= order._id %></td>
               <td>
                 <strong><%= order.userId.name %></strong><br>
-                <%= order.userId.email %>
+                <small><%= order.userId.email %></small>
               </td>
               <td>
                 <% order.items.forEach(item => { %>
-                  <p>
-                    <img src="/uploads/re-image/<%= item.productId.productImage[0] %>" alt="Product Image" width="50">
-                    <%= item.productId.productName %>
-                  </p>
+                  <div class="product-details">
+                    <img src="/uploads/re-image/<%= item.productId.productImage[0] %>" alt="Product Image" class="order-image">
+                    <span><%= item.productId.productName %></span>
+                  </div>
                 <% }) %>
               </td>
-              <td><%= order.subTotal %></td>
+              <td>₹<%= order.subTotal.toFixed(2) %></td>
               <td><%= order.paymentMethod %></td>
               <td>
-                <!-- Dynamically applying color-coded status -->
-                <td>
-                  <!-- Dynamically applying color-coded status -->
-                  <span class="badge 
-                    <%= order.orderStatus === 'Pending' ? 'status-pending' : '' %>
-                    <%= order.orderStatus === 'Shipped' ? 'status-shipped' : '' %>
-                    <%= order.orderStatus === 'Deliverd' ? 'status-deliverd' : '' %>
-                    <%= order.orderStatus === 'Cancelled' ? 'status-cancelled' : '' %>
-                    <%= order.orderStatus === 'Confirmed' ? 'status-confirmed' : '' %>">
-                    <%= order.orderStatus %>
-                  </span>
-                </td>
-                
+                <span class="badge 
+                  <%= order.orderStatus === 'Pending' ? 'status-pending' : '' %>
+                  <%= order.orderStatus === 'Shipped' ? 'status-shipped' : '' %>
+                  <%= order.orderStatus === 'Deliverd' ? 'status-deliverd' : '' %>
+                  <%= order.orderStatus === 'Cancelled' ? 'status-cancelled' : '' %>
+                  <%= order.orderStatus === 'Confirmed' ? 'status-confirmed' : '' %>">
+                  <%= order.orderStatus %>
+                </span>
               </td>
               <td>
-                <a href="/admin/orderView/<%= order._id %>" class="btn btn-info btn-sm">View</a>
-                <a href="/admin/orderEdit/<%= order._id %>" class="btn btn-primary btn-sm">Edit</a>
+                <a href="/admin/orderView/<%= order._id %>" class="btn btn-info btn-sm mb-1">View</a>
+                <a href="/admin/orderEdit/<%= order._id %>" class="btn btn-primary btn-sm mb-1">Edit</a>
                 <button class="btn btn-danger btn-sm">Delete</button>
               </td>
             </tr>
