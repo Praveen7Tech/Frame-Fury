@@ -158,6 +158,35 @@
         .text-start {
             text-align: left;
         }
+        .offer-btns {
+        display: flex;
+        gap: 10px;
+    }
+
+    .offer-btn {
+        font-size: 14px;
+        padding: 8px 15px;
+        border-radius: 25px;
+        color: white;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .offer-btn-add {
+        background-color: #007bff;
+    }
+
+    .offer-btn-edit {
+        background-color: #17a2b8;
+    }
+
+    .offer-btn-remove {
+        background-color: #dc3545;
+    }
+
+    .offer-btn:hover {
+        opacity: 0.8;
+    }
     </style>
 
     <section class="content-main">
@@ -206,6 +235,8 @@
                                         <th>ID</th>
                                         <th>Name</th>
                                         <th>Description</th>
+                                        <th>Offer percentage</th>
+                                        <th>Offer</th>
                                         <th>Status</th>
                                         <th>List/Unlist</th>
                                         <th>Edit</th>
@@ -228,6 +259,28 @@
                                             <td class="text-start">
                                                 <%= category.description %>
                                             </td>
+                                            <%if(category.categoryOffer){%>
+                                            <td>
+                                                <%= category.categoryOffer%>%
+                                            </td>
+                                            <%}else{%>
+                                                <td>No offer..</td>
+                                            <%}%>    
+                                            <td class="text-start">
+                                            <%if(category.categoryOffer){%>    
+                                                <button class="offer-btn offer-btn-edit" onclick="editOffer('<%= category._id%>')">
+                                                    Edit Offer
+                                                </button>
+                                                <button class="offer-btn offer-btn-remove" onclick="removeOffer('<%= category._id%>')">
+                                                    Remove Offer
+                                                </button>
+                                            <%}else{%>
+                                                <button class="offer-btn offer-btn-add" onclick="addOffer('<%= category._id%>')">
+                                                    Add Offer
+                                                </button>
+                                            <%}%>    
+                                            </td>
+
                                             <td class="text-start">
                                                 <% if (category.isListed) { %>
                                                     <span class="badge badge-success">Listed</span>
@@ -391,6 +444,141 @@
                 window.history.replaceState(null, null, window.location.href);
             }
         </script>
+
+
+    <!-- add offer -->
+     <script>
+
+         function addOffer(categoryId){
+            Swal.fire({
+                title:`Add offer for ${name}`,
+                html: `
+                    <div>
+                        <label>Offer Amount (%)</label>
+                        <input type="number" id="offerAmount" class="swal2-input" placeholder="Enter offer percentage">
+                    </div>
+                `,
+                showCancelButton:true,
+                confirmButtonText:"Save",
+                preConfirm:()=>{
+                    const offerAmount = document.getElementById("offerAmount").value;
+                    if(!offerAmount || offerAmount <= 0 || offerAmount > 100){
+                        Swal.showValidationMessage("Please enter a valid Percentage");
+                        return false
+                    }
+                    return {categoryId,offerAmount}
+                }
+            })
+            .then(result=>{
+                if(result.isConfirmed){
+                    const {categoryId, offerAmount} =result.value;
+
+                    fetch("/admin/addOffer",{
+                        method:"POST",
+                        headers:{
+                            "Content-Type":"application/json"
+                        },
+                        body:JSON.stringify({
+                            categoryId,
+                            amount:offerAmount
+                        })
+                    }).then(response=>{
+                        if(response.ok){
+                            Swal.fire("Success","Category Offer Added Successfully.","success").then(()=> location.reload())
+                        }
+                        else{
+                            Swal.fire("Error.!","Failed to add category Offer","error")
+                        }
+                    })
+                    .catch(err=>{
+                        console.error(err);
+                        Swal.fire("Error..!","An error occured while adding category offer..!","error")
+                    })
+                }
+            })
+            
+         }
+
+     </script>
+
+
+    <!-- edit offer -->
+     <script>
+
+        function editOffer(categoryId){
+            Swal.fire({
+                title:"Edit Offer",
+                html: `
+                    <div>
+                        <label>Offer Amount (%)</label>
+                        <input type="number" id="offerAmount" class="swal2-input" placeholder="Enter offer percentage">
+                    </div>
+                `,
+                showCancelButton:true,
+                confirmButtonText:"Update",
+                preConfirm:()=>{
+                    const offerAmount = document.getElementById("offerAmount").value;
+                    if(!offerAmount || offerAmount <=0 || offerAmount > 100){
+                        Swal.showValidationMessage("Please enter a valid Percentage")
+                        return false
+                    }
+                    return {categoryId, offerAmount}
+                }
+            })
+            .then(result=>{
+                if(result.isConfirmed){
+                    const {categoryId,offerAmount} =result.value;
+
+                    fetch("/admin/editOffer",{
+                        method:"PUT",
+                        headers:{
+                            "Content-Type":"application/json"
+                        },
+                        body:JSON.stringify({
+                            categoryId,
+                            amount:offerAmount
+                        })
+                    })
+                    .then(response=>{
+                        if(response.ok){
+                            Swal.fire("Success.","Category Offer Updated Successfully","success").then(()=> location.reload())
+                        }
+                        else{
+                            Swal.fire("Error!","Error in updating category Offer..!","error")
+                        }
+                    })
+                    .catch(err=>{
+                        console.error(error);
+                        Swal.fire("Error..!","Error in updating category Offer","error")
+                    })
+                }
+            })
+        }
+
+     </script>
+
+
+    <!-- remove offer -->
+     <script>
+
+         function removeOffer(categoryId){
+            Swal.fire({
+                title:"Are You Sure..!",
+                text:"Removing Category Offer",
+                icon:"warning",
+                showCancelButton:true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText:"YES Remove it"
+            })
+            .then(result=>{
+                if(result.isConfirmed){
+                    window.location.href=`/admin/removeOffer/?categoryId=${categoryId}`
+                }
+            })
+         }
+
+     </script>
 
 
      

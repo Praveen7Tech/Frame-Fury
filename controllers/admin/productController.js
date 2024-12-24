@@ -82,15 +82,16 @@ const getAllProducts = async (req, res) => {
         const page = req.query.page || 1;
         const limit = 10;
 
-        // Fetch product data with populated category information
+        
         const productData = await Product.find({
             $or: [
                 { productName: { $regex: new RegExp(".*" + search + ".*", "i") } },
             ],
         })
+        .sort({createdOn:1})
         .limit(limit)
         .skip((page - 1) * limit)
-        .populate("category") // Populate the category field
+        .populate("category") 
         .exec();
 
         const count = await Product.find({
@@ -224,6 +225,63 @@ const deleteImage = async (req, res) => {
     }
 };
 
+const addOffer = async(req,res)=>{
+try {
+    const {productId, amount} =req.body;
+
+    console.log("product-id",productId);
+    console.log("amount -",amount)
+
+    const product = await Product.findById(productId);
+    console.log("product - ",product);
+
+    product.offer = amount;
+    product.save();
+
+    res.status(200).send("Offer added successfully")
+    console.log("offer added successfully")
+} catch (error) {
+    console.error("error in adding offer",error);
+    res.status(500).send("Failed to add offer")
+}
+}
+
+
+const editOffer = async(req,res)=>{
+    try {
+        const {productId, amount} = req.body;
+        const product = await Product.findById(productId)
+
+        product.offer = amount;
+        product.save();
+
+        res.status(200).send("Poduct offer updated succesfully.")
+        console.log("offer updated succesfully.")
+    } catch (error) {
+        console.error("RError in updating product offer",error);
+        res.status(500).send("failed to update product offer");
+    }
+}
+
+
+const removeOffer = async(req,res)=>{
+    try {
+        const productId = req.params.id;
+        console.log("product id --",productId)
+
+        const product = await Product.findById(productId)
+        console.log("pro-",product)
+
+        product.offer = null;
+        product.save();
+
+        res.status(200).json({success:true,message:"Product offer removed successfull.."})
+        console.log("product offer removed successfull")
+    } catch (error) {
+        console.error("Error in remove product offer",error);
+        res.status(500).json({success:false,message:"Internal server error"})
+    }
+}
 
 
 
@@ -236,6 +294,9 @@ module.exports = {
     unblockProduct,
     editProduct,
     updateProduct,
-    deleteImage
+    deleteImage,
+    addOffer,
+    editOffer,
+    removeOffer
 };
 

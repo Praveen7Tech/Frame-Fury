@@ -26,6 +26,9 @@ router.get("/unBlockCustomer", adminAuth, customerController.customerunBlocked)
 //category management
 router.get("/category", adminAuth, categoryController.categoryInfo)
 router.post("/addCategory", adminAuth, categoryController.addCategory)
+router.post("/addOffer",adminAuth,categoryController.addOffer)
+router.put("/editOffer",adminAuth,categoryController.editOffer)
+router.get("/removeOffer",adminAuth,categoryController.removeOffer)
 
 // listing category
 router.get("/listCategory", adminAuth, categoryController.listCategory)
@@ -37,6 +40,9 @@ router.post("/editCategory/:id", adminAuth, categoryController.updateCategory)
 router.get("/addProducts", adminAuth, productController.productAddpage)
 router.post("/addProducts", adminAuth, uploads.array("images", 4), productController.addProducts)
 router.get("/products",adminAuth,productController.getAllProducts)
+router.post("/addOffer",adminAuth,productController.addOffer)
+router.put("/editOffer",adminAuth,productController.editOffer)
+router.post("/removeOffer/:id",adminAuth,productController.removeOffer)
 
 //block / unblock product
 router.get("/blockProduct",adminAuth,productController.blockProduct)

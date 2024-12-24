@@ -101,6 +101,10 @@
             background: linear-gradient(135deg, #28a745, #4dbd74);
             color: white;
         }
+        .btn-remove {
+            background: linear-gradient(135deg, #b80817, #7b7161);
+            color: white; 
+        }
 
         .btn-edit {
             background: linear-gradient(135deg, #17a2b8, #45a3c1);
@@ -169,6 +173,9 @@
                 <th scope="col"><b>Category</b></th>
                 <th scope="col"><b>Sale Price</b></th>
                 <th scope="col"><b>Quantity</b></th>
+                <th scope="col"><b>Offer percentage</b></th>
+                <th scope="col"><b>Offer price</b></th>
+                <th scope="col"><b>Offer</b></th>
                 <th scope="col"><b>Action</b></th>
                 <th scope="col"><b>Edit</b></th>
             </tr>
@@ -181,6 +188,29 @@
                 <td><%= data[i].category.name %></td>
                 <td><%= data[i].salePrice %></td>
                 <td><%= data[i].quantity %></td>
+                
+            <%if(data[i].offer !== null){%>
+                <td><%= data[i].offer%>%</td>
+            <%}else{%>
+                <td>No offer..</td>
+            <%}%>    
+                <td><%= data[i].salePrice-(data[i].salePrice*data[i].offer / 100)%></td>
+
+                <td class="action-btns">
+                <%if(data[i].offer===null){%>
+                    <button class="btn btn-block" onclick="addOffer('<%= data[i]._id%>')">
+                        <a href="#">Add Offer</a>
+                    </button>
+                <%}else{%>    
+                    <button class="btn btn-unblock" onclick="editOffer('<%= data[i]._id%>')">
+                        <a href="#">Edit offer</a>
+                    </button>
+                    <button class="btn btn-remove" onclick="removeOffer('<%= data[i]._id%>')">
+                        <a href="#">Remove offer</a>
+                    </button>
+                <%}%>    
+                </td>
+
                 <td class="action-btns">
                     <% if (data[i].isBlocked === false) { %>
                     <button class="btn btn-block">
@@ -218,3 +248,149 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <%- include("../../views/partials/admin/footer") %>
+
+<!-- add offer -->
+<script>
+
+     function addOffer(productId,productName){
+        Swal.fire({
+            title:`Add offer for ${productName}`,
+            html: `
+            <div>
+                <label>Offer Amount (%)</label>
+                <input type="number" id="offerAmount" class="swal2-input" placeholder="Enter offer percentage">
+            </div>
+            `,
+            showCancelButton:true,
+            confirmButtonText:"Save",
+            preConfirm: ()=>{
+                const offerAmount =document.getElementById("offerAmount").value;
+                if(!offerAmount || offerAmount <= 0 || offerAmount > 100){
+                    Swal.showValidationMessage("Please enter a valid percentage")
+                    return false
+                }
+                return {productId,offerAmount}
+            }
+        })
+        .then(result=>{
+            if(result.isConfirmed){
+                const {productId,offerAmount} =result.value;
+
+                fetch("/admin/addOffer",{
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({
+                        productId,
+                        amount:offerAmount
+                    }),
+
+                })
+                .then(response=>{
+                    if(response.ok){
+                        Swal.fire("Success","Offer Added Succesfully","success").then(()=> location.reload())
+                    }
+                    else{
+                        Swal.fire("Error!","Failed to Add Offer..!","error")
+                    }
+                })
+                .catch(err=>{
+                    console.error(err);
+                    Swal.fire("Error.","An error occured in adding offer","error")
+                })
+            }
+        })
+     }
+
+</script>
+
+<!-- edit offer -->
+<script>
+
+    function editOffer(productId,productName){
+        Swal.fire({
+            title:`Add offer for ${productName}`,
+            html: `
+            <div>
+                <label>Offer Amount (%)</label>
+                <input type="number" id="offerAmount" class="swal2-input" placeholder="Enter offer percentage">
+            </div>
+            `,
+            showCancelButton:true,
+            confirmButtonText:"Update",
+            preConfirm:()=>{
+                const offerAmount = document.getElementById("offerAmount").value;
+                if(!offerAmount || offerAmount <=0 || offerAmount > 100){
+                    Swal.showValidationMessage("Please Enter a valid Percentage..!")
+                    return false;
+                }
+                return {productId,offerAmount}
+            }
+        })
+        .then(result=>{
+            if(result.isConfirmed){
+                const {productId,offerAmount} = result.value;
+
+                fetch("/admin/editOffer",{
+                    method:"PUT",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({
+                        productId,
+                        amount:offerAmount
+                    })
+                })
+                .then(response=>{
+                    if(response.ok){
+                        Swal.fire("Success","Offer updated Successfully","success").then(()=> location.reload())
+                    }
+                    else{
+                        Swal.fire("Error.!","Failed To update Offer..!","error")
+                    }
+                })
+                .catch(err=>{
+                    console.error(err);
+                    Swal.fire("Error..!","An Error occured in Updating Offer","error")
+                })
+            }
+        })
+    }
+</script>
+
+<!-- remove offer -->
+ <script>
+    function removeOffer(productId){
+        Swal.fire({
+            title:"Are You Sure.!",
+            text:"Removing Product Offer",
+            icon:"warning",
+            showCancelButton:true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText:"Remove Offer."
+        })
+        .then(result=>{
+            if(result.isConfirmed){
+                fetch(`/admin/removeOffer/${productId}`,{
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    }
+                }).then(response => response.json())
+                .then(data=>{
+                    if(data.success){
+                        Swal.fire("Removed","The offer has been Removed.!","success").then(()=> location.reload())
+                    }
+                    else{
+                        Swal.fire("Error!","Failed to Remove the Product Offer..!","error")
+                    }
+                })
+                .catch(err=>{
+                    Swal.fire("Error!","An error occured while removing the product offer.","error")
+                })
+            }
+        })
+    }
+ </script>

@@ -113,6 +113,67 @@ const updateCategory = async(req,res)=>{
 }
 
 
+const addOffer = async(req,res)=>{
+    try {
+        const {categoryId,amount} = req.body;
+        console.log("cat id-",categoryId);
+        console.log("amount - ",amount)
+        const category = await Category.findById(categoryId);
+        console.log("cat -",category);
+        
+        category.categoryOffer = amount;
+        category.save();
+
+        res.status(200).send("Category offer added successfully")
+        console.log("category offer added succesfully")
+    } catch (error) {
+        console.error("Error in adding cat offer",error);
+        res.status(500).send("Error while adding  category offer")
+    }
+}
+
+
+const editOffer = async(req,res)=>{
+    try {
+        const {categoryId,amount} = req.body;
+        console.log("body ",req.body);
+        
+        const category = await Category.findById(categoryId);
+        console.log("cat - ",category);
+        
+        category.categoryOffer = amount;
+        category.save();
+
+        res.status(200).send("Category Offer Updated Successfully.")
+        console.log("category offer updated succesfully");
+        
+    } catch (error) {
+        console.error("Error i updating cat offer");
+        res.status(500).send("Error in updating category offer")
+    }
+}
+
+
+const removeOffer = async(req,res)=>{
+    try {
+        const categoryId = req.query.categoryId;
+        console.log("cat id 1",categoryId);
+        
+        const category = await Category.findById(categoryId)
+        console.log("cat 1 ",category);
+        
+
+        category.categoryOffer = 0;
+        category.save()
+
+        res.redirect("/admin/category");
+        console.log("category offer removed succssfully")
+    } catch (error) {
+        console.error("Error in removing category");
+        res.status(500).json({success:false,message:"Server Error..!"})
+    }
+}
+
 
 
 module.exports = {
@@ -121,5 +182,8 @@ module.exports = {
     listCategory,
     unlistCategory,
     editCategory,
-    updateCategory
+    updateCategory,
+    addOffer,
+    editOffer,
+    removeOffer
 }

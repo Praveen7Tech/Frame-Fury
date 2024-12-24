@@ -38,6 +38,10 @@ const productSchema = new Schema({
         type :[String],
         required : true
     },
+    offer:{
+        type:Number,
+        default:null
+    },
     isBlocked :{
         type : Boolean,
         default : false
