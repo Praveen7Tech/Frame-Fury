@@ -27,6 +27,8 @@ const productDetails = async (req, res) => {
             category: findCategory,
             productId
         });
+
+        
     } catch (error) {
         console.error("Error fetching product details", error);
         res.redirect("/pageNotFound");

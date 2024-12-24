@@ -1,9 +1,9 @@
 <%-include("../../views/partials/user/header")%>
 
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
-    <main class="main">       
+    <main class="main">
         <section class="home-slider position-relative pt-50">
             <div class="hero-slider-1 dot-style-1 dot-style-1-position-1">
                 <div class="single-hero-slider single-animation-wrap">
@@ -69,140 +69,180 @@
             </div>
             <div class="slider-arrow hero-slider-1-arrow"></div>
         </section>
-       
+
         <section class="product-tabs section-padding position-relative wow fadeIn animated">
             <div class="bg-square"></div>
             <div class="container">
                 <div class="tab-header">
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="nav-tab-one" data-bs-toggle="tab" data-bs-target="#tab-one" type="button" role="tab" aria-controls="tab-one" aria-selected="true">Featured</button>
+                            <button class="nav-link active" id="nav-tab-one" data-bs-toggle="tab"
+                                data-bs-target="#tab-one" type="button" role="tab" aria-controls="tab-one"
+                                aria-selected="true">Featured</button>
                         </li>
-                        
+
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="nav-tab-three" data-bs-toggle="tab" data-bs-target="#tab-three" type="button" role="tab" aria-controls="tab-three" aria-selected="false">New added</button>
+                            <button class="nav-link" id="nav-tab-three" data-bs-toggle="tab" data-bs-target="#tab-three"
+                                type="button" role="tab" aria-controls="tab-three" aria-selected="false">New
+                                added</button>
                         </li>
                     </ul>
-                    <a href="/shoppingPage" class="view-more d-none d-md-flex">View More<i class="fi-rs-angle-double-small-right"></i></a>
+                    <a href="/shoppingPage" class="view-more d-none d-md-flex">View More<i
+                            class="fi-rs-angle-double-small-right"></i></a>
                 </div>
                 <!--End nav-tabs-->
                 <div class="tab-content wow fadeIn animated" id="myTabContent">
                     <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
-                     
+
                         <!-- PRODUCT SECTION -->
                         <div class="row product-grid-4">
                             <%for(let i=0;i<products.length;i++){%>
-                                
-                            <div class="col-lg-3 col-md-4 col-12 col-sm-6">
-                                <div class="product-cart-wrap mb-30">
-                                    <div class="product-img-action-wrap">
-                                        <div class="product-img product-img-zoom">
 
-                                            <a href="/productDetails?id=<%=products[i]._id%>">
-                                                <img class="default-img" src="/uploads/re-image/<%=products[i].productImage[0]%>" alt="<%=products[i].productName%>">
-                                                <!-- <img class="hover-img" src="assets/imgs/shop/product-1-2.jpg" alt=""> -->
-                                            </a>
+                                <div class="col-lg-3 col-md-4 col-12 col-sm-6">
+                                    <div class="product-cart-wrap mb-30">
+                                        <div class="product-img-action-wrap">
+                                            <div class="product-img product-img-zoom">
+
+                                                <a href="/productDetails?id=<%=products[i]._id%>">
+                                                    <img class="default-img"
+                                                        src="/uploads/re-image/<%=products[i].productImage[0]%>"
+                                                        alt="<%=products[i].productName%>">
+                                                    <!-- <img class="hover-img" src="assets/imgs/shop/product-1-2.jpg" alt=""> -->
+                                                </a>
+                                            </div>
+                                            <div class="product-action-1">
+                                                <a aria-label="Quick view" class="action-btn hover-up"
+                                                    data-bs-toggle="modal" data-bs-target="#quickViewModal"><i
+                                                        class="fi-rs-eye"></i></a>
+                                                <a aria-label="Add To Wishlist" class="action-btn hover-up" href="#"
+                                                    onclick="addToWishlist('<%=products[i]._id %>')"><i
+                                                        class="fi-rs-heart"></i>
+                                                </a>
+
+                                            </div>
+                                            <div class="product-badges product-badges-position product-badges-mrg">
+                                                <span class="hot">Hot</span>
+                                            </div>
                                         </div>
-                                        <div class="product-action-1">
-                                            <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
-                                            <a aria-label="Add To Wishlist" class="action-btn hover-up" href="/addToWishlist/?id=<%=products._id%>"><i class="fi-rs-heart"></i></a>
-                                            <!-- <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a> -->
-                                        </div>
-                                        <div class="product-badges product-badges-position product-badges-mrg">
-                                            <span class="hot">Hot</span>
-                                        </div>
-                                    </div>
-                                    <div class="product-content-wrap">
-                                        <div class="product-category">
-                                            <a href="shop-grid-right.html">Clothing</a>
-                                        </div>
-                                        <h2><a href="/productDetails?id=<%=products[i]._id%>"><%=products[i].productName%></a></h2>
-                                        <div class="rating-result" title="90%">
-                                            <% if (products[i].salePrice < products[i].regularPrice) { %>
-                                                <span class="save-price font-md color3 ml-15">
-                                                    <% const discount = Math.round(((products[i].regularPrice - products[i].salePrice) / products[i].regularPrice) * 100); %>
-                                                    <%= discount %> % Off
+                                        <div class="product-content-wrap">
+                                            <div class="product-category">
+                                                <% if (products[i].category) { %>
+                                                    <a href="shop-grid-right.html">
+                                                        <%=products[i].category.name%>
+                                                    </a>
+                                                    <% } else { %>
+                                                        <span>Uncategorized</span>
+                                                        <% } %>
+                                            </div>
+
+                                            <h2><a href="/productDetails?id=<%=products[i]._id%>">
+                                                    <%=products[i].productName%>
+                                                </a></h2>
+                                            <div class="rating-result" title="90%">
+                                                <% if (products[i].salePrice < products[i].regularPrice) { %>
+                                                    <span class="save-price font-md color3 ml-15">
+                                                        <% const discount=Math.round(((products[i].regularPrice -
+                                                            products[i].salePrice) / products[i].regularPrice) * 100);
+                                                            %>
+                                                            <%= discount %> % Off
+                                                    </span>
+                                                    <% } %>
+                                            </div>
+
+                                            <div class="product-price">
+                                                <span>
+                                                    <%=products[i].salePrice%>
                                                 </span>
-                                            <% } %>
-                                        </div>
-                                        
-                                        <div class="product-price">
-                                            <span><%=products[i].salePrice%>> </span>
-                                            <span class="old-price"><%=products[i].regularPrice%>></span>
-                                        </div>
-                                        <!-- <div class="product-action-1 show">
+                                                <span class="old-price">
+                                                    <%=products[i].regularPrice%>>
+                                                </span>
+                                            </div>
+                                            <!-- <div class="product-action-1 show">
                                             <a aria-label="Add To Cart" class="action-btn hover-up" href="/addToCart/id=<%=products[i]._id%>"><i class="fi-rs-shopping-bag-add"></i></a>
                                         </div> -->
-                                        <div class="product-action-1 show">
-                                            <a aria-label="Add To Cart" class="action-btn hover-up"
-                                                href="#"><i class="fi-rs-shopping-bag-add" onclick="addToCart('<%=products[i]._id%>')"></i>
-                                            </a>
+                                            <div class="product-action-1 show">
+                                                <a aria-label="Add To Cart" class="action-btn hover-up" href="#"><i
+                                                        class="fi-rs-shopping-bag-add"
+                                                        onclick="addToCart('<%=products[i]._id%>')"></i>
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <%}%>
-                           
+                                <%}%>
+
                         </div>
                         <!--End product-grid-4-->
                     </div>
-                    
-                    
+
+
                     <!--new added -->
                     <div class="tab-pane fade" id="tab-three" role="tabpanel" aria-labelledby="tab-three">
                         <div class="row product-grid-4">
                             <%for(let i=0;i<products.length;i++){%>
-                                
-                            <div class="col-lg-3 col-md-4 col-12 col-sm-6">
-                                <div class="product-cart-wrap mb-30">
-                                    <div class="product-img-action-wrap">
-                                        <div class="product-img product-img-zoom">
 
-                                            <a href="/productDetails?id=<%=products[i]._id%>">
-                                                <img class="default-img" src="/uploads/re-image/<%=products[i].productImage[0]%>" alt="<%=products[i].productName%>">
-                                                <!-- <img class="hover-img" src="assets/imgs/shop/product-1-2.jpg" alt=""> -->
-                                            </a>
+                                <div class="col-lg-3 col-md-4 col-12 col-sm-6">
+                                    <div class="product-cart-wrap mb-30">
+                                        <div class="product-img-action-wrap">
+                                            <div class="product-img product-img-zoom">
+
+                                                <a href="/productDetails?id=<%=products[i]._id%>">
+                                                    <img class="default-img"
+                                                        src="/uploads/re-image/<%=products[i].productImage[0]%>"
+                                                        alt="<%=products[i].productName%>">
+                                                    
+                                                </a>
+                                            </div>
+                                            <div class="product-action-1">
+                                                <a aria-label="Quick view" class="action-btn hover-up"
+                                                    data-bs-toggle="modal" data-bs-target="#quickViewModal"><i
+                                                        class="fi-rs-eye"></i></a>
+                                                <a aria-label="Add To Wishlist" class="action-btn hover-up"
+                                                    href="/addToWishlist/?id=<%=products._id%>"><i
+                                                        class="fi-rs-heart"></i></a>
+                                                
+                                            </div>
+                                            <div class="product-badges product-badges-position product-badges-mrg">
+                                                <span class="hot">Hot</span>
+                                            </div>
                                         </div>
-                                        <div class="product-action-1">
-                                            <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
-                                            <a aria-label="Add To Wishlist" class="action-btn hover-up" href="/addToWishlist/?id=<%=products._id%>"><i class="fi-rs-heart"></i></a>
-                                            <!-- <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a> -->
-                                        </div>
-                                        <div class="product-badges product-badges-position product-badges-mrg">
-                                            <span class="hot">Hot</span>
-                                        </div>
-                                    </div>
-                                    <div class="product-content-wrap">
-                                        <div class="product-category">
-                                            <a href="shop-grid-right.html">Clothing</a>
-                                        </div>
-                                        <h2><a href="/productDetails?id=<%=products[i]._id%>"><%=products[i].productName%>></a></h2>
-                                        <div class="rating-result" title="90%">
-                                            <% if (products[i].salePrice < products[i].regularPrice) { %>
-                                                <span class="save-price font-md color3 ml-15">
-                                                    <% const discount = Math.round(((products[i].regularPrice - products[i].salePrice) / products[i].regularPrice) * 100); %>
-                                                    <%= discount %> % Off
+                                        <div class="product-content-wrap">
+                                            <div class="product-category">
+                                                <a href="shop-grid-right.html">Clothing</a>
+                                            </div>
+                                            <h2><a href="/productDetails?id=<%=products[i]._id%>">
+                                                    <%=products[i].productName%>>
+                                                </a></h2>
+                                            <div class="rating-result" title="90%">
+                                                <% if (products[i].salePrice < products[i].regularPrice) { %>
+                                                    <span class="save-price font-md color3 ml-15">
+                                                        <% const discount=Math.round(((products[i].regularPrice -
+                                                            products[i].salePrice) / products[i].regularPrice) * 100);
+                                                            %>
+                                                            <%= discount %> % Off
+                                                    </span>
+                                                    <% } %>
+                                            </div>
+
+                                            <div class="product-price">
+                                                <span>
+                                                    <%=products[i].salePrice%>>
                                                 </span>
-                                            <% } %>
-                                        </div>
-                                        
-                                        <div class="product-price">
-                                            <span><%=products[i].salePrice%>> </span>
-                                            <span class="old-price"><%=products[i].regularPrice%>></span>
-                                        </div>
-                                        <!-- <div class="product-action-1 show">
-                                            <a aria-label="Add To Cart" class="action-btn hover-up" href="/addToCart/id=<%=products[i]._id%>"><i class="fi-rs-shopping-bag-add"></i></a>
-                                        </div> -->
-                                        <div class="product-action-1 show">
-                                            <a aria-label="Add To Cart" class="action-btn hover-up"
-                                                href="#"><i class="fi-rs-shopping-bag-add" onclick="addToCart('<%=products[i]._id%>')"></i>
-                                            </a>
+                                                <span class="old-price">
+                                                    <%=products[i].regularPrice%>>
+                                                </span>
+                                            </div>
+                                            <div class="product-action-1 show">
+                                                <a aria-label="Add To Cart" class="action-btn hover-up" href="#"><i
+                                                        class="fi-rs-shopping-bag-add"
+                                                        onclick="addToCart('<%=products[i]._id%>')"></i>
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <%}%>
-                           
+                                <%}%>
+
                         </div>
                         <!--End product-grid-4-->
                     </div>
@@ -227,108 +267,113 @@
             <div class="container wow fadeIn animated">
                 <h3 class="section-title mb-20"><span>Popular</span> Categories</h3>
                 <div class="carausel-6-columns-cover position-relative">
-                    <div class="slider-arrow slider-arrow-2 carausel-6-columns-arrow" id="carausel-6-columns-arrows"></div>
+                    <div class="slider-arrow slider-arrow-2 carausel-6-columns-arrow" id="carausel-6-columns-arrows">
+                    </div>
 
 
                     <!-- CATEGORY LOGOS -->
 
                     <div class="carausel-6-columns" id="carausel-6-columns">
                         <%for(let i=0;i<category.length;i++){%>
-                        <div class="card-1">
-                            <figure class=" img-hover-scale overflow-hidden">
-                                <a href="/filter?category=<%=category[i]._id%>"><img src="assets/imgs/shop/porch1.jpg" alt=""></a>
-                            </figure>
-                            <h5><a href="shop-grid-right.html"><%=category[i].name%></a></h5>
-                        </div>
-                        <%}%>        
-                        <!-- <div class="card-1">
-                            <figure class=" img-hover-scale overflow-hidden">
-                                <a href=""> <img src="assets/imgs/shop/ferrari.webp" alt=""></a>
-                            </figure>
-                            <h5><a href="shop-grid-right.html">Ferrari</a></h5>
-                        </div>
-                        <div class="card-1">
-                            <figure class=" img-hover-scale overflow-hidden">
-                                <a href="shop-grid-right.html"><img src="assets/imgs/shop/lambo.jpg" alt=""></a>
-                            </figure>
-                            <h5><a href="shop-grid-right.html">Lmborghini</a></h5>
-                        </div>
-                        <div class="card-1">
-                            <figure class=" img-hover-scale overflow-hidden">
-                                <a href="shop-grid-right.html"><img src="assets/imgs/shop/mclaren.jpg" alt=""></a>
-                            </figure>
-                            <h5><a href="shop-grid-right.html">McLaren</a></h5>
-                        </div>
-                        <div class="card-1">
-                            <figure class=" img-hover-scale overflow-hidden">
-                                <a href="shop-grid-right.html"><img src="assets/imgs/shop/mercedes.jpg"alt=""></a>
-                            </figure>
-                            <h5><a href="shop-grid-right.html">Mercedes</a></h5>
-                        </div>
-                        <div class="card-1">
-                            <figure class=" img-hover-scale overflow-hidden">
-                                <a href="shop-grid-right.html"><img src="assets/imgs/shop/buggati.jpg" alt=""></a>
-                            </figure>
-                            <h5><a href="shop-grid-right.html">Buggati</a></h5>
-                        </div>
-                        <div class="card-1">
-                            <figure class=" img-hover-scale overflow-hidden">
-                                <a href="shop-grid-right.html"><img src="assets/imgs/shop/rolls.jpg" alt=""></a>
-                            </figure>
-                            <h5><a href="shop-grid-right.html">Rolls Royce</a></h5>
-                        </div>
-                        <div class="card-1">
-                            <figure class=" img-hover-scale overflow-hidden">
-                                <a href="shop-grid-right.html"><img src="assets/imgs/shop/segg.jpg" alt=""></a>
-                            </figure>
-                            <h5><a href="shop-grid-right.html">Koenigsegg</a></h5>
-                        </div> -->
+                            <div class="card-1">
+                                <figure class=" img-hover-scale overflow-hidden">
+                                    <a href="/filter?category=<%=category[i]._id%>"><img
+                                            src="assets/imgs/shop/porch1.jpg" alt=""></a>
+                                </figure>
+                                <h5><a href="shop-grid-right.html">
+                                        <%=category[i].name%>
+                                    </a></h5>
+                            </div>
+                            <%}%>
+                           
                     </div>
-                
+
                 </div>
             </div>
         </section>
-       
+
     </main>
-   
+
 
     <%-include("../../views/partials/user/footer")%>
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <script>
+        <script>
 
-        function addToCart(productId){
+            function addToCart(productId) {
 
-            $.ajax({
-                url:"/addToCart",
-                method:"POST",
-                data:{productId:productId},
-                success:(response)=>{
-                    if(response.status){
+                $.ajax({
+                    url: "/addToCart",
+                    method: "POST",
+                    data: { productId: productId },
+                    success: (response) => {
+                        if (response.status) {
+                            Swal.fire({
+                                title: "Added To Cart",
+                                text: "The Product Has been Added to Your Cart",
+                                icon: "Success",
+                                timer: 2000
+                            })
+                        } else {
+                            Swal.fire({
+                                title: "Product Alredy in Cart",
+                                text: response.message,
+                                icon: "info",
+                                timer: 2000
+                            })
+                        }
+                    },
+                    error: (error) => {
                         Swal.fire({
-                            title:"Added To Cart",
-                            text:"The Product Has been Added to Your Cart",
-                            icon:"Success",
-                            timer:2000
+                            title: "Error",
+                            text: "Error Adding the Poduct to your Cart..!",
+                            icon: "error",
+                            timer: 2000
+                        })
+                    }
+                })
+            }
+
+        </script>
+
+        <script>
+
+            function addToWishlist(productId){
+                fetch("/addToWishlist",{
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({productId})
+                })
+                .then(response=> response.json())
+                .then(data=>{
+                    if(data.success){
+                        Swal.fire({
+                            icon:"success",
+                            title:"Added to WishList",
+                            text:data.message,
+                            timer:2000,
+                            showConfrimButton:false
                         })
                     }else{
                         Swal.fire({
-                            title:"Product Alredy in Cart",
-                            text:response.message,
-                             icon:"info",
-                             timer:2000
+                            icon:"Warning",
+                            titile:"Ooop..",
+                            text:data.message,
+                            timer:2000,
+                            showConfrimButton:false
                         })
                     }
-                },
-                error:(error)=>{
+                })
+                .catch(error=>{
+                    console.error("Error",error);  
                     Swal.fire({
-                        title:"Error",
-                        text:"Error Adding the Poduct to your Cart..!",
-                        icon:"error",
-                        timer:2000
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Something went wrong. Please try again later.'
                     })
-                }
-            })
-        }
-    </script>
+                })
+            }
+        </script>

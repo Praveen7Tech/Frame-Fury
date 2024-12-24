@@ -10,10 +10,23 @@ const orderSchema = new Schema({
         ref:"User",
         required:true
     },
-    addressId:{
-        type:Schema.Types.ObjectId,
-        ref:"Address",
-        required:true
+    address: {
+        addressType: {type: String, 
+            required: true },
+        name: { type: String, 
+            required: true },
+        city: { type: String, 
+            required: true },
+        landMark: { type: String, 
+            required: true },
+        state: { type: String, 
+            required: true },
+        pincode: { type: Number, 
+            required: true },
+        phone: { type: String, 
+            required: true },
+        altPhone: { type: String, 
+            required: true }
     },
     items:[{
         productId:{

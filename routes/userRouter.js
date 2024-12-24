@@ -7,6 +7,7 @@ const profileController = require("../controllers/user/profileController")
 const cartController = require("../controllers/user/cartController")
 const checkOutController = require("../controllers/user/checkoutcontroller")
 const orderController = require("../controllers/user/orderController")
+const whishListController = require("../controllers/user/wishListController")
 const {userAuth} = require("../middlewares/auth")
 
 router.get("/pageNotFound",userController.pageNotFound)
@@ -98,6 +99,11 @@ router.post("/placeOrder",userAuth,checkOutController.placeOrder)
 // order management
 router.get("/orderDetails/:orderId",userAuth,orderController.orderDetails)
 router.post("/orderCancel/:orderId",userAuth,orderController.orderCancel)
+
+//wishlist management
+router.get("/Wishlist",userAuth, whishListController.wishListPage)
+router.post("/addToWishlist",userAuth,whishListController.addToWishList)
+router.get("/removeFromWishList",userAuth,whishListController.removeFromWishList)
 
 
 

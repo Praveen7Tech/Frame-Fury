@@ -5,7 +5,7 @@ const customerController = require("../controllers/admin/customerController");
 const categoryController = require("../controllers/admin/categoryController");
 const productController = require("../controllers/admin/productController")
 const orderController = require("../controllers/admin/orderController")
-const {userAuth, adminAuth} = require("../middlewares/auth")
+const {adminAuth} = require("../middlewares/auth")
 const multer = require("multer")
 const storage = require("../helpers/multer")
 const uploads = multer({storage:storage})
@@ -13,7 +13,7 @@ const uploads = multer({storage:storage})
 router.get("/pageerror", adminController.pageerror)
 
 //login management
-router.get("/login", adminController.loadLogin)
+router.get("/login",adminController.loadLogin)
 router.post("/login", adminController.login)
 router.get("/", adminAuth, adminController.loadDashboard)
 router.get("/logout", adminController.logout)

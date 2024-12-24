@@ -93,9 +93,11 @@
                                         </div>
                                         <div class="product-content-wrap">
                                             <div class="product-category">
-
-                                                <a href="shop-grid-right.html"></a>
-
+                                                <% if (products[i].category) { %>
+                                                    <a href="shop-grid-right.html"><%=products[i].category.name%></a>
+                                                <% } else { %>
+                                                    <span>Uncategorized</span>
+                                                <% } %>
                                             </div>
                                             <h2><a href="shop-product-right.html">
                                                     <%=products[i].productName%>
@@ -197,7 +199,7 @@
                                 <div class="bt-1 border-color-1"></div>
                             </div>
                             <div class="single-post clearfix">
-                            <%for(let i=0;i<products.length-7;i++){%>    
+                            <%for(let i=0;i<products.length-9;i++){%>    
                                 <div class="image">
                                     <img src="/uploads/re-image/<%=products[i].productImage[0]%>" alt="">
                                 </div>
@@ -210,30 +212,7 @@
                                 </div>
                             <%}%>    
                             </div>
-                            <!-- <div class="single-post clearfix">
-                                <div class="image">
-                                    <img src="assets/imgs/shop/thumbnail-4.jpg" alt="#">
-                                </div>
-                                <div class="content pt-10">
-                                    <h6><a href="shop-product-detail.html">Chen Sweater</a></h6>
-                                    <p class="price mb-0 mt-5">$89.50</p>
-                                    <div class="product-rate">
-                                        <div class="product-rating" style="width:80%"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="single-post clearfix">
-                                <div class="image">
-                                    <img src="assets/imgs/shop/thumbnail-5.jpg" alt="#">
-                                </div>
-                                <div class="content pt-10">
-                                    <h6><a href="shop-product-detail.html">Colorful Jacket</a></h6>
-                                    <p class="price mb-0 mt-5">$25</p>
-                                    <div class="product-rate">
-                                        <div class="product-rating" style="width:60%"></div>
-                                    </div>
-                                </div>
-                            </div> -->
+                         
                         </div>
                         <div class="banner-img wow fadeIn mb-45 animated d-lg-block d-none">
                             <img src="assets/imgs/shop/classic.webp" alt="">

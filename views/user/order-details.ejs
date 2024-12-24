@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -121,19 +122,19 @@
                     </div>
                     <div class="card-body">
                         <p><strong>Name:</strong>
-                            <%=address.name%>
+                            <%=order.address.name%>
                         </p>
                         <p><strong>Address:</strong>
-                            <%=address.landMark%>
+                            <%=order.address.landMark%>
                         </p>
                         <p><strong>City:</strong>
-                            <%=address.city%>
+                            <%=order.address.city%>
                         </p>
                         <p><strong>State:</strong>
-                            <%=address.state%>
+                            <%=order.address.state%>
                         </p>
                         <p><strong>Zip Code:</strong>
-                            <%=address.pincode%>
+                            <%=order.address.pincode%>
                         </p>
                         <p><strong>Country:</strong> India</p>
                     </div>
@@ -148,8 +149,8 @@
                         <p><strong>Payment Method:</strong>
                             <%=order.paymentMethod%>
                         </p>
-                        <p><strong>Card Type:</strong> Visa</p>
-                        <p><strong>Card Number:</strong> **** **** **** 1234</p>
+                        <p><strong>Card Type:</strong>empty</p>
+                        <p><strong>Card Number:</strong>empty</p> 
                         <p><strong>Subtotal:</strong>
                             <%=order.subTotal%>
                         </p>

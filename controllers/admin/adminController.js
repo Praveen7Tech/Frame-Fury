@@ -17,9 +17,14 @@ const loadLogin = async(req,res)=>{
 const login = async(req,res)=>{
     try {
         const {email,password} = req.body;
+        // console.log("email-",email);
+        // console.log("pass-",password);
+        
         const admin =await User.findOne({email,isAdmin:true})
+        console.log("admin-",admin)
         if(admin){
-             const passwordMatch = bcrypt.compare(password,admin.password);
+             const passwordMatch =await bcrypt.compare(password, admin.password);
+            //   console.log("pass match-",passwordMatch);
              
              if(passwordMatch){
                 req.session.admin = true;

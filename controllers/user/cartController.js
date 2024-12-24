@@ -24,7 +24,7 @@ const cartPage = async (req, res) => {
             );
         });
 
-        console.log("Valid Items in Cart:", findProduct);
+        //console.log("Valid Items in Cart:", findProduct);
         res.render("cart", {
             user,
             cart: findProduct, 
@@ -46,11 +46,9 @@ const addToCart = async (req, res) => {
 
         let cart = await Cart.findOne({ userId });
         if (!cart) {
-            // Create a new cart if it doesn't exist
             cart = new Cart({ userId, items: [] });
         }
 
-        // Check if the product is already in the cart
         const productInCart = cart.items.find((item) => item.productId.toString() === productId);
 
         const product = await Product.findById(productId)

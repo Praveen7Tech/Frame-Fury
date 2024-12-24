@@ -9,15 +9,8 @@ const orderDetails = async(req,res)=>{
         const order = await Order.findById(orderId)
         .populate("items.productId","productName productImage").exec();
 
-        const shippingAddress = await Address.findOne(
-            { "address._id": order.addressId },
-            { "address.$": 1 }
-        );
 
-        // Extract the address
-        const addressDetails = shippingAddress?.address[0];
-
-        res.render("order-details",{user,order,address:addressDetails})
+        res.render("order-details",{user,order})
     } catch (error) {
         console.error("Error in showing order details",error);
         res.redirect("/pageNotFound")

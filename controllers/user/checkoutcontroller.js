@@ -43,23 +43,29 @@ const placeOrder = async (req, res) => {
     try {
         const { selectedAddress, paymentMethod, deliveryMethod } = req.body;
         const userId = req.session.user;
-        
+
+        // Fetch the selected address details
         const userAddress = await Address.findOne(
             { userId, "address._id": selectedAddress },
-            { "address.$": 1 }  
+            { "address.$": 1 }  // Fetch only the matched address
         );
 
         if (!userAddress) {
             return res.status(400).json({ success: false, message: "Invalid address selected" });
         }
 
-        const cart = await Cart.findOne({ userId }).populate("items.productId");
-        const category = await Category.find({isListed:true});
-        const listedCategory = category.map(category=> category._id.toString());
+        // Extract address details
+        const addressDetails = userAddress.address[0]; // First and only match
+        console.log("details ",addressDetails)
 
-        const findProduct = cart.items.filter(item=>{
+        // Fetch cart items
+        const cart = await Cart.findOne({ userId }).populate("items.productId");
+        const category = await Category.find({ isListed: true });
+        const listedCategory = category.map(category => category._id.toString());
+
+        const findProduct = cart.items.filter(item => {
             const product = item.productId;
-            return ( product.isBlocked===false && listedCategory.includes(product.category.toString()))
+            return product.isBlocked === false && listedCategory.includes(product.category.toString());
         });
 
         if (!findProduct || findProduct.length === 0) {
@@ -68,17 +74,16 @@ const placeOrder = async (req, res) => {
 
         const subTotal = findProduct.reduce((sum, item) => sum + item.totalPrice, 0);
 
-        let deliveryCharge =0;
-        if(deliveryMethod === "fast"){
+        let deliveryCharge = 0;
+        if (deliveryMethod === "fast") {
             deliveryCharge = 80;
         }
-        const total = subTotal + deliveryCharge
-        console.log("total-",total);
-        
+        const total = subTotal + deliveryCharge;
 
+        // Create the order with embedded address
         const order = new Order({
             userId,
-            addressId: selectedAddress,
+            address: addressDetails, // Embed address details
             deliveryCharge,
             deliveryMethod,
             subTotal,
@@ -93,7 +98,7 @@ const placeOrder = async (req, res) => {
         res.json({ success: true, orderId: order._id });
         console.log("Order placed successfully");
     } catch (error) {
-        console.error("Error placing order:",error);
+        console.error("Error placing order:", error);
         res.status(500).json({
             success: false,
             message: "Failed to place the order",
@@ -101,6 +106,7 @@ const placeOrder = async (req, res) => {
         });
     }
 };
+
 
 
 

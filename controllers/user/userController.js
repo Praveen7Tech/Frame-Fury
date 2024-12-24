@@ -24,11 +24,10 @@ const loadHomepage = async (req, res) => {
       isBlocked: false,
       category: { $in: categories.map(category => category._id) },
       quantity: { $gt: 0 },
-    }).sort({createdOn:-1})
+    }).populate("category", "name").sort({createdOn:-1})
 
    
     // console.log("acesnding-",productData);
-    
 
     res.render("home", { user, products: productData ,category:categories});
   } catch (error) {
@@ -242,7 +241,7 @@ const shoppingPage = async(req,res)=>{
         const skip = (page-1)*limit;
         const products = await Product.find(
             {isBlocked:false,category:{$in:categoryId},quantity:{$gt:0}}
-        ).sort({createdOn:-1}).skip(skip).limit(limit);
+        ).populate("category", "name").sort({createdOn:-1}).skip(skip).limit(limit);
 
         const totalProducts =await Product.countDocuments({
             isBlocked:false,
@@ -365,7 +364,6 @@ const filterByPrice = async (req, res) => {
 
         let totalPages = Math.ceil(totalProducts / itemPerPage);
 
-        // Render response
         res.render("shopping-page", {
             user: userData,
             products: findProducts,

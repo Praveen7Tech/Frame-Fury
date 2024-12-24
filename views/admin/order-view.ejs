@@ -145,59 +145,57 @@
         }
     }
 </style>
+
 <body>
-    
-    <h1>Order Details </h1>
-    
+    <h1>Order Details</h1>
     <div class="order-details">
-        <h3>Order info</h3>
-        <p><strong>Order ID : </strong> <%=order._id%></p>
-        <p><strong>Order Created At : </strong> <span class="timestamp"><%=new Date(order.createdAt).toLocaleString()%></span></p>
-        <p><strong>Order Status : </strong> 
-            <span class="badge <%=order.orderStatus.toLowerCase()%>"><%=order.orderStatus%></span>
+        <h3>Order Information</h3>
+        <p><strong>Order ID:</strong> <%= order._id %></p>
+        <p><strong>Order Created At:</strong> <span class="timestamp"><%= new Date(order.createdAt).toLocaleString() %></span></p>
+        <p><strong>Order Status:</strong> 
+            <span class="badge <%= order.orderStatus.toLowerCase() %>"><%= order.orderStatus %></span>
         </p>
 
         <h3>User Information</h3>
-        <p><strong>Name:</strong> <%=order.userId.name%></p>
-        <p><strong>Email:</strong> <%=order.userId.email%></p>
+        <p><strong>Name:</strong> <%= order.userId.name %></p>
+        <p><strong>Email:</strong> <%= order.userId.email %></p>
 
         <h3>Shipping Address</h3>
-        <p><strong>Address Type : </strong> <%= addressDetails.addressType %></p>
-        <p><strong>Name : </strong> <%=addressDetails.name%></p>
-        <p><strong>City : </strong> <%=addressDetails.city%></p>
-        <p><strong>Land Mark : </strong> <%=addressDetails.landMark%></p>
-        <p><strong>State : </strong> <%=addressDetails.state%></p>
-        <p><strong>Zip Code : </strong> <%=addressDetails.pincode%></p>
-        <p><strong>Phone : </strong> <%=addressDetails.phone%></p>
+        <p><strong>Address Type:</strong> <%= order.address.addressType %></p>
+        <p><strong>Name:</strong> <%= order.address.name %></p>
+        <p><strong>City:</strong> <%= order.address.city %></p>
+        <p><strong>Landmark:</strong> <%= order.address.landMark %></p>
+        <p><strong>State:</strong> <%= order.address.state %></p>
+        <p><strong>Zip Code:</strong> <%= order.address.pincode %></p>
+        <p><strong>Phone:</strong> <%= order.address.phone %></p>
 
         <h3>Order Items</h3>
         <ul>
-            <%order.items.forEach(item => {%>
+            <% order.items.forEach(item => { %>
                 <li>
                     <div class="item">
-                        <img src="/uploads/re-image/<%=item.productId.productImage[0]%>" alt="Product Image" width="100">
+                        <img src="/uploads/re-image/<%= item.productId.productImage[0] %>" alt="Product Image" width="100">
                         <div>
-                            <p><strong>Product Name : </strong> <%=item.productId.productName%></p>
-                            <p><strong>Quantity : </strong> <%=item.quantity%></p>
-                            <p><strong>Price : </strong> <%=item.price%> /-</p>
+                            <p><strong>Product Name:</strong> <%= item.productId.productName %></p>
+                            <p><strong>Quantity:</strong> <%= item.quantity %></p>
+                            <p><strong>Price:</strong> <%= item.price %> /-</p>
                         </div>
                     </div>
                 </li>
-            <%})%>
+            <% }); %>
         </ul>
 
         <h3>Payment Details</h3>
-        <p class="payment-method"><strong>Payment Method : </strong><%=order.paymentMethod%></p>
-        <p class="payment-method"><strong>Delivery Option : </strong><%=order.deliveryMethod%></p>
-        <p class="payment-method"><strong>Delivery Charge : </strong><%=order.deliveryCharge%></p>
-        <p><strong>Subtotal:</strong> <%=order.subTotal%> /-</p>
-        <p><strong>Total:</strong> <%=order.total%> /-</p>
-  
+        <p><strong>Payment Method:</strong> <%= order.paymentMethod %></p>
+        <p><strong>Delivery Option:</strong> <%= order.deliveryMethod %></p>
+        <p><strong>Delivery Charge:</strong> <%= order.deliveryCharge %> /-</p>
+        <p><strong>Subtotal:</strong> <%= order.subTotal %> /-</p>
+        <p><strong>Total:</strong> <%= order.total %> /-</p>
     </div>
 
     <div class="buttons">
         <a href="/admin/orderList" class="btn-back">Back to Orders</a>
     </div>
-
 </body>
 </html>
+
