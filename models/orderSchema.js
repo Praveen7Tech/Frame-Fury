@@ -73,6 +73,14 @@ const orderSchema = new Schema({
         enum:["Pending","Confirmed","Shipped",'Deliverd',"Cancelled"],
         default:"Pending"
     },
+    couponDiscount:{
+        type:Number,
+        default:null,
+    },
+    couponCode:{
+        type:String,
+        default:null
+    },
     createdAt:{
         type:Date,
         default:Date.now

@@ -3,7 +3,8 @@ const User = require("../../models/userSchema");
 const Cart = require("../../models/cartSchema");
 const Order = require("../../models/orderSchema")
 const Address = require("../../models/addressSchema");
-const Category = require("../../models/categorySchema")
+const Category = require("../../models/categorySchema");
+const Coupon = require("../../models/coupenSchema")
 
 
 const checkOutPage = async(req,res)=>{
@@ -24,8 +25,6 @@ const checkOutPage = async(req,res)=>{
         
         const total = subTotal + shiipingCost;
 
-        
-
         res.render("checkout",{
             user:userId,
             cart:findProduct ? findProduct:[],
@@ -41,8 +40,10 @@ const checkOutPage = async(req,res)=>{
 
 const placeOrder = async (req, res) => {
     try {
-        const { selectedAddress, paymentMethod, deliveryMethod } = req.body;
+        const { selectedAddress, paymentMethod, deliveryMethod, couponCode, } = req.body;
         const userId = req.session.user;
+        console.log(" req body _",req.body);
+        
 
         // Fetch the selected address details
         const userAddress = await Address.findOne(
@@ -55,10 +56,9 @@ const placeOrder = async (req, res) => {
         }
 
         // Extract address details
-        const addressDetails = userAddress.address[0]; // First and only match
-        console.log("details ",addressDetails)
+        const addressDetails = userAddress.address[0]; 
 
-        // Fetch cart items
+
         const cart = await Cart.findOne({ userId }).populate("items.productId");
         const category = await Category.find({ isListed: true });
         const listedCategory = category.map(category => category._id.toString());
@@ -74,28 +74,35 @@ const placeOrder = async (req, res) => {
 
         const subTotal = findProduct.reduce((sum, item) => sum + item.totalPrice, 0);
 
-        let deliveryCharge = 0;
-        if (deliveryMethod === "fast") {
-            deliveryCharge = 80;
+        let discount =0
+       if(couponCode){
+        const coupon = await Coupon.findOne({name:couponCode, isList:true});
+        if(coupon){
+            discount = coupon.offerPrice
         }
-        const total = subTotal + deliveryCharge;
+       }
+        
+       const deliveryCharge = deliveryMethod === "fast" ? 80 : 0;
+        
+       const total = subTotal - discount + deliveryCharge
 
-        // Create the order with embedded address
         const order = new Order({
             userId,
-            address: addressDetails, // Embed address details
+            address: addressDetails, 
             deliveryCharge,
             deliveryMethod,
             subTotal,
             total,
+            couponDiscount:discount,
             paymentMethod,
+            couponCode,
             items: findProduct
         });
 
         await order.save();
         await Cart.findOneAndUpdate({ userId }, { items: [] });
 
-        res.json({ success: true, orderId: order._id });
+        res.json({ success: true, orderId: order._id ,discount});
         console.log("Order placed successfully");
     } catch (error) {
         console.error("Error placing order:", error);
@@ -106,7 +113,6 @@ const placeOrder = async (req, res) => {
         });
     }
 };
-
 
 
 

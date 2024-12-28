@@ -26,10 +26,11 @@
 
                             <!-- address details -->
                             <div class="form-group col-md-12">
-                                <a href="/addAddress?redirectTo=checkout" class="btn btn-link" style="text-decoration: none;">
+                                <a href="/addAddress?redirectTo=checkout" class="btn btn-link"
+                                    style="text-decoration: none;">
                                     Add Address
                                 </a>
-                                
+
                             </div>
 
                             <% if (addresses && addresses.length> 0) { %>
@@ -119,15 +120,48 @@
                                                                 <td colspan="2" id="shippingCharge">0.00</td>
                                                             </tr>
                                                             <tr>
+                                                                <th>Discount</th>
+                                                                <td colspan="2" id="couponDiscount">0.00</td>
+                                                            </tr>
+                                                            <tr>
                                                                 <th>Total</th>
-                                                                <td colspan="2" id="totalAmount" class="font-xl text-brand fw-900">
+                                                                <td colspan="2" id="totalAmount"
+                                                                    class="font-xl text-brand fw-900">
                                                                     <%= total.toFixed(2) %>
                                                                 </td>
                                                             </tr>
                                     </tbody>
                                 </table>
                             </div>
-                            <br>
+
+                            <!-- coupon apply -->
+                            <div class="mb-30 mt-50">
+                                <div class="heading_s1 mb-3">
+                                    <h4>Apply Coupon</h4>
+                                </div>
+                                <div class="total-amount">
+                                    <div class="left">
+                                        <div class="coupon">
+                                            <!-- <form action="#" target="_blank"> -->
+                                            <div class="form-row row justify-content-center">
+                                                <div class="form-group col-lg-6">
+                                                    <input class="font-medium" name="couponCode" id="couponCode"
+                                                        placeholder="Enter Your Coupon Code Here..">
+                                                </div>
+                                                <div class="form-group col-lg-6">
+                                                    <button class="btn  btn-sm" id="couponButton"><i class="fi-rs-label mr-10"></i>
+                                                        Apply
+                                                    </button>
+                                                    <button class="btn btn-sm" id="RemoveCoupon" style="display: none;">
+                                                        Remove Coupon
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <!-- </form> -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
                             <!-- Payment Methods -->
                             <h5>Payment</h5>
@@ -166,7 +200,6 @@
                                 </div>
                             </div>
 
-
                             <button type="submit" id="placeOrderButton" class="btn btn-fill-out btn-block mt-30">Place
                                 Order</button>
                         </div>
@@ -178,9 +211,248 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <%- include("../../views/partials/user/footer") %>
 
+
+    <script>
+        
+        let discount = 0; // Tracks the applied discount
+        let deliveryCharge = 0; // Tracks the selected delivery charge
+        const subTotal = parseFloat(<%= subTotal.toFixed(2) %>); // Initial subtotal 
+        let currentTotal = subTotal; // Tracks the dynamically updated total
+    
+        // coupon function
+        document.getElementById("couponButton").addEventListener("click", async (event) => {
+            event.preventDefault();
+    
+            const couponCode = document.getElementById("couponCode").value.trim();
+    
+            if (!couponCode) {
+                Swal.fire({
+                    title: "Error",
+                    text: "Please Enter A valid Coupon Code.",
+                    icon: "error"
+                });
+                return;
+            }
+    
+            try {
+                const response = await fetch("/verifyCoupon", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ couponCode, subTotal })
+                });
+    
+                const data = await response.json();
+    
+                if (data.success) {
+                    discount = data.discount; 
+                    currentTotal = subTotal - discount + deliveryCharge; // Update current total
+                    updateTotalDisplay();
+    
+                    Swal.fire({
+                        title: "Success.",
+                        text: "Coupon added Successfully",
+                        icon: "success"
+                    });
+
+                    document.getElementById("RemoveCoupon").style.display = "inline-Block"
+                } else {
+                    Swal.fire({
+                        title: "Error..!",
+                        text: data.message,
+                        icon: "error"
+                    });
+                }
+            } catch (error) {
+                console.error("Error in adding coupon code", error);
+                Swal.fire({
+                    title: "Error.!",
+                    text: "An error occurred while adding the coupon. Please try again later.",
+                    icon: "error"
+                });
+            }
+        });
+
+        // Remove Coupon function
+
+        document.getElementById("RemoveCoupon").addEventListener("click",async(event)=>{
+            event.preventDefault()
+
+            discount =0
+            currentTotal = subTotal + deliveryCharge
+            updateTotalDisplay()
+            console.log("sub value ",subTotal);
+            console.log("del charge ",deliveryCharge)
+
+            document.getElementById("RemoveCoupon").style.display = "none"
+            document.getElementById("couponCode").value = " "
+
+
+            Swal.fire({
+                title:"Success",
+                text:"Coupon Removed Successfully",
+                icon:"success"
+            })
+        })
+    
+        // Place order function
+        async function placeOrder(event) {
+            if (event) {
+                event.preventDefault();
+            }
+    
+            try {
+                const selectedAddress = document.querySelector("input[name='selectedAddress']:checked").value;
+                const paymentMethod = document.querySelector("input[name='paymentMethod']:checked").value;
+                const deliveryMethod = document.querySelector("input[name='deliveryMethod']:checked").value;
+                const couponCode = document.getElementById("couponCode").value.trim();
+    
+                console.log("Final Total Amount:", currentTotal);
+    
+                const response = await fetch("/placeOrder", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ selectedAddress, paymentMethod, deliveryMethod, couponCode, totalAmount: currentTotal }),
+                });
+    
+                const data = await response.json();
+    
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: "Order Placed Successfully",
+                        text: `Your Order ID is: ${data.orderId}`,
+                        confirmButtonText: "OK",
+                    }).then(() => {
+                        window.location.href = "/cart"; // Redirect after success
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Order Placing Failed",
+                        text: data.message,
+                        confirmButtonText: "OK",
+                    });
+                }
+            } catch (error) {
+                console.error("Error Placing Order", error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "An error occurred while placing the order. Please try again later.",
+                    confirmButtonText: "OK",
+                });
+            }
+        }
+    
+        // Update total at delivery method changes
+        document.addEventListener("DOMContentLoaded", function () {
+            const deliveryOptions = document.querySelectorAll("input[name='deliveryMethod']");
+            const shippingChargeElement = document.getElementById("shippingCharge");
+    
+            deliveryOptions.forEach(option => {
+                option.addEventListener("change", function () {
+                    if (this.value === "fast") {
+                        deliveryCharge = 80.00;
+                    } else {
+                        deliveryCharge = 0.00;
+                    }
+    
+                    shippingChargeElement.textContent = deliveryCharge.toFixed(2);
+                    currentTotal = subTotal - discount + deliveryCharge; // Recalculate total
+                    updateTotalDisplay();
+                });
+            });
+        });
+    
+        // Function to update total display
+        function updateTotalDisplay() {
+            const totalAmountElement = document.getElementById("totalAmount");
+            totalAmountElement.textContent = currentTotal.toFixed(2);
+            console.log("Updated Total:", currentTotal);
+        }
+    </script>
+    
+
+    
+
+        <!-- <script>
+
+    
+
+            document.getElementById("couponButton").addEventListener("click", async (event) => {
+                event.preventDefault()
+
+                const couponCode = document.getElementById("couponCode").value.trim();
+                const subTotal = parseFloat(<%= subTotal.toFixed(2) %>);
+                console.log("sub total :", subTotal)
+
+                if (!couponCode) {
+                    Swal.fire({
+                        title: "Error",
+                        text: "Please Enter A valid Coupon Code.",
+                        icon: "error"
+                    })
+                }
+
+                try {
+                    const response = await fetch("/verifyCoupon", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            couponCode, subTotal
+                        })
+                    })
+
+                    const data = await response.json()
+
+                    if (data.success) {
+                        const discount = data.discount
+                        const totalAmountPlace = document.getElementById("totalAmount");
+                        const currentTotal = parseFloat(totalAmountPlace.textContent);
+
+
+                        const updatedTotal = currentTotal - discount;
+                        totalAmountPlace.textContent = updatedTotal.toFixed(2);
+                        let amountTotal = totalAmountPlace.textContent
+
+                        Swal.fire({
+                            title: "Success.",
+                            text: "Coupon added Successfully",
+                            icon: "success"
+                        })
+
+                        
+                    } else {
+                        Swal.fire({
+                            title: "Error..!",
+                            text: data.message,
+                            icon: "error"
+                        })
+                    }
+
+                } catch (error) {
+                    console.error("Error in adding coupon code", error);
+                    Swal.fire({
+                        title: "Error.!",
+                        text: "An Error occured in Coupon adding....!",
+                        icon: "error"
+                    })
+                }
+
+            })
+
+        </script>
+
+
         <script>
-            async function placeOrder(event) {
-                // Prevent the form from submitting
+          
+           let discount =0;
+            
+            async function placeOrder(event,) {
                 if (event) {
                     event.preventDefault();
                 }
@@ -189,21 +461,24 @@
                     const selectedAddress = document.querySelector("input[name='selectedAddress']:checked").value;
                     const paymentMethod = document.querySelector("input[name='paymentMethod']:checked").value;
                     const deliveryMethod = document.querySelector("input[name='deliveryMethod']:checked").value;
+                    const couponCode = document.getElementById("couponCode").value.trim();
+                    const totalAmount = parseFloat(<%= total.toFixed(2) %>)
                     console.log("Selected Address:", selectedAddress);
                     console.log("Payment Method:", paymentMethod);
-                    console.log("delivery method:",deliveryMethod);
-                    
+                    console.log("delivery method:", deliveryMethod);
+                    console.log("total Amount : ", totalAmount)
 
 
                     const response = await fetch("/placeOrder", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ selectedAddress, paymentMethod, deliveryMethod }),
+                        body: JSON.stringify({ selectedAddress, paymentMethod, deliveryMethod, couponCode, totalAmount }),
                     });
 
                     const data = await response.json();
 
                     if (data.success) {
+                        discount = data.discount
                         Swal.fire({
                             icon: 'success',
                             title: "Order Placed Successfully",
@@ -232,25 +507,34 @@
             }
 
 
-            document.addEventListener("DOMContentLoaded",function(){
+            
+            document.addEventListener("DOMContentLoaded", function () {
                 const deliveryOption = document.querySelectorAll("input[name='deliveryMethod']");
-                const shippingCharge = document.getElementById("shippingCharge");
-                const totalAmout = document.getElementById("totalAmount");
-                const Subtotal = <%= subTotal.toFixed(2)%>
+                const shippingChargeElement = document.getElementById("shippingCharge");
+                const totalAmountElement = document.getElementById("totalAmount");
+                const subTotal = parseFloat(<%= subTotal.toFixed(2) %>); // Get the initial subtotal from the server
+                const TOTAL = parseFloat( <%= total.toFixed(2) %>);
+                
+                console.log("TOTAL : ",TOTAL)
 
-                deliveryOption.forEach(option =>{
-                    option.addEventListener("change", function(){
-                        let deliveryCharge =0;
+                let deliveryCharge = 0;
+                
 
-                        if(this.value === "fast"){
-                            deliveryCharge = +80.00;
+                deliveryOption.forEach(option => {
+                    option.addEventListener("change", function () {
+
+                        if (this.value === "fast") {
+                            deliveryCharge = 80.00;
+                        } else {
+                            deliveryCharge = 0.00;
                         }
 
-                        shippingCharge.textContent = deliveryCharge.toFixed(2);
-                        const updatedTotal = Subtotal + deliveryCharge;
-                        totalAmout.textContent = updatedTotal.toFixed(2);
-                    })
-                })
-            })
+                        shippingChargeElement.textContent = deliveryCharge.toFixed(2);
 
-        </script>
+                        const updatedTotal = TOTAL - discount + deliveryCharge;
+                        totalAmountElement.textContent = updatedTotal.toFixed(2);
+                    });
+                });
+            });
+
+        </script> -->

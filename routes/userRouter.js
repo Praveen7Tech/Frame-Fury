@@ -8,6 +8,7 @@ const cartController = require("../controllers/user/cartController")
 const checkOutController = require("../controllers/user/checkoutcontroller")
 const orderController = require("../controllers/user/orderController")
 const whishListController = require("../controllers/user/wishListController")
+const couponController = require("../controllers/user/couponController")
 const {userAuth} = require("../middlewares/auth")
 
 router.get("/pageNotFound",userController.pageNotFound)
@@ -104,6 +105,9 @@ router.post("/orderCancel/:orderId",userAuth,orderController.orderCancel)
 router.get("/Wishlist",userAuth, whishListController.wishListPage)
 router.post("/addToWishlist",userAuth,whishListController.addToWishList)
 router.get("/removeFromWishList",userAuth,whishListController.removeFromWishList)
+
+//coupon management
+router.post("/verifyCoupon",userAuth,couponController.verifyCoupon)
 
 
 

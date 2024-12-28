@@ -5,6 +5,7 @@ const customerController = require("../controllers/admin/customerController");
 const categoryController = require("../controllers/admin/categoryController");
 const productController = require("../controllers/admin/productController")
 const orderController = require("../controllers/admin/orderController")
+const coupenController = require("../controllers/admin/coupenController")
 const {adminAuth} = require("../middlewares/auth")
 const multer = require("multer")
 const storage = require("../helpers/multer")
@@ -57,6 +58,12 @@ router.get("/orderList",adminAuth,orderController.orderList)
 router.get("/orderView/:orderId",adminAuth,orderController.orderView)
 router.get("/orderEdit/:orderId",adminAuth,orderController.EditStatusPage)
 router.post("/orderEdit/:orderId",adminAuth,orderController.EditStatus)
+
+//coupen management
+router.get("/coupon",adminAuth,coupenController.CoupenPage)
+router.post("/addCoupon",adminAuth,coupenController.addCopen)
+router.get("/deleteCoupon",adminAuth,coupenController.deleteCoupon)
+router.post("/editCoupon",adminAuth,coupenController.editCoupon)
 
 
 module.exports = router
