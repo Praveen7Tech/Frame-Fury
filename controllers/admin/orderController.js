@@ -3,12 +3,12 @@ const Address = require("../../models/addressSchema")
 
 const orderList = async(req,res)=>{
     try {
-        const order = await Order.find().populate("userId", 'name email').populate("items.productId","productName productImage").exec()
-        console.log("order-",order)
+        const order = await Order.find().populate("userId", 'name email').populate("items.productId","productName productImage").sort({createdAt:-1}).exec()
+
+        //console.log("order-",order)
         res.render("orderList",{order})
     } catch (error) {
-        console.error("error in load order page",error);
-        
+        console.error("error in load order page",error);        
         res.redirect("/pageerror")
     }
 }

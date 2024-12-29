@@ -41,8 +41,8 @@ router.post("/editCategory/:id", adminAuth, categoryController.updateCategory)
 router.get("/addProducts", adminAuth, productController.productAddpage)
 router.post("/addProducts", adminAuth, uploads.array("images", 4), productController.addProducts)
 router.get("/products",adminAuth,productController.getAllProducts)
-router.post("/addOffer",adminAuth,productController.addOffer)
-router.put("/editOffer",adminAuth,productController.editOffer)
+router.post("/addProOffer",adminAuth,productController.addOffer)
+router.put("/editProOffer",adminAuth,productController.editOffer)
 router.post("/removeOffer/:id",adminAuth,productController.removeOffer)
 
 //block / unblock product

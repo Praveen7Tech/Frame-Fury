@@ -148,7 +148,7 @@ const editOffer = async(req,res)=>{
         console.log("category offer updated succesfully");
         
     } catch (error) {
-        console.error("Error i updating cat offer");
+        console.error("Error in updating cat offer");
         res.status(500).send("Error in updating category offer")
     }
 }

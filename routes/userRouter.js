@@ -96,6 +96,8 @@ router.post("/updateCartQuantity",userAuth,cartController.updateCartQuantity)
 //checkout management
 router.get("/checkOut",userAuth,checkOutController.checkOutPage)
 router.post("/placeOrder",userAuth,checkOutController.placeOrder)
+router.post("/placeOrderRazorPay",userAuth,checkOutController.razorPayOrder)
+router.post("/verifyRazorPayOrder",userAuth,checkOutController.verifyRazorPayOrder)
 
 // order management
 router.get("/orderDetails/:orderId",userAuth,orderController.orderDetails)
