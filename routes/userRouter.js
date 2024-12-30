@@ -9,6 +9,7 @@ const checkOutController = require("../controllers/user/checkoutcontroller")
 const orderController = require("../controllers/user/orderController")
 const whishListController = require("../controllers/user/wishListController")
 const couponController = require("../controllers/user/couponController")
+const walletController = require("../controllers/user/walletController")
 const {userAuth} = require("../middlewares/auth")
 
 router.get("/pageNotFound",userController.pageNotFound)
@@ -102,6 +103,7 @@ router.post("/verifyRazorPayOrder",userAuth,checkOutController.verifyRazorPayOrd
 // order management
 router.get("/orderDetails/:orderId",userAuth,orderController.orderDetails)
 router.post("/orderCancel/:orderId",userAuth,orderController.orderCancel)
+router.post("/ReturnOrder/:orderId",userAuth,orderController.ReturnOrder)
 
 //wishlist management
 router.get("/Wishlist",userAuth, whishListController.wishListPage)
@@ -110,6 +112,9 @@ router.get("/removeFromWishList",userAuth,whishListController.removeFromWishList
 
 //coupon management
 router.post("/verifyCoupon",userAuth,couponController.verifyCoupon)
+
+//wallet
+router.get("/wallet",userAuth,walletController.walletPage)
 
 
 

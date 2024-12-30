@@ -73,6 +73,12 @@ const EditStatus = async(req,res)=>{
         order.orderStatus =status;
         await order.save();
 
+        if(order.orderStatus === "Shipped"){
+            order.deleiverdDate = Date.now()
+
+            await order.save()
+        }
+
         res.redirect("/admin/orderList")
     } catch (error) {
         console.error("Error in updating order status.",error);

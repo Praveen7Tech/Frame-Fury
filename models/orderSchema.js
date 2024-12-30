@@ -70,8 +70,12 @@ const orderSchema = new Schema({
     },
     orderStatus:{
         type:String,
-        enum:["Pending","Confirmed","Shipped",'Deliverd',"Cancelled"],
+        enum:["Pending","Confirmed","Shipped",'Deliverd',"Cancelled","Returned"],
         default:"Pending"
+    },
+    deleiverdDate:{
+        type:Date,
+        default:null
     },
     couponDiscount:{
         type:Number,

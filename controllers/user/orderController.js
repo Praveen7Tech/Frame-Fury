@@ -22,7 +22,7 @@ const orderCancel = async(req,res)=>{
     try {
         const orderId = req.params.orderId;
         const order = await Order.findById(orderId);
-        console.log("order : ",order);
+        //console.log("order : ",order);
         
 
         if(order.orderStatus === "Pending" || order.orderStatus === "Confirmed"){
@@ -54,9 +54,42 @@ const orderCancel = async(req,res)=>{
 }
 
 
+const ReturnOrder = async(req,res)=>{
+    try {
+        const orderId = req.params.orderId;
+        console.log("od id",orderId)
+        const order = await Order.findById(orderId)
+
+        const deliverDate = order.deleiverdDate;
+        const currentDate = new Date()
+        const expectedDate = new Date(deliverDate);
+        expectedDate.setDate(expectedDate.getDate()+10)
+
+        console.log("deliver date ",deliverDate );
+        console.log("current date ",currentDate );
+        console.log("expectedDat ",expectedDate );
+
+        if(currentDate <= expectedDate){
+            res.status(200).json({success:true,message:"Return Order Request Confirmed..!"})
+
+            order.orderStatus = "Returned"
+            await order.save()
+            console.log("Return Order Request Success.")
+        }
+        else{
+            res.status(400).json({success:false,message:"Unfortunately The Return Period Has Expired..!"})
+        }
+    } catch (error) {
+        console.error("Error in Return ORder Request..",error);
+        res.status(500).json({message:"Server Error..!"})
+    }
+}
+
+
 
 
 module.exports ={
     orderDetails,
-    orderCancel
+    orderCancel,
+    ReturnOrder
 }

@@ -25,7 +25,7 @@
                         
                         <td>
                         
-                        <%if(order.orderStatus !== "Deliverd" && order.orderStatus !== "Cancelled"){%>
+                        <%if(order.orderStatus !== "Deliverd" && order.orderStatus !== "Cancelled" && order.orderStatus !== "Returned"){%>
 
                             <form action="/admin/orderEdit/<%= order._id%>" method="POST" class="d-flex">
                                 <input type="hidden" name="orderId" value="<%= order._id%>">

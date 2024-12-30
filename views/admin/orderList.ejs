@@ -28,6 +28,10 @@
       background-color: #f29a47; /* Orange for Confirmed */
       color: #fff;
     }
+    .status-returned{
+      background-color: #96e457;
+      color: #fff;
+    }
     /* Additional styling */
     .order-image {
       width: 50px;
@@ -87,7 +91,8 @@
                   <%= order.orderStatus === 'Shipped' ? 'status-shipped' : '' %>
                   <%= order.orderStatus === 'Deliverd' ? 'status-deliverd' : '' %>
                   <%= order.orderStatus === 'Cancelled' ? 'status-cancelled' : '' %>
-                  <%= order.orderStatus === 'Confirmed' ? 'status-confirmed' : '' %>">
+                  <%= order.orderStatus === 'Confirmed' ? 'status-confirmed' : '' %>
+                  <%= order.orderStatus === 'Returned' ? 'status-returned' : ''%>">
                   <%= order.orderStatus %>
                 </span>
               </td>
