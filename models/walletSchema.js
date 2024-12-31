@@ -24,6 +24,40 @@ const transactionSchema = new Schema({
   }
 });
 
+const onlinePurchaseSchema = new Schema({
+  paymentId:{
+    type:String,
+    required:false
+  },
+  amount:{
+    type:Number,
+    required:false
+  },
+  date:{
+    type:Date,
+    default:Date.now
+  }
+});
+
+const refundHistory = new Schema({
+  refundId:{
+    type:String,
+    required:true
+  },
+  orderId:{
+    type:String,
+    required:true
+  },
+  amount:{
+    type:Number,
+    required:true
+  },
+  date:{
+    type:Date,
+    default:Date.now
+  }
+})
+
 
 const walletSchema = new Schema({
   userId:{
@@ -35,7 +69,9 @@ const walletSchema = new Schema({
     type:Number,
     default:0,
   },
-  transactions:[transactionSchema]
+  transactions:[transactionSchema],
+  onlinePurchase:[onlinePurchaseSchema],
+  refundHistory:[refundHistory]
 })
 
 

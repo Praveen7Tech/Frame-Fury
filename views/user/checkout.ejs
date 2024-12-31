@@ -314,6 +314,7 @@
     
                 console.log("Final Total Amount:", currentTotal);
 
+                // placing order using RazorPay
                 if(paymentMethod === "Online"){
                     
                     const response = await fetch("/placeOrderRazorPay",{
@@ -420,9 +421,10 @@
                     });
                 }
             }
+
+            // order placing using Wallet
             else if(paymentMethod === "wallet"){
 
-                // Wallet payment method
                 const response = await fetch("/placeOrderWallet",{
                     method:"POST",
                     headers:{
@@ -437,6 +439,12 @@
                     })
                 })
 
+                console.log("sel",selectedAddress)
+                console.log("sel",paymentMethod)
+                console.log("sel",deliveryMethod)
+                console.log("sel",couponCode)
+                console.log("sel",currentTotal)
+
                 const data = await response.json()
                 if(data.success){
                     Swal.fire({
@@ -444,17 +452,16 @@
                         text:`Your Order Id is : ${data.orderId}`,
                         icon:"success",
                         confirmButtonText:"OK"
-                    }).theme(()=> window.location.href="/cart")
+                    }).then(()=> window.location.href="/cart")
                 }else{
                     Swal.fire({
                         title:"Error.",
                         text:data.message,
-                        title:"error",
+                        icon:"error",
                         confirmButtonText:"OK"
                     })
                 }
             }
-
 
             } catch (error) {
                 console.error("Error Placing Order", error);

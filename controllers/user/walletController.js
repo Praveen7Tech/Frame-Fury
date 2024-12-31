@@ -6,7 +6,6 @@ const walletPage = async(req,res)=>{
     try {
         const user = req.session.user;
         const userId = req.session.user._id;
-        const order = await Order.find({userId,paymentMethod:"Online"}).sort({createdAt:-1}).lean()
         const refundOrder = await Order.find({userId,orderStatus:"Cancelled"}).sort({createdAt:-1}).lean()
 
         // console.log("userid",order);
@@ -20,7 +19,7 @@ const walletPage = async(req,res)=>{
 
         //console.log("wallet ",wallet)
 
-        res.render("wallet",{user,order,refundOrder,wallet})
+        res.render("wallet",{user,refundOrder,wallet})
     } catch (error) {
         console.error("Error in loading wallet",error);
         res.redirect("/pageNotFound")
@@ -36,9 +35,9 @@ const AddMoneyToWallet = async(req,res)=>{
         let wallet = await Wallet.findOne({userId})
         const transactionId =uuidv4();
 
-        console.log("bodyyy",req.body)
-        console.log("user-",userId);
-        console.log("uuid",transactionId)
+        // console.log("bodyyy",req.body)
+        // console.log("user-",userId);
+        // console.log("uuid",transactionId)
 
         if(!wallet){
             wallet = new Wallet({
@@ -52,7 +51,9 @@ const AddMoneyToWallet = async(req,res)=>{
                         additionalDetails:additionalDetail,
                         date:new Date()
                     }
-                ]
+                ],
+                onlinePurchase:[],
+                refundHistory:[]
             })
 
             await wallet.save()
@@ -70,8 +71,9 @@ const AddMoneyToWallet = async(req,res)=>{
             await wallet.save()
         }
 
-        return res.status(200).json({message:"Amount Added To Wallet Successfully.",wallet})
         console.log("Amount added to wallet successfully");
+        return res.status(200).json({message:"Amount Added To Wallet Successfully.",wallet})
+        
 
     } catch (error) {
         console.error("Error in amount adding in wallet",error);

@@ -84,23 +84,25 @@
                                 <div class="tab-pane fade show active" id="online-purchases" role="tabpanel"
                                     aria-labelledby="online-purchases-tab">
                                     <ul class="list-unstyled">
-                                        <% if (order.length> 0) { %>
-                                            <% order.forEach((o)=> { %>
+                                    <%if(wallet){%>    
+                                        <% wallet.onlinePurchase.forEach(data =>{%>    
                                                 <li class="transaction-item py-3">
                                                     <div class="d-flex justify-content-between align-items-center">
                                                         <div>
                                                             <h6 class="mb-1">Payment id : <span>
-                                                                    <%= o.paymentId %>
+                                                                <%= data.paymentId%>
                                                                 </span></h6>
                                                             <small class="text-muted">
-                                                                <%=new Date(o.createdAt).toLocaleString()%>
+                                                                <%=new Date(data.date).toLocaleString()%>
                                                             </small>
                                                         </div>
-                                                        <span class="text-danger">-₹ <%= o.total %></span>
+                                                        <span class="text-danger">-₹ <%= data.amount%></span>
                                                     </div>
                                                 </li>
-                                                <% }) %>
-                                                    <% } %>
+                                        <%})%>        
+                                    <%}else{%> 
+                                        <h6 class="mb-1">Oops...No Data Found</h6>
+                                    <%}%>    
                                     </ul>
                                 </div>
 
@@ -144,22 +146,24 @@
                                 <div class="tab-pane fade" id="subscriptions" role="tabpanel"
                                     aria-labelledby="subscriptions-tab">
                                     <ul class="list-unstyled">
-                                        <%if(refundOrder.length> 0){%>
-                                            <%refundOrder.forEach((o)=>{%>
+                                        <%if(wallet){%>        
+                                            <% wallet.refundHistory.forEach(data =>{%> 
                                                 <li class="transaction-item py-3">
                                                     <div class="d-flex justify-content-between align-items-center">
                                                         <div>
-                                                            <h6 class="mb-1">Payment id : <%= o.paymentId%>
+                                                            <h6 class="mb-1">Refund id : <%= data.refundId%>
                                                             </h6>
                                                             <small class="text-muted">
-                                                                <%=new Date(o.createdAt).toLocaleString()%>
+                                                                <%=new Date(data.date).toLocaleString()%>
                                                             </small>
                                                         </div>
-                                                        <span class="text-success">+₹ <%= o.total%></span>
+                                                        <span class="text-success">+₹ <%= data.amount%></span>
                                                     </div>
                                                 </li>
-                                                <%})%>
-                                                    <%}%>
+                                            <%})%>        
+                                        <%}else{%> 
+                                                <h6 class="mb-1">Oops...No Data Found</h6>
+                                        <%}%>    
                                     </ul>
                                 </div>
                             </div>

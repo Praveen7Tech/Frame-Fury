@@ -1,6 +1,8 @@
 const Order = require("../../models/orderSchema")
 const Address = require("../../models/addressSchema");
 const Product = require("../../models/productSchema");
+const Wallet = require("../../models/walletSchema")
+const {v4 :uuidv4} = require("uuid")
 
 const orderDetails = async(req,res)=>{
     try {
@@ -57,8 +59,10 @@ const orderCancel = async(req,res)=>{
 const ReturnOrder = async(req,res)=>{
     try {
         const orderId = req.params.orderId;
+        const userId = req.session.user
         console.log("od id",orderId)
         const order = await Order.findById(orderId)
+        const wallet = await Wallet.findOne({userId})
 
         const deliverDate = order.deleiverdDate;
         const currentDate = new Date()
@@ -69,12 +73,31 @@ const ReturnOrder = async(req,res)=>{
         console.log("current date ",currentDate );
         console.log("expectedDat ",expectedDate );
 
+        const transactionId = uuidv4();
+        
+
         if(currentDate <= expectedDate){
             res.status(200).json({success:true,message:"Return Order Request Confirmed..!"})
 
             order.orderStatus = "Returned"
             await order.save()
             console.log("Return Order Request Success.")
+
+            // refund money to wallet
+            if(order.paymentMethod === "wallet"){
+                wallet.balance += order.total
+                wallet.refundHistory.push({
+                    refundId:transactionId,
+                    orderId:order._id,
+                    amount:order.total,
+                    date:new Date()
+                })
+    
+                await wallet.save()
+            }
+
+            console.log("Wallet updated successfully");           
+            
         }
         else{
             res.status(400).json({success:false,message:"Unfortunately The Return Period Has Expired..!"})

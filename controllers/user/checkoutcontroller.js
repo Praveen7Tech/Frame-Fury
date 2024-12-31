@@ -7,6 +7,8 @@ const Category = require("../../models/categorySchema");
 const Coupon = require("../../models/coupenSchema");
 const Wallet = require("../../models/walletSchema")
 
+const {v4: uuidv4} = require("uuid")
+
 const crypto = require("crypto")
 
 const dotenv = require("dotenv")
@@ -252,27 +254,106 @@ const verifyRazorPayOrder = async(req,res)=>{
     }
 }
 
-const placeOrderWallet = async(req,res)=>{
+const placeOrderWallet = async (req, res) => {
     try {
-        const { selectedAddress, paymentMethod, deliveryMethod, couponCode} =req.body;
+        const { selectedAddress, paymentMethod, deliveryMethod, couponCode, totalAmount } = req.body;
         const userId = req.session.user;
 
-        const wallet = await Wallet.findById(userId);
-        if(!wallet){
-            wallet = new Wallet({
-                userId,
-                transactionId,
-                transactionType,
-                amount,
-                walletBalanceAfter,
-                status,
-                orderId
-            })
+        console.log("body--", req.body);
+        console.log("user id--", userId);
+
+        // Check wallet balance
+        const wallet = await Wallet.findOne({ userId });
+        console.log("wallet", wallet);
+        if (!wallet || wallet.balance < totalAmount) {
+            return res.status(400).json({ success: false, message: "Insufficient Balance in Your Wallet" });
         }
-    } catch (error) {
+
+        // Validate selected address
+        const userAddress = await Address.findOne(
+            { userId, "address._id": selectedAddress },
+            { "address.$": 1 } // Fetch only the matched address
+        );
+
+        if (!userAddress) {
+            return res.status(400).json({ success: false, message: "Invalid address selected" });
+        }
+
+        // Extract address details
+        const addressDetails = userAddress.address[0];
+
+        // Fetch user's cart
+        const cart = await Cart.findOne({ userId }).populate("items.productId");
+        const category = await Category.find({ isListed: true });
+        const listedCategory = category.map(category => category._id.toString());
+
+        const findProduct = cart.items.filter(item => {
+            const product = item.productId;
+            return product.isBlocked === false && listedCategory.includes(product.category.toString());
+        });
+
+        if (!findProduct || findProduct.length === 0) {
+            return res.status(400).json({ success: false, message: "Cart is empty" });
+        }
+
+        // Calculate totals
+        const subTotal = findProduct.reduce((sum, item) => sum + item.totalPrice, 0);
+        let discount = 0;
+
+        if (couponCode) {
+            const coupon = await Coupon.findOne({ name: couponCode, isList: true });
+            if (coupon) {
+                discount = coupon.offerPrice;
+            }
+        }
+
+        const deliveryCharge = deliveryMethod === "fast" ? 80 : 0;
+        const total = subTotal - discount + deliveryCharge;
+
+        // Create new order
+        const order = new Order({
+            userId,
+            address: addressDetails,
+            deliveryCharge,
+            deliveryMethod,
+            subTotal,
+            total,
+            couponDiscount: discount,
+            paymentMethod,
+            couponCode,
+            items: findProduct
+        });
+
+        await order.save();
+        await Cart.findOneAndUpdate({ userId }, { items: [] });
+
+        // Update wallet
+        const transactionId = uuidv4();
+        wallet.balance -= total;
+        wallet.onlinePurchase.push({
+            paymentId: transactionId,
+            amount: total,
+            date: new Date()
+        });
+        await wallet.save();
+
+        console.log("Wallet updated successfully");
+        console.log("Order placed successfully");
+
+        // Send response
+        return res.json({ success: true, orderId: order._id });
         
+        
+    } catch (error) {
+        console.error("Error placing order:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to place the order",
+            error: error.message
+        });
     }
-}
+};
+
 
 module.exports ={
     checkOutPage,
