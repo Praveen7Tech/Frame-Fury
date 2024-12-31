@@ -163,27 +163,6 @@
                                 </div>
                             </div>
 
-                            <!-- Payment Methods -->
-                            <h5>Payment</h5>
-                            <div class="payment_option">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="paymentMethod" id="online"
-                                        value="bankTransfer">
-                                    <label class="form-check-label" for="online">Direct Bank Transfer</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="paymentMethod" id="cod"
-                                        value="COD" checked>
-                                    <label class="form-check-label" for="cod">Cash on Delivery</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="paymentMethod" id="razorPay"
-                                        value="Online">
-                                    <label class="form-check-label" for="paypal">Razor Pay</label>
-                                </div>
-                            </div>
-                            <br>
-
                             <!-- Delivery Options -->
                             <h5>Delivery Options</h5>
                             <div class="delivery_option">
@@ -199,6 +178,29 @@
                                     <label class="form-check-label" for="fastDelivery">Fast Delivery (+80.00)</label>
                                 </div>
                             </div>
+
+                            <br>
+
+                            <!-- Payment Methods -->
+                            <h5>Payment</h5>
+                            <div class="payment_option">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" id="wallet"
+                                        value="wallet">
+                                    <label class="form-check-label" for="wallet">Wallet</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" id="cod"
+                                        value="COD" checked>
+                                    <label class="form-check-label" for="cod">Cash on Delivery</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" id="razorPay"
+                                        value="Online">
+                                    <label class="form-check-label" for="razorPay">Razor Pay</label>
+                                </div>
+                            </div>
+                            <br>
 
                             <button type="submit" id="placeOrderButton" class="btn btn-fill-out btn-block mt-30">Place
                                 Order</button>
@@ -390,7 +392,7 @@
                     }
                 }
                 // placing order using COD
-                else{
+                else if(paymentMethod === "COD"){
 
                 const response = await fetch("/placeOrder", {
                     method: "POST",
@@ -418,6 +420,42 @@
                     });
                 }
             }
+            else if(paymentMethod === "wallet"){
+
+                // Wallet payment method
+                const response = await fetch("/placeOrderWallet",{
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({
+                        selectedAddress,
+                        paymentMethod,
+                        deliveryMethod,
+                        couponCode,
+                        totalAmount:currentTotal
+                    })
+                })
+
+                const data = await response.json()
+                if(data.success){
+                    Swal.fire({
+                        title:"Order Placed Successfully",
+                        text:`Your Order Id is : ${data.orderId}`,
+                        icon:"success",
+                        confirmButtonText:"OK"
+                    }).theme(()=> window.location.href="/cart")
+                }else{
+                    Swal.fire({
+                        title:"Error.",
+                        text:data.message,
+                        title:"error",
+                        confirmButtonText:"OK"
+                    })
+                }
+            }
+
+
             } catch (error) {
                 console.error("Error Placing Order", error);
                 Swal.fire({
@@ -458,166 +496,3 @@
     </script>
     
 
-    
-
-
-
-    
-
-            document.getElementById("couponButton").addEventListener("click", async (event) => {
-                event.preventDefault()
-
-                const couponCode = document.getElementById("couponCode").value.trim();
-                const subTotal = parseFloat(<%= subTotal.toFixed(2) %>);
-                console.log("sub total :", subTotal)
-
-                if (!couponCode) {
-                    Swal.fire({
-                        title: "Error",
-                        text: "Please Enter A valid Coupon Code.",
-                        icon: "error"
-                    })
-                }
-
-                try {
-                    const response = await fetch("/verifyCoupon", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({
-                            couponCode, subTotal
-                        })
-                    })
-
-                    const data = await response.json()
-
-                    if (data.success) {
-                        const discount = data.discount
-                        const totalAmountPlace = document.getElementById("totalAmount");
-                        const currentTotal = parseFloat(totalAmountPlace.textContent);
-
-
-                        const updatedTotal = currentTotal - discount;
-                        totalAmountPlace.textContent = updatedTotal.toFixed(2);
-                        let amountTotal = totalAmountPlace.textContent
-
-                        Swal.fire({
-                            title: "Success.",
-                            text: "Coupon added Successfully",
-                            icon: "success"
-                        })
-
-                        
-                    } else {
-                        Swal.fire({
-                            title: "Error..!",
-                            text: data.message,
-                            icon: "error"
-                        })
-                    }
-
-                } catch (error) {
-                    console.error("Error in adding coupon code", error);
-                    Swal.fire({
-                        title: "Error.!",
-                        text: "An Error occured in Coupon adding....!",
-                        icon: "error"
-                    })
-                }
-
-            })
-
-        </script>
-
-
-        <script>
-          
-           let discount =0;
-            
-            async function placeOrder(event,) {
-                if (event) {
-                    event.preventDefault();
-                }
-
-                try {
-                    const selectedAddress = document.querySelector("input[name='selectedAddress']:checked").value;
-                    const paymentMethod = document.querySelector("input[name='paymentMethod']:checked").value;
-                    const deliveryMethod = document.querySelector("input[name='deliveryMethod']:checked").value;
-                    const couponCode = document.getElementById("couponCode").value.trim();
-                    const totalAmount = parseFloat(<%= total.toFixed(2) %>)
-                    console.log("Selected Address:", selectedAddress);
-                    console.log("Payment Method:", paymentMethod);
-                    console.log("delivery method:", deliveryMethod);
-                    console.log("total Amount : ", totalAmount)
-
-
-                    const response = await fetch("/placeOrder", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ selectedAddress, paymentMethod, deliveryMethod, couponCode, totalAmount }),
-                    });
-
-                    const data = await response.json();
-
-                    if (data.success) {
-                        discount = data.discount
-                        Swal.fire({
-                            icon: 'success',
-                            title: "Order Placed Successfully",
-                            text: `Your Order ID is: ${data.orderId}`,
-                            confirmButtonText: "OK",
-                        }).then(() => {
-                            window.location.href = "/cart"; // Redirect after success
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Order Placing Failed",
-                            text: data.message,
-                            confirmButtonText: "OK",
-                        });
-                    }
-                } catch (error) {
-                    console.error("Error Placing Order", error);
-                    Swal.fire({
-                        icon: "error",
-                        title: "Error",
-                        text: "An error occurred while placing the order. Please try again later.",
-                        confirmButtonText: "OK",
-                    });
-                }
-            }
-
-
-            
-            document.addEventListener("DOMContentLoaded", function () {
-                const deliveryOption = document.querySelectorAll("input[name='deliveryMethod']");
-                const shippingChargeElement = document.getElementById("shippingCharge");
-                const totalAmountElement = document.getElementById("totalAmount");
-                const subTotal = parseFloat(<%= subTotal.toFixed(2) %>); // Get the initial subtotal from the server
-                const TOTAL = parseFloat( <%= total.toFixed(2) %>);
-                
-                console.log("TOTAL : ",TOTAL)
-
-                let deliveryCharge = 0;
-                
-
-                deliveryOption.forEach(option => {
-                    option.addEventListener("change", function () {
-
-                        if (this.value === "fast") {
-                            deliveryCharge = 80.00;
-                        } else {
-                            deliveryCharge = 0.00;
-                        }
-
-                        shippingChargeElement.textContent = deliveryCharge.toFixed(2);
-
-                        const updatedTotal = TOTAL - discount + deliveryCharge;
-                        totalAmountElement.textContent = updatedTotal.toFixed(2);
-                    });
-                });
-            });
-
-        </script> -->

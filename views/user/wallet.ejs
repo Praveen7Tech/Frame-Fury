@@ -1,153 +1,306 @@
 <%-include("../../views/partials/user/header")%>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
         .wallet-card {
             background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
             color: white;
         }
+
         .transaction-item:not(:last-child) {
             border-bottom: 1px solid #e0e0e0;
         }
+
         .nav-pills .nav-link.active {
             background-color: #6a11cb;
         }
     </style>
-</head>
-<body>
-    <div class="container py-5">
-        <h1 class="text-center mb-5">My Wallet</h1>
-        
-        <div class="row">
-            <div class="col-md-6 mb-4">
-                <div class="card wallet-card">
-                    <div class="card-body">
-                        <h5 class="card-title">Current Balance</h5>
-                        <h2 class="card-text mb-4">$1,234.56</h2>
-                        <div class="d-flex justify-content-between">
-                            <button class="btn btn-light">Add Funds</button>
-                            <button class="btn btn-outline-light">Withdraw</button>
+    </head>
+
+    <body>
+        <div class="container py-5">
+            <h1 class="text-center mb-5">My Wallet</h1>
+
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card wallet-card">
+                        <div class="card-body">
+                        <%if(wallet){%>    
+                            <h5 class="card-title">Current Balance</h5>
+                            <h2 class="card-text mb-4">₹ <%= wallet.balance%></h2>
+                        <%}else{%>
+                            <h2 class="card-text mb-4">Your Waleet is Empty.. Add some Amount.</h2>
+                        <%}%>    
+                            <div class="d-flex justify-content-between">
+                                <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#addMoneyModal">Add
+                                    Funds</button>
+                                <button class="btn btn-outline-light">Withdraw</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">Quick Actions</h5>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary">Make a Payment</button>
+                                <button class="btn btn-secondary">Transfer Funds</button>
+                                <button class="btn btn-info">View Statements</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <div class="col-md-6 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title mb-4">Quick Actions</h5>
-                        <div class="d-grid gap-2">
-                            <button class="btn btn-primary">Make a Payment</button>
-                            <button class="btn btn-secondary">Transfer Funds</button>
-                            <button class="btn btn-info">View Statements</button>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">Recent Transactions</h5>
+                            <ul class="nav nav-pills mb-3" id="transactions-tab" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="online-purchases-tab" data-bs-toggle="pill"
+                                        data-bs-target="#online-purchases" type="button" role="tab"
+                                        aria-controls="online-purchases" aria-selected="true">Online Purchases</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="funds-added-tab" data-bs-toggle="pill"
+                                        data-bs-target="#funds-added" type="button" role="tab"
+                                        aria-controls="funds-added" aria-selected="false">Funds Added</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="subscriptions-tab" data-bs-toggle="pill"
+                                        data-bs-target="#subscriptions" type="button" role="tab"
+                                        aria-controls="subscriptions" aria-selected="false">Payment Refunded</button>
+                                </li>
+                            </ul>
+                            <div class="tab-content" id="transactions-tabContent">
+
+                                <!-- purchase history -->
+
+                                <div class="tab-pane fade show active" id="online-purchases" role="tabpanel"
+                                    aria-labelledby="online-purchases-tab">
+                                    <ul class="list-unstyled">
+                                        <% if (order.length> 0) { %>
+                                            <% order.forEach((o)=> { %>
+                                                <li class="transaction-item py-3">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <div>
+                                                            <h6 class="mb-1">Payment id : <span>
+                                                                    <%= o.paymentId %>
+                                                                </span></h6>
+                                                            <small class="text-muted">
+                                                                <%=new Date(o.createdAt).toLocaleString()%>
+                                                            </small>
+                                                        </div>
+                                                        <span class="text-danger">-₹ <%= o.total %></span>
+                                                    </div>
+                                                </li>
+                                                <% }) %>
+                                                    <% } %>
+                                    </ul>
+                                </div>
+
+                                <!-- Amount Added -->
+
+                                <div class="tab-pane fade" id="funds-added" role="tabpanel"
+                                    aria-labelledby="funds-added-tab">
+                                    <ul class="list-unstyled">
+
+                                <%if(wallet){%>        
+                                    <% wallet.transactions.forEach(data =>{%>    
+
+                                        <li class="transaction-item py-3">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <h6 class="mb-1"><%=data.transactionType%> Transfer</h6>
+                                                    <small class="text-muted"><%=new Date(data.date).toLocaleString()%></small>
+                                                </div>
+                                                <span class="text-success">+₹ <%=data.amount%></span>
+                                            </div>
+                                        </li>
+
+                                    <%})%> 
+                                <%}else{%> 
+                                    <li class="transaction-item py-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="mb-1">No Data..</h6>
+                                                <small class="text-muted">..</small>
+                                            </div>
+                                            <span class="text-success">+₹ 0.00</span>
+                                        </div>
+                                    </li>
+                                <%}%>    
+
+                                    </ul>
+                                </div>
+
+                                <!-- refund history -->
+
+                                <div class="tab-pane fade" id="subscriptions" role="tabpanel"
+                                    aria-labelledby="subscriptions-tab">
+                                    <ul class="list-unstyled">
+                                        <%if(refundOrder.length> 0){%>
+                                            <%refundOrder.forEach((o)=>{%>
+                                                <li class="transaction-item py-3">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <div>
+                                                            <h6 class="mb-1">Payment id : <%= o.paymentId%>
+                                                            </h6>
+                                                            <small class="text-muted">
+                                                                <%=new Date(o.createdAt).toLocaleString()%>
+                                                            </small>
+                                                        </div>
+                                                        <span class="text-success">+₹ <%= o.total%></span>
+                                                    </div>
+                                                </li>
+                                                <%})%>
+                                                    <%}%>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="text-center mt-3">
+                                <a href="#" class="btn btn-link">View All Transactions</a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title mb-4">Recent Transactions</h5>
-                        <ul class="nav nav-pills mb-3" id="transactions-tab" role="tablist">
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="online-purchases-tab" data-bs-toggle="pill" data-bs-target="#online-purchases" type="button" role="tab" aria-controls="online-purchases" aria-selected="true">Online Purchases</button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="funds-added-tab" data-bs-toggle="pill" data-bs-target="#funds-added" type="button" role="tab" aria-controls="funds-added" aria-selected="false">Funds Added</button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="subscriptions-tab" data-bs-toggle="pill" data-bs-target="#subscriptions" type="button" role="tab" aria-controls="subscriptions" aria-selected="false">Payment Refunded</button>
-                            </li>
-                        </ul>
-                        <div class="tab-content" id="transactions-tabContent">
 
-                            <!-- purchase history -->
-
-                            <div class="tab-pane fade show active" id="online-purchases" role="tabpanel" aria-labelledby="online-purchases-tab">
-                                <ul class="list-unstyled">
-                                    <% if (order.length > 0) { %>
-                                        <% order.forEach((o) => { %>
-                                          <li class="transaction-item py-3">
-                                            <div class="d-flex justify-content-between align-items-center">
-                                              <div>
-                                                <h6 class="mb-1">Payment id : <span><%= o.paymentId %></span></h6>
-                                                <small class="text-muted"><%=new Date(o.createdAt).toLocaleString()%></small>
-                                              </div>
-                                              <span class="text-danger">-₹ <%= o.total %></span>
-                                            </div>
-                                          </li>
-                                        <% }) %>
-                                    <% } %>
-                                </ul>
-                            </div>
-                            <div class="tab-pane fade" id="funds-added" role="tabpanel" aria-labelledby="funds-added-tab">
-                                <ul class="list-unstyled">
-                                    <li class="transaction-item py-3">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <h6 class="mb-1">Bank Transfer</h6>
-                                                <small class="text-muted">May 30, 2023</small>
-                                            </div>
-                                            <span class="text-success">+$500.00</span>
-                                        </div>
-                                    </li>
-                                    <li class="transaction-item py-3">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <h6 class="mb-1">PayPal Transfer</h6>
-                                                <small class="text-muted">May 15, 2023</small>
-                                            </div>
-                                            <span class="text-success">+$250.00</span>
-                                        </div>
-                                    </li>
-                                    <li class="transaction-item py-3">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <h6 class="mb-1">Cash Deposit</h6>
-                                                <small class="text-muted">May 5, 2023</small>
-                                            </div>
-                                            <span class="text-success">+$100.00</span>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <!-- refund history -->
-
-                            <div class="tab-pane fade" id="subscriptions" role="tabpanel" aria-labelledby="subscriptions-tab">
-                                <ul class="list-unstyled">
-                                    <%if(refundOrder.length > 0){%>  
-                                        <%refundOrder.forEach((o)=>{%>     
-                                    <li class="transaction-item py-3">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <h6 class="mb-1">Payment id : <%= o.paymentId%></h6>
-                                                <small class="text-muted"><%=new Date(o.createdAt).toLocaleString()%></small>
-                                            </div>
-                                            <span class="text-success">+₹ <%= o.total%></span>
-                                        </div>  
-                                    </li>
-                                        <%})%>
-                                    <%}%>  
-                                </ul>
-                            </div>
+         <!-- Add Money Modal -->
+    <div class="modal fade" id="addMoneyModal" tabindex="-1" aria-labelledby="addMoneyModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addMoneyModalLabel">Add Funds to Wallet</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addMoneyForm">
+                        <div class="mb-3">
+                            <label for="amount" class="form-label">Amount</label>
+                            <input type="number" class="form-control" id="amount" placeholder="Enter amount" required>
                         </div>
-                        <div class="text-center mt-3">
-                            <a href="#" class="btn btn-link">View All Transactions</a>
+                        <div class="mb-3">
+                            <label for="paymentMethod" class="form-label">Payment Method</label>
+                            <select class="form-select" id="paymentMethod" required>
+                                <option value="">Select payment method</option>
+                                <option value="card">Credit/Debit Card</option>
+                                <option value="bank">Bank Transfer</option>
+                                <option value="paypal">PayPal</option>
+                            </select>
                         </div>
-                    </div>
+                        <div id="additionalFields" class="mb-3" style="display: none;">
+                            <!-- Placeholder for dynamically added fields -->
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Add Funds</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+    <!-- Modal option selection -->
+    <script>
+        const paymentMethodSelect = document.getElementById('paymentMethod');
+        const additionalFields = document.getElementById('additionalFields');
+
+        paymentMethodSelect.addEventListener('change', () => {
+            additionalFields.innerHTML = ''; // Clear previous fields
+            const selectedMethod = paymentMethodSelect.value;
+
+            if (selectedMethod === 'card') {
+                additionalFields.innerHTML = `
+                    <label for="cardNumber" class="form-label">Card Number</label>
+                    <input type="text" class="form-control" id="cardNumber" placeholder="Enter card number" required>
+                `;
+            } else if (selectedMethod === 'bank') {
+                additionalFields.innerHTML = `
+                    <label for="accountNumber" class="form-label">Account Number</label>
+                    <input type="text" class="form-control" id="accountNumber" placeholder="Enter account number" required>
+                `;
+            } else if (selectedMethod === 'paypal') {
+                additionalFields.innerHTML = `
+                    <label for="paypalEmail" class="form-label">PayPal Email</label>
+                    <input type="email" class="form-control" id="paypalEmail" placeholder="Enter PayPal email" required>
+                `;
+            }
+
+            additionalFields.style.display = selectedMethod ? 'block' : 'none';
+        });
+    </script>
+
+
+     <!-- Amount Adding to wallet -->
+    <script>
+
+        document.getElementById("addMoneyForm").addEventListener("submit",async function(e){
+            e.preventDefault()
+
+            const amount = document.getElementById("amount").value
+            const paymentMethod = document.getElementById("paymentMethod").value
+
+            let additionalDetail = null;
+            if(paymentMethod === "card"){
+                additionalDetail = document.getElementById("cardNumber").value
+            }
+            else if(paymentMethod === "bank"){
+                additionalDetail = document.getElementById("accountNumber").value
+            }
+            else if(paymentMethod === "paypal"){
+                additionalDetail = document.getElementById("paypalEmail").value
+            }
+
+            console.log("amt-",amount);
+            console.log("mtd-",paymentMethod)
+            console.log("addDet-",additionalDetail)
+
+            if(amount && paymentMethod){
+                try {
+                    const response = await fetch("/addMoneyToWallet",{
+                        method:"POST",
+                        headers:{
+                            "Content-Type":"application/json"
+                        },body:JSON.stringify({
+                            amount,paymentMethod,additionalDetail
+                        })
+                    })
+
+                    const data = await response.json();
+
+                    if(response.ok){
+                        Swal.fire({
+                            title:"Payment Success.",
+                            text:data.message,
+                            icon:"success",
+                            confirmButtonText:"OK"
+                        })
+                        .then(() => location.reload())
+                    }
+                    else{
+                        Swal.fire({
+                            title:"Error..!",
+                            text:data.message,
+                            icon:"error",
+                            confirmButtonText:"Try Again Later"
+                        })
+                    }
+
+                } catch (error) {
+                    console.error("Error in adding amount to Wallet",error);
+                    Swal.fire("Error...!","An Error occured in adding money to wallet..","error")
+                }
+            }
+        })
+    </script>
+
 </body>
-
-
-
-
 <%-include("../../views/partials/user/footer")%>

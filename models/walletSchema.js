@@ -1,47 +1,42 @@
 const mongoose = require("mongoose");
 
-const { Schema } = mongoose;
+const {Schema} = mongoose
+
+const transactionSchema = new Schema({
+  transactionId:{
+    type:String,
+    required:true
+  },
+  transactionType:{
+    type:String,
+    required:true
+  },
+  amount:{
+    type:Number,
+    required:true
+  },
+  additionalDetails:{
+    type:String
+  },
+  date:{
+    type:Date,
+    default:Date.now
+  }
+});
+
 
 const walletSchema = new Schema({
-  userId: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
+  userId:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"User",
+    required:true
   },
-  transactionId: {
-    type: String,
-    required: true,
-    unique: true,
+  balance:{
+    type:Number,
+    default:0,
   },
-  transactionType: {
-    type: String,
-    enum: ["credit", "debit", "refund"],
-    required: true,
-  },
-  amount: {
-    type: Number,
-    required: true,
-    min: 0,
-  },
-  walletBalanceAfter: {
-    type: Number,
-    required: true,
-  },
-  status: {
-    type: String,
-    enum: ["Pending", "Completed", "Failed", "Refunded"],
-    default: "Pending",
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  orderId: {
-    type: String,
-    default: null, 
-  },
-
-});
+  transactions:[transactionSchema]
+})
 
 
 

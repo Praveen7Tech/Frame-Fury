@@ -5,6 +5,7 @@ const Order = require("../../models/orderSchema")
 const Address = require("../../models/addressSchema");
 const Category = require("../../models/categorySchema");
 const Coupon = require("../../models/coupenSchema");
+const Wallet = require("../../models/walletSchema")
 
 const crypto = require("crypto")
 
@@ -162,7 +163,7 @@ const verifyRazorPayOrder = async(req,res)=>{
         const {selectedAddress,paymentMethod,deliveryMethod,couponCode,  orderId, paymentId,razorpaySignature} = req.body;
 
         const userId = req.session.user;
-        console.log(" req body _",req.body);
+        //console.log(" req body _",req.body);
         
 
         // Fetch the selected address details
@@ -251,11 +252,32 @@ const verifyRazorPayOrder = async(req,res)=>{
     }
 }
 
+const placeOrderWallet = async(req,res)=>{
+    try {
+        const { selectedAddress, paymentMethod, deliveryMethod, couponCode} =req.body;
+        const userId = req.session.user;
 
+        const wallet = await Wallet.findById(userId);
+        if(!wallet){
+            wallet = new Wallet({
+                userId,
+                transactionId,
+                transactionType,
+                amount,
+                walletBalanceAfter,
+                status,
+                orderId
+            })
+        }
+    } catch (error) {
+        
+    }
+}
 
 module.exports ={
     checkOutPage,
     placeOrder,
     razorPayOrder,
-    verifyRazorPayOrder
+    verifyRazorPayOrder,
+    placeOrderWallet
 }
