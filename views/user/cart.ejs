@@ -52,7 +52,7 @@
                                                     </p>
                                                 </td>
                                                 <td class="price" data-title="Price"><span>
-                                                        <%= item.productId.salePrice %>
+                                                        <%= Math.floor(item.productId.salePrice -(item.productId.salePrice * item.productId.offer / 100)) %>
                                                     </span></td>
                                                 <td class="text-center" data-title="Stock">
                                                     <div class="detail-qty border radius  m-auto">
@@ -72,7 +72,7 @@
                                                 </td>
                                                 <td class="text-right" data-title="Cart">
                                                     <span>
-                                                        <%= item.totalPrice %>
+                                                        <%= Math.floor(item.totalPrice)  %>
                                                     </span>
                                                 </td>
                                                 <td class="action" data-title="Remove">

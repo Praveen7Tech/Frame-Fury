@@ -146,13 +146,21 @@
                                                             %>
                                                             <%= discount %> % Off
                                                     </span>
-                                                    <% } %>
+                                                <% } %>
                                             </div>
 
+                                            <!-- if the product have a product offer it will show otherwise show the saleprice -->
+                                             
                                             <div class="product-price">
+                                            <%if(products[i].offer > 0){%>    
+                                                <span>
+                                                    <%=Math.floor(products[i].salePrice - (products[i].salePrice * products[i].offer / 100))%>
+                                                </span>
+                                            <%}else{%>
                                                 <span>
                                                     <%=products[i].salePrice%>
                                                 </span>
+                                            <%}%>
                                                 <span class="old-price">
                                                     <%=products[i].regularPrice%>>
                                                 </span>

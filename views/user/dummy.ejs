@@ -1,208 +1,71 @@
-<%- include("../../views/partials/user/header") %>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <main class="main">
-        <div class="page-header breadcrumb-wrap">
-            <div class="container">
-                <div class="breadcrumb">
-                    <a href="/" rel="nofollow">Home</a>
-                    <span></span> Shop
-                    <span></span> Checkout
+<section class="banners mb-15">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-md-6">
+                <div class="banner-img wow fadeIn animated">
+                    <img src="assets/imgs/banner/banner-1.png" alt="">
+                    <div class="banner-text">
+                        <span>Smart Offer</span>
+                        <h4>Save 20% on <br>Woman Bag</h4>
+                        <a href="shop-grid-right.html">Shop Now <i class="fi-rs-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="banner-img wow fadeIn animated">
+                    <img src="assets/imgs/banner/banner-2.png" alt="">
+                    <div class="banner-text">
+                        <span>Sale off</span>
+                        <h4>Great Summer <br>Collection</h4>
+                        <a href="shop-grid-right.html">Shop Now <i class="fi-rs-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 d-md-none d-lg-flex">
+                <div class="banner-img wow fadeIn animated  mb-sm-0">
+                    <img src="assets/imgs/banner/banner-3.png" alt="">
+                    <div class="banner-text">
+                        <span>New Arrivals</span>
+                        <h4>Shop Today’s <br>Deals & Offers</h4>
+                        <a href="shop-grid-right.html">Shop Now <i class="fi-rs-arrow-right"></i></a>
+                    </div>
                 </div>
             </div>
         </div>
-        <section class="mt-50 mb-50">
-            <form method="POST" id="orderForm" action="/placeOrder">
-                <div class="container">
-                    <div class="row">
-                        <!-- Billing Details -->
-                        <div class="col-md-6">
-                            <h4>Billing Details</h4>
-                            <div class="form-group">
-                                <input type="text" name="fname" placeholder="First Name *" required>
-                            </div>
-                            <div class="form-group">
-                                <input type="text" name="lname" placeholder="Last Name *" required>
-                            </div>
+    </div>
+</section>
 
-                            <!-- address details -->
-                            <div class="form-group col-md-12">
-                                <a href="/addAddress?redirectTo=checkout" class="btn btn-link"
-                                    style="text-decoration: none;">
-                                    Add Address
-                                </a>
 
-                            </div>
 
-                            <% if (addresses && addresses.length> 0) { %>
-                                <h5>Select Shipping Address:</h5>
-                                <% addresses.forEach((addr, index)=> { %>
-                                    <div class="address-option">
-                                        <input type="radio" name="selectedAddress" id="address-<%= index %>"
-                                            value="<%= addr._id %>" <%=index===0 ? 'checked' : '' %>>
-                                        <label for="address-<%= index %>">
-                                            <p><strong>Address Type:</strong>
-                                                <%= addr.addressType %>
-                                            </p>
-                                            <p><strong>Name:</strong>
-                                                <%= addr.name %>
-                                            </p>
-                                            <p><strong>City:</strong>
-                                                <%= addr.city %>
-                                            </p>
-                                            <p><strong>Landmark:</strong>
-                                                <%= addr.landMark %>
-                                            </p>
-                                            <p><strong>State:</strong>
-                                                <%= addr.state %>
-                                            </p>
-                                            <p><strong>Postal Code:</strong>
-                                                <%= addr.pincode %>
-                                            </p>
-                                            <p><strong>Phone:</strong>
-                                                <%= addr.phone %>
-                                            </p>
-                                            <p><strong>Alt Phone:</strong>
-                                                <%= addr.altPhone %>
-                                            </p>
-                                        </label>
-                                        <hr>
-                                    </div>
-                                    <% }); %>
-                                        <% } else { %>
-                                            <p>No addresses found. Please update your profile with a shipping address.
-                                            </p>
-                                            <% } %>
-                        </div>
 
-                        <!-- Order Summary -->
-                        <div class="col-md-6">
-                            <h4>Your Orders</h4>
-                            <div class="table-responsive order_table">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th colspan="2">Product</th>
-                                            <th>Total</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <% if (cart.length> 0) { %>
-                                            <% cart.forEach(item=> { %>
-                                                <tr>
-                                                    <td class="image product-thumbnail">
-                                                        <img src="/uploads/re-image/<%= item.productId.productImage[0] %>"
-                                                            alt="#">
-                                                    </td>
-                                                    <td>
-                                                        <h5>
-                                                            <%= item.productId.productName %>
-                                                        </h5>
-                                                        <span class="product-qty">Qty: <%= item.quantity %></span>
-                                                    </td>
-                                                    <td>
-                                                        <%= item.totalPrice %>
-                                                    </td>
-                                                </tr>
-                                                <% }); %>
-                                                    <% } else { %>
-                                                        <tr>
-                                                            <td colspan="3">Oops... No items found in your cart!</td>
-                                                        </tr>
-                                                        <% } %>
-                                                            <tr>
-                                                                <th>Subtotal</th>
-                                                                <td colspan="2">
-                                                                   0.00
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <th>Shipping</th>
-                                                                <td colspan="2" id="shippingCharge">0.00</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <th>Discount</th>
-                                                                <td colspan="2" id="couponDiscount">0.00</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <th>Total</th>
-                                                                <td colspan="2" id="totalAmount"
-                                                                    class="font-xl text-brand fw-900">
-                                                                   0.00
-                                                                </td>
-                                                            </tr>
-                                    </tbody>
-                                </table>
-                            </div>
 
-                            <!-- coupon apply -->
-                            <div class="mb-30 mt-50">
-                                <div class="heading_s1 mb-3">
-                                    <h4>Apply Coupon</h4>
-                                </div>
-                                <div class="total-amount">
-                                    <div class="left">
-                                        <div class="coupon">
-                                            <!-- <form action="#" target="_blank"> -->
-                                            <div class="form-row row justify-content-center">
-                                                <div class="form-group col-lg-6">
-                                                    <input class="font-medium" name="couponCode" id="couponCode"
-                                                        placeholder="Enter Your Coupon Code Here..">
-                                                </div>
-                                                <div class="form-group col-lg-6">
-                                                    <button class="btn  btn-sm" id="couponButton"><i
-                                                            class="fi-rs-label mr-10"></i>Apply</button>
-                                                </div>
-                                            </div>
-                                            <!-- </form> -->
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <!-- Payment Methods -->
-                            <h5>Payment</h5>
-                            <div class="payment_option">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="paymentMethod" id="online"
-                                        value="bankTransfer">
-                                    <label class="form-check-label" for="online">Direct Bank Transfer</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="paymentMethod" id="cod"
-                                        value="COD" checked>
-                                    <label class="form-check-label" for="cod">Cash on Delivery</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="paymentMethod" id="paypal"
-                                        value="Online">
-                                    <label class="form-check-label" for="paypal">PayPal</label>
-                                </div>
-                            </div>
-                            <br>
 
-                            <!-- Delivery Options -->
-                            <h5>Delivery Options</h5>
-                            <div class="delivery_option">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="deliveryMethod"
-                                        id="regularDelivery" value="regular" checked>
-                                    <label class="form-check-label" for="regularDelivery">Regular Delivery (Free
-                                        Shipping)</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="deliveryMethod" id="fastDelivery"
-                                        value="fast">
-                                    <label class="form-check-label" for="fastDelivery">Fast Delivery (+80.00)</label>
-                                </div>
-                            </div>
 
-                            <button type="submit" id="placeOrderButton" class="btn btn-fill-out btn-block mt-30">Place
-                                Order</button>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </section>
-    </main>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-    <%- include("../../views/partials/user/footer") %>
+
+
+
+
+onst order = await Order.find();
+            //console.log("orders:",order)
+            const overallSale = order.aggregate([{
+                $group:{_id:null,
+                    totalSale:{$sum:"$total"}
+                }
+            }])
+            console.log("sale:",overallSale);
+
+
+
+
+
+
+            const loadDashboard = async(req,res)=>{
+                if(req.session.admin){
+                    try {
+                        res.render("dashboard")
+                    } catch (error) {
+                       res.redirect("/pageerror") 
+                    }
+                }
+            }

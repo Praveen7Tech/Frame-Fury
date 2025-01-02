@@ -1,5 +1,6 @@
 const User = require("../../models/userSchema");
 const mongoose =require("mongoose");
+const Order = require("../../models/orderSchema")
 const bcrypt = require("bcrypt");
 
 
@@ -17,14 +18,12 @@ const loadLogin = async(req,res)=>{
 const login = async(req,res)=>{
     try {
         const {email,password} = req.body;
-        // console.log("email-",email);
-        // console.log("pass-",password);
         
         const admin =await User.findOne({email,isAdmin:true})
-        console.log("admin-",admin)
+        //console.log("admin-",admin)
         if(admin){
-             const passwordMatch =await bcrypt.compare(password, admin.password);
-            //   console.log("pass match-",passwordMatch);
+             const passwordMatch = await bcrypt.compare(password, admin.password);
+            // console.log("pass match-",passwordMatch);
              
              if(passwordMatch){
                 req.session.admin = true;
@@ -42,13 +41,25 @@ const login = async(req,res)=>{
 }
 
 const loadDashboard = async(req,res)=>{
-    if(req.session.admin){
-        try {
-            res.render("dashboard")
-        } catch (error) {
-           res.redirect("/pageerror") 
-        }
-    }
+   try {
+    const order = await Order.find()
+    // const order = await Order.aggregate([{
+    //     $group:{_id:null,
+    //         totalSale:{$sum:"$total"}
+    //     }
+    // }])
+
+    const totalSale = order.reduce((sum,order) =>sum + order.total,0)
+    const saleCount = await Order.countDocuments()
+    const couponDiscount = order.reduce((sum,order) => sum+ order.couponDiscount ,0)
+    
+    console.log("sale",totalSale,saleCount,couponDiscount);
+    
+    res.render("dashboard",{totalSale,saleCount,couponDiscount})
+   } catch (error) {
+    console.error("Error in loading dashboard",error);
+    
+   }
 }
 
 const logout = async(req,res)=>{

@@ -67,6 +67,8 @@
                         </div>
                         <div class="row product-grid-3">
 
+                            <!-- product section -->
+
                             <%for(let i=0;i<products.length;i++){%>
 
                                 <div class="col-lg-4 col-md-4 col-12 col-sm-6">
@@ -112,10 +114,19 @@
                                                     </span>
                                                     <% } %>
                                             </div>
+                                            
+                                            <!-- if product offer show otherwise show the sale price -->
+
                                             <div class="product-price">
+                                            <%if(products[i].offer){%>    
+                                                <span>
+                                                    <%=Math.floor(products[i].salePrice - (products[i].salePrice * products[i].offer / 100))%>
+                                                </span>
+                                            <%}else{%>
                                                 <span>
                                                     <%=products[i].salePrice%>
                                                 </span>
+                                            <%}%>    
                                                 <span class="old-price">
                                                     <%=products[i].regularPrice%>
                                                 </span>

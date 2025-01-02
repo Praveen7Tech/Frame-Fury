@@ -14,7 +14,6 @@ const cartPage = async (req, res) => {
         
         
         const listedCategory = categories.map(category => category._id.toString());
-        console.log("Listed Categories:", listedCategory);
 
         const findProduct = cart.items.filter(item => {
             const product = item.productId;
@@ -24,7 +23,7 @@ const cartPage = async (req, res) => {
             );
         });
 
-        //console.log("Valid Items in Cart:", findProduct);
+        console.log("Valid Items in Cart:", findProduct);
         res.render("cart", {
             user,
             cart: findProduct, 
@@ -60,6 +59,9 @@ const addToCart = async (req, res) => {
             return res.status(400).json({status:false, message:"Product is out of stock..!"})
         }
 
+        const updatedPrice = product.salePrice - (product.salePrice * product.offer / 100)
+        console.log("updated price-",updatedPrice)
+
         if (productInCart) {
            if(productInCart.quantity >= cartLimit){
             return res.status(200).json({status:false, message:"Maximum quantity add this product to cart is reached...!"})
@@ -73,7 +75,7 @@ const addToCart = async (req, res) => {
             cart.items.push({
                 productId,
                 price:product.salePrice,
-                totalPrice:product.salePrice,
+                totalPrice:updatedPrice,
                 quantity:1
             })
 
@@ -141,10 +143,15 @@ const updateCartQuantity = async(req,res)=>{
             return res.status(404).json({ status: false, message: "Product not found!" });
         }
 
+        console.log("product--",product)
+
         const findProduct = cart.items.find((item)=> item.productId.toString() === productId);
         if(!findProduct){
             return res.status(404).json({status:false, message:"Product not found in the cart..!"})
         }
+
+
+        console.log("find item:",findProduct)
 
         if(quantity > limit){
             return res.status(400).json({status:false, message:"Quantity not exceed 5."})
@@ -162,7 +169,7 @@ const updateCartQuantity = async(req,res)=>{
         }
        
         findProduct.quantity = quantity;
-        findProduct.totalPrice = findProduct.price * findProduct.quantity;
+        findProduct.totalPrice = (findProduct.price - (findProduct.price * product.offer / 100)) * findProduct.quantity;
 
         await product.save();
         await cart.save();

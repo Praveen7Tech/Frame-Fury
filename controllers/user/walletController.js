@@ -6,20 +6,16 @@ const walletPage = async(req,res)=>{
     try {
         const user = req.session.user;
         const userId = req.session.user._id;
-        const refundOrder = await Order.find({userId,orderStatus:"Cancelled"}).sort({createdAt:-1}).lean()
-
-        // console.log("userid",order);
-        // console.log("refund",refundOrder);
         
         const wallet = await Wallet.findOne({userId}).lean()
 
-        if(wallet && wallet.transactions){
+        if(wallet ){
             wallet.transactions.sort((a,b) =>new Date(b.date) - new Date(a.date))
+            wallet.onlinePurchase.sort((a,b) => new Date(b.date) -new Date(a.date))
+            wallet.refundHistory.sort((a,b) => new Date(b.date) - new Date(a.date))
         }
 
-        //console.log("wallet ",wallet)
-
-        res.render("wallet",{user,refundOrder,wallet})
+        res.render("wallet",{user,wallet})
     } catch (error) {
         console.error("Error in loading wallet",error);
         res.redirect("/pageNotFound")

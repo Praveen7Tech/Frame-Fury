@@ -5,7 +5,7 @@ const Order = require("../../models/orderSchema")
 const Address = require("../../models/addressSchema");
 const Category = require("../../models/categorySchema");
 const Coupon = require("../../models/coupenSchema");
-const Wallet = require("../../models/walletSchema")
+const Wallet = require("../../models/walletSchema");
 
 const {v4: uuidv4} = require("uuid")
 
@@ -23,6 +23,8 @@ const checkOutPage = async(req,res)=>{
         const cart = await Cart.findOne({userId}).populate("items.productId")
         const userAddress = await Address.findOne({userId});
         const categories = await Category.find({isListed:true})
+        const coupon = await Coupon.find({isList:true})
+
         const listedCategory = categories.map(category=> category._id.toString())
 
         const findProduct = cart.items.filter(item=>{
@@ -40,7 +42,8 @@ const checkOutPage = async(req,res)=>{
             cart:findProduct ? findProduct:[],
             addresses: userAddress ? userAddress.address:[],
             subTotal,
-            total
+            total,
+            coupon
         })
     } catch (error) {
         console.error("Error in showing checkout page",error);
@@ -78,18 +81,22 @@ const placeOrder = async (req, res) => {
             return product.isBlocked === false && listedCategory.includes(product.category.toString());
         });
 
+        console.log("find product :",findProduct)
+
         if (!findProduct || findProduct.length === 0) {
             return res.status(400).json({ success: false, message: "Cart is empty" });
         }
 
         const subTotal = findProduct.reduce((sum, item) => sum + item.totalPrice, 0);
 
-        let discount =0
+       let discount =0
        if(couponCode){
         const coupon = await Coupon.findOne({name:couponCode, isList:true});
         if(coupon){
             discount = coupon.offerPrice
         }
+        coupon.UsageLimit -= 1;
+        await coupon.save()
        }
         
        const deliveryCharge = deliveryMethod === "fast" ? 80 : 0;
@@ -101,8 +108,8 @@ const placeOrder = async (req, res) => {
             address: addressDetails, 
             deliveryCharge,
             deliveryMethod,
-            subTotal,
-            total,
+            subTotal:Math.floor(subTotal),
+            total:Math.floor(total),
             couponDiscount:discount,
             paymentMethod,
             couponCode,
@@ -203,6 +210,8 @@ const verifyRazorPayOrder = async(req,res)=>{
         if(coupon){
             discount = coupon.offerPrice
         }
+        coupon.UsageLimit -= 1;
+        await coupon.save()
        }
         
        const deliveryCharge = deliveryMethod === "fast" ? 80 : 0;
@@ -225,8 +234,8 @@ const verifyRazorPayOrder = async(req,res)=>{
                 address: addressDetails, 
                 deliveryCharge,
                 deliveryMethod,
-                subTotal,
-                total,
+                subTotal:Math.floor(subTotal),
+                total:Math.floor(total),
                 couponDiscount:discount,
                 paymentMethod,
                 couponCode,
@@ -305,6 +314,9 @@ const placeOrderWallet = async (req, res) => {
             if (coupon) {
                 discount = coupon.offerPrice;
             }
+
+            coupon.UsageLimit -= 1;
+            await coupon.save()
         }
 
         const deliveryCharge = deliveryMethod === "fast" ? 80 : 0;
@@ -316,8 +328,8 @@ const placeOrderWallet = async (req, res) => {
             address: addressDetails,
             deliveryCharge,
             deliveryMethod,
-            subTotal,
-            total,
+            subTotal:Math.floor(subTotal),
+            total:Math.floor(total),
             couponDiscount: discount,
             paymentMethod,
             couponCode,
@@ -329,10 +341,10 @@ const placeOrderWallet = async (req, res) => {
 
         // Update wallet
         const transactionId = uuidv4();
-        wallet.balance -= total;
+        wallet.balance -= Math.floor(total);
         wallet.onlinePurchase.push({
             paymentId: transactionId,
-            amount: total,
+            amount: Math.floor(total),
             date: new Date()
         });
         await wallet.save();

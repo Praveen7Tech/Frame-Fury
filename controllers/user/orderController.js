@@ -23,7 +23,9 @@ const orderDetails = async(req,res)=>{
 const orderCancel = async(req,res)=>{
     try {
         const orderId = req.params.orderId;
+        const userId = req.session.user;
         const order = await Order.findById(orderId);
+        const wallet = await Wallet.findOne({userId})
         //console.log("order : ",order);
         
 
@@ -45,6 +47,20 @@ const orderCancel = async(req,res)=>{
             console.log("order cancelled succussfully...");
             
             res.status(200).json({success:true,message:"Order Cancelled successfully"})
+
+            const transactionId = uuidv4();
+
+            if(order.paymentMethod ==="wallet"){
+                wallet.balance +=order.total
+                wallet.refundHistory.push({
+                    refundId:transactionId,
+                    orderId:order._id,
+                    amount:order.total,
+                    date:new Date()
+                })
+                await wallet.save()
+                console.log("wallet updated successfully")
+            }
         }else if(order.orderStatus === "Shipped"){
             res.status(400).json({success:false,message:"Order Can't Cancel, Shipping started.."})
         }
@@ -69,9 +85,9 @@ const ReturnOrder = async(req,res)=>{
         const expectedDate = new Date(deliverDate);
         expectedDate.setDate(expectedDate.getDate()+10)
 
-        console.log("deliver date ",deliverDate );
-        console.log("current date ",currentDate );
-        console.log("expectedDat ",expectedDate );
+        // console.log("deliver date ",deliverDate );
+        // console.log("current date ",currentDate );
+        // console.log("expectedDat ",expectedDate );
 
         const transactionId = uuidv4();
         

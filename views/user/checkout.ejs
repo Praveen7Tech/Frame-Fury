@@ -1,5 +1,24 @@
 <%- include("../../views/partials/user/header") %>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        .copy-btn {
+    background-color:transparent; /* Green */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.copy-btn:hover {
+    background-color: #45a049; /* Darker green */
+}
+
+    </style>
+
     <main class="main">
         <div class="page-header breadcrumb-wrap">
             <div class="container">
@@ -10,6 +29,8 @@
                 </div>
             </div>
         </div>
+        <br>
+
         <section class="mt-50 mb-50">
             <form method="POST" id="orderForm" action="/placeOrder" onsubmit="return placeOrder(event)">
                 <div class="container">
@@ -100,7 +121,7 @@
                                                         <span class="product-qty">Qty: <%= item.quantity %></span>
                                                     </td>
                                                     <td>
-                                                        <%= item.totalPrice %>
+                                                        <%= Math.floor(item.totalPrice) %>
                                                     </td>
                                                 </tr>
                                                 <% }); %>
@@ -112,7 +133,7 @@
                                                             <tr>
                                                                 <th>Subtotal</th>
                                                                 <td colspan="2">
-                                                                    <%= subTotal.toFixed(2) %>
+                                                                    <%= Math.floor(subTotal.toFixed(2)) %>
                                                                 </td>
                                                             </tr>
                                                             <tr>
@@ -127,7 +148,7 @@
                                                                 <th>Total</th>
                                                                 <td colspan="2" id="totalAmount"
                                                                     class="font-xl text-brand fw-900">
-                                                                    <%= total.toFixed(2) %>
+                                                                    <%= Math.floor(total.toFixed(2)) %>
                                                                 </td>
                                                             </tr>
                                     </tbody>
@@ -209,6 +230,42 @@
                 </div>
             </form>
         </section>
+
+            <!-- coupon section -->
+            <section class="banners mb-15">
+                <div class="container">
+                    <div class="row">
+                        <%for(let i=0;i<coupon.length;i++){%>
+                        <div class="col-lg-4 col-md-6">
+                          
+                            <div class="banner-img wow fadeIn animated">
+                                <img src="assets/imgs/banner/frame-3.png" alt="">
+                                <div class="banner-text">
+                                    <span>Exclusive Coupon</span>
+                                    <h4>
+                                        Save <span style="color: rgb(70, 213, 14);"><%= coupon[i].offerPrice %></span> 
+                                        on every minimum Purchase at 
+                                        <span style="color: rgb(218, 110, 90);"><%= coupon[i].minimumPrice %></span>
+                                    </h4>
+                                    <span>COUPON CODE:</span>
+                                    <strong style="color: white;" id="couponCode-<%= i %>"><%= coupon[i].name %></strong>
+                                    <button 
+                                        class="copy-btn" 
+                                        onclick="copyCouponCode('<%= coupon[i].name %>')">
+                                        Copy
+                                    </button>
+                                    <br>
+                                    <span>Expires On:</span>
+                                    <strong style="color: white;"><%= new Date(coupon[i].expireOn).toLocaleDateString() %></strong>
+                                </div>
+                            </div>
+                            
+                           
+                        </div>
+                        <%}%> 
+                    </div>
+                </div>
+            </section>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -488,7 +545,7 @@
                     }
     
                     shippingChargeElement.textContent = deliveryCharge.toFixed(2);
-                    currentTotal = subTotal - discount + deliveryCharge; // Recalculate total
+                    currentTotal = Math.floor(subTotal - discount + deliveryCharge); // Recalculate total
                     updateTotalDisplay();
                 });
             });
@@ -501,5 +558,29 @@
             console.log("Updated Total:", currentTotal);
         }
     </script>
+
+
+ <!-- coupon code copy function -->
+<script>
+    function copyCouponCode(code) {
+        // Create a temporary input element to copy text
+        const tempInput = document.createElement('input');
+        tempInput.value = code;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        tempInput.setSelectionRange(0, 99999); // For mobile devices
+        document.execCommand('copy');
+        document.body.removeChild(tempInput);
+        
+        Swal.fire({
+            title:"Coupon code copied",
+            text:"Code : "+code,
+            icon:"success",
+            showConfirmButton:false,
+            timer:1000
+        })
+    }
+</script>
+
     
 
