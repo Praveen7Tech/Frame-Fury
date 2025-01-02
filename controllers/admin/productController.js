@@ -236,6 +236,7 @@ try {
     console.log("product - ",product);
 
     product.offer = amount;
+    product.offerAmount = Math.floor(product.salePrice * amount / 100)
     product.save();
 
     res.status(200).send("Offer added successfully")
@@ -253,6 +254,7 @@ const editOffer = async(req,res)=>{
         const product = await Product.findById(productId)
 
         product.offer = amount;
+        product.offerAmount = Math.ceil(product.salePrice * amount / 100)
         product.save();
 
         res.status(200).send("Poduct offer updated succesfully.")
@@ -272,7 +274,8 @@ const removeOffer = async(req,res)=>{
         const product = await Product.findById(productId)
         console.log("pro-",product)
 
-        product.offer = null;
+        product.offer = 0;
+        product.offerAmount = 0;
         product.save();
 
         res.status(200).json({success:true,message:"Product offer removed successfull.."})

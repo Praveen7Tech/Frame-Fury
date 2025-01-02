@@ -21,18 +21,20 @@ const userAuth = (req,res,next)=>{
 }
 
 const adminAuth = (req,res,next)=>{
+   if(req.session.admin){
     User.findOne({isAdmin:true})
     .then(data=>{
         if(data){
-            next();
+            next()
         }else{
-            res.redirect("/admin/login")
+            return resredirect("/admin/login")
         }
     })
     .catch(error=>{
-        console.log("Error in admin Auth middleware",error);
-        res.status(500).send("Internal server error")
+        console.error("Error in Login Admin panel",error)
+        res.status(500).send("Internal Server Error..")
     })
+   }
 }
 
 

@@ -29,10 +29,10 @@ const login = async(req,res)=>{
                 req.session.admin = true;
                 return res.redirect("/admin")
              }else{
-                return res.redirect("/login")
+                return res.redirect("/admin/login")
              }        
         }else{
-            return res.redirect("/login")
+            return res.redirect("/admin/login")
         }
     } catch (error) {
         console.log("Login error");
@@ -43,19 +43,16 @@ const login = async(req,res)=>{
 const loadDashboard = async(req,res)=>{
    try {
     const order = await Order.find()
-    // const order = await Order.aggregate([{
-    //     $group:{_id:null,
-    //         totalSale:{$sum:"$total"}
-    //     }
-    // }])
 
     const totalSale = order.reduce((sum,order) =>sum + order.total,0)
     const saleCount = await Order.countDocuments()
     const couponDiscount = order.reduce((sum,order) => sum+ order.couponDiscount ,0)
+    const overallDiscount = order.reduce((sum,order) => sum + order.productOfferTotal,0)
     
-    console.log("sale",totalSale,saleCount,couponDiscount);
-    
-    res.render("dashboard",{totalSale,saleCount,couponDiscount})
+    console.log("sale",totalSale,saleCount,couponDiscount,overallDiscount);
+    // console.log("order",order)
+   
+    res.render("dashboard",{totalSale,saleCount,couponDiscount,overallDiscount})
    } catch (error) {
     console.error("Error in loading dashboard",error);
     

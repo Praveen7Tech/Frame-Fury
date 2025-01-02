@@ -80,8 +80,7 @@ const placeOrder = async (req, res) => {
             const product = item.productId;
             return product.isBlocked === false && listedCategory.includes(product.category.toString());
         });
-
-        console.log("find product :",findProduct)
+    
 
         if (!findProduct || findProduct.length === 0) {
             return res.status(400).json({ success: false, message: "Cart is empty" });
@@ -98,6 +97,12 @@ const placeOrder = async (req, res) => {
         coupon.UsageLimit -= 1;
         await coupon.save()
        }
+
+       //Total product Offer
+       const value = findProduct.map(item => item.productId.offerAmount * item.quantity);
+       const productOfferTotal = value.reduce((sum, value) => sum + value ,0)
+
+       console.log("off amt",value, "qq",productOfferTotal)
         
        const deliveryCharge = deliveryMethod === "fast" ? 80 : 0;
         
@@ -113,7 +118,8 @@ const placeOrder = async (req, res) => {
             couponDiscount:discount,
             paymentMethod,
             couponCode,
-            items: findProduct
+            items: findProduct,
+            productOfferTotal
         });
 
         await order.save();
@@ -131,7 +137,7 @@ const placeOrder = async (req, res) => {
     }
 };
 
-// craetting a razorpay instance
+// creating a razorpay instance
 const razorpayInstance = new Razorpay({
     key_id: process.env.RAZORPAY_ID_KEY, 
     key_secret: process.env.RAZORPAY_SECRET_KEY, 
@@ -218,6 +224,12 @@ const verifyRazorPayOrder = async(req,res)=>{
         
        const total = subTotal - discount + deliveryCharge
 
+       // calculating total Product offer
+       const value = findProduct.map(item => item.productId.offerAmount * item.quantity);
+       const productOfferTotal = value.reduce((sum, value) => sum + value ,0)
+
+      // console.log("off amt",value, "qq",productOfferTotal)
+
 
        // check the signature is valid, means payment is authentic
         const generatedSignature = crypto
@@ -225,7 +237,7 @@ const verifyRazorPayOrder = async(req,res)=>{
         .update(`${orderId}|${paymentId}`)
         .digest("hex")
 
-        console.log("compare ",generatedSignature , razorpaySignature)
+        //console.log("compare ",generatedSignature , razorpaySignature)
 
         if(generatedSignature === razorpaySignature){
 
@@ -240,6 +252,7 @@ const verifyRazorPayOrder = async(req,res)=>{
                 paymentMethod,
                 couponCode,
                 items: findProduct,
+                productOfferTotal,
                 
                 orderId,                       //razorpay implimentation
                 paymentId,
@@ -319,6 +332,12 @@ const placeOrderWallet = async (req, res) => {
             await coupon.save()
         }
 
+        //Total product offer
+       const value = findProduct.map(item => item.productId.offerAmount * item.quantity);
+       const productOfferTotal = value.reduce((sum, value) => sum + value ,0)
+
+       console.log("off amt",value, "qq",productOfferTotal)
+
         const deliveryCharge = deliveryMethod === "fast" ? 80 : 0;
         const total = subTotal - discount + deliveryCharge;
 
@@ -333,7 +352,8 @@ const placeOrderWallet = async (req, res) => {
             couponDiscount: discount,
             paymentMethod,
             couponCode,
-            items: findProduct
+            items: findProduct,
+            productOfferTotal
         });
 
         await order.save();

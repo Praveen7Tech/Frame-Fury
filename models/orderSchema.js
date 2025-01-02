@@ -41,9 +41,12 @@ const orderSchema = new Schema({
         price:{
             type:Number,
             required:true
-        },
-
+        }
     }],
+    productOfferTotal:{
+        type:Number,
+        default:0
+    },
     categoryId:{
         type:Schema.Types.ObjectId,
         ref:"Category"

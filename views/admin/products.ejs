@@ -194,7 +194,7 @@
             <%}else{%>
                 <td>No offer..</td>
             <%}%>    
-                <td><%= Math.ceil(data[i].salePrice-(data[i].salePrice*data[i].offer / 100))%></td>
+                <td><%= Math.floor(data[i].salePrice-(data[i].salePrice*data[i].offer / 100))%></td>
 
                 <td class="action-btns">
                 <%if(data[i].offer===null){%>

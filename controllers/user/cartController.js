@@ -23,7 +23,6 @@ const cartPage = async (req, res) => {
             );
         });
 
-        console.log("Valid Items in Cart:", findProduct);
         res.render("cart", {
             user,
             cart: findProduct, 
@@ -33,8 +32,6 @@ const cartPage = async (req, res) => {
         res.redirect("/pageNotFound");
     }
 };
-
-
 
 
 const addToCart = async (req, res) => {
@@ -60,7 +57,7 @@ const addToCart = async (req, res) => {
         }
 
         const updatedPrice = product.salePrice - (product.salePrice * product.offer / 100)
-        console.log("updated price-",updatedPrice)
+        //console.log("updated price-",updatedPrice)
 
         if (productInCart) {
            if(productInCart.quantity >= cartLimit){

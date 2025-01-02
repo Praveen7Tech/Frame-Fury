@@ -36,7 +36,11 @@ const productSchema = new Schema({
     },
     offer:{
         type:Number,
-        default:null
+        default:0
+    },
+    offerAmount:{
+        type:Number,
+        default:0
     },
     isBlocked :{
         type : Boolean,
