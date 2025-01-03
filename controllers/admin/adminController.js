@@ -42,7 +42,7 @@ const login = async(req,res)=>{
 
 const loadDashboard = async(req,res)=>{
    try {
-    const order = await Order.find()
+    const order = await Order.find().sort({createdAt:-1})
 
     const totalSale = order.reduce((sum,order) =>sum + order.total,0)
     const saleCount = await Order.countDocuments()
@@ -50,9 +50,8 @@ const loadDashboard = async(req,res)=>{
     const overallDiscount = order.reduce((sum,order) => sum + order.productOfferTotal,0)
     
     console.log("sale",totalSale,saleCount,couponDiscount,overallDiscount);
-    // console.log("order",order)
    
-    res.render("dashboard",{totalSale,saleCount,couponDiscount,overallDiscount})
+    res.render("dashboard",{order,totalSale,saleCount,couponDiscount,overallDiscount})
    } catch (error) {
     console.error("Error in loading dashboard",error);
     

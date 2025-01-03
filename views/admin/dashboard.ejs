@@ -17,11 +17,12 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <label for="report-type" class="form-label">Report Type</label>
-                                <select id="report-type" class="form-select">
+                                <select id="filter-order" class="form-select" onchange="filterOrder()">
+                                    <option value="custom">Default</option>
                                     <option value="daily">Daily</option>
                                     <option value="weekly">Weekly</option>
+                                    <option value="monthly">Monthly</option>
                                     <option value="yearly">Yearly</option>
-                                    <option value="custom">Custom Date</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
@@ -71,7 +72,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Coupons Deduction</h5>
-                        <h3 class="text-danger"><%=couponDiscount%></h3>
+                        <h3 class="text-danger">₹ <%=couponDiscount%></h3>
                     </div>
                 </div>
             </div>
@@ -93,30 +94,26 @@
                             <thead>
                                 <tr>
                                     <th>Date</th>
-                                    <th>Total Sales</th>
-                                    <th>Orders</th>
-                                    <th>Discounts</th>
-                                    <th>Coupons</th>
-                                    <th>Net Sales</th>
+                                    <th>Sub Total</th>
+                                    <th>Payment Method</th>
+                                    <th>Coupon Discount</th>
+                                    <th>Product Discount</th>
+                                    <th>Net Total</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Dec 15, 2024</td>
-                                    <td>$1,500</td>
-                                    <td>15</td>
-                                    <td>$100</td>
-                                    <td>$50</td>
-                                    <td>$1,350</td>
-                                </tr>
-                                <tr>
-                                    <td>Dec 14, 2024</td>
-                                    <td>$2,000</td>
-                                    <td>20</td>
-                                    <td>$150</td>
-                                    <td>$75</td>
-                                    <td>$1,775</td>
-                                </tr>
+                            <%if(order.length >0){%>
+                                 <% order.forEach(order=>{%> 
+                                <tr>                              
+                                    <td><%=new Date(order.createdAt).toLocaleString()%></td>
+                                    <td>₹ <%= order.subTotal%></td>
+                                    <td><%= order.paymentMethod%></td>
+                                    <td>₹ <%= order.couponDiscount%></td>
+                                    <td>₹ <%= order.productOfferTotal%></td>
+                                    <td>₹ <%= order.total%></td>
+                               </tr>
+                                <%})%>
+                             <%}%>   
                                 <!-- Add more rows dynamically -->
                             </tbody>
                         </table>
@@ -128,3 +125,47 @@
 </section>
 
 <%- include("../../views/partials/admin/footer") %>
+
+  <script>
+
+      async function filterOrder(){
+        const filterType = document.getElementById("filter-order").value;
+        console.log("filter type :",filterType);
+        
+        try {
+            const response = await fetch(`/admin/filterOrder?filterType=${filterType}`)
+
+            const data = await response.json()
+
+            if(data.orders){
+                console.log("data :",data)
+                console.log("data :",data.couponDiscountTotal)
+                const filterTable = document.querySelector("table tbody")
+                filterTable.textContent = ""
+
+                data.orders.forEach(order=>{
+                    const row =`
+                    <tr>
+                        <td>${new Date(order.createdAt).toLocaleString()}</td>
+                        <td>${order.subTotal}</td>
+                        <td>${order.paymentMethod}</td>
+                        <td>${order.couponDiscount}</td>
+                        <td>${order.productOfferTotal}</td>
+                        <td>${order.total}</td>
+                    </tr>    
+                    `;
+                    filterTable.insertAdjacentHTML("beforeend",row)
+                })
+
+                document.querySelector(".text-primary").innerHTML= data.orderCount;
+                document.querySelector(".text-success").innerHTML=data.orderTotal;
+                document.querySelector(".text-warning").innerHTML=data.overalDiscount;
+                document.querySelector(".text-danger").innerHTML=data.couponDiscountTotal;
+            }
+        } catch (error) {
+            console.error("Error in Filtering Orders",error);
+            
+        }
+      }
+
+  </script>

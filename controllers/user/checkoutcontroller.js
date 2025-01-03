@@ -228,8 +228,6 @@ const verifyRazorPayOrder = async(req,res)=>{
        const value = findProduct.map(item => item.productId.offerAmount * item.quantity);
        const productOfferTotal = value.reduce((sum, value) => sum + value ,0)
 
-      // console.log("off amt",value, "qq",productOfferTotal)
-
 
        // check the signature is valid, means payment is authentic
         const generatedSignature = crypto
