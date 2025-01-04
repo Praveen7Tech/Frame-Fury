@@ -4,6 +4,10 @@
         <div>
             <h2 class="content-title card-title">Dashboard</h2>
         </div>
+        <div class="col-md-3 d-flex align-items-end">
+            <button
+            id="downloadReport" class="btn btn-primary w-100" onclick="downloadReport()">Download Sale Report</button>
+        </div>
     </div>
 
     <!-- Main Dashboard Content -->
@@ -34,7 +38,7 @@
                                 <input type="date" id="end-date" class="form-control">
                             </div>
                             <div class="col-md-3 d-flex align-items-end">
-                                <button class="btn btn-primary w-100">Generate Report</button>
+                                <button class="btn btn-primary w-100" onclick="filterByDate()">Filter</button>
                             </div>
                         </div>
                     </div>
@@ -63,7 +67,7 @@
             <div class="col-md-3">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Overall Discount</h5>
+                        <h5 class="card-title">Product Discount</h5>
                         <h3 class="text-warning">₹ <%=overallDiscount%></h3>
                     </div>
                 </div>
@@ -72,7 +76,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Coupons Deduction</h5>
-                        <h3 class="text-danger">₹ <%=couponDiscount%></h3>
+                        <h3 class="text-danger coupon1">₹ <%=couponDiscount%></h3>
                     </div>
                 </div>
             </div>
@@ -111,9 +115,9 @@
                                     <td>₹ <%= order.couponDiscount%></td>
                                     <td>₹ <%= order.productOfferTotal%></td>
                                     <td>₹ <%= order.total%></td>
-                               </tr>
+                                </tr>
                                 <%})%>
-                             <%}%>   
+                            <%}%>   
                                 <!-- Add more rows dynamically -->
                             </tbody>
                         </table>
@@ -128,6 +132,7 @@
 
   <script>
 
+     // filter orders
       async function filterOrder(){
         const filterType = document.getElementById("filter-order").value;
         console.log("filter type :",filterType);
@@ -160,12 +165,105 @@
                 document.querySelector(".text-primary").innerHTML= data.orderCount;
                 document.querySelector(".text-success").innerHTML=data.orderTotal;
                 document.querySelector(".text-warning").innerHTML=data.overalDiscount;
-                document.querySelector(".text-danger").innerHTML=data.couponDiscountTotal;
+                document.querySelector(".coupon1").innerHTML=data.couponDiscountTotal;
             }
         } catch (error) {
-            console.error("Error in Filtering Orders",error);
-            
+            console.error("Error in Filtering Orders",error);           
         }
       }
 
+
+      // filter based on custon date
+
+      async function filterByDate(){
+        const startDate = document.getElementById("start-date").value;
+        const endDate = document.getElementById("end-date").value;
+
+        console.log("S T :",startDate,endDate)
+
+        try {
+            const response = await fetch(`/admin/filterbyDate?startDate=${startDate}&endDate=${endDate}`);
+
+            const data = await response.json()
+            console.log(data)
+            if(data.orders){
+                const filterTable = document.querySelector("table tbody");
+                filterTable.textContent=""
+
+                data.orders.forEach(order=>{
+                    const row =`
+                    <tr>
+                        <td>${new Date(order.createdAt).toLocaleString()}</td>
+                        <td>${order.subTotal}</td>
+                        <td>${order.paymentMethod}</td>
+                        <td>${order.couponDiscount}</td>
+                        <td>${order.productOfferTotal}</td>
+                        <td>${order.total}</td>
+                    </tr>    
+                    `;
+                    filterTable.insertAdjacentHTML("beforeend",row)
+                })
+
+                document.querySelector(".text-primary").innerHTML= data.saleCount;
+                document.querySelector(".text-success").innerHTML=data.productDiscount;
+                document.querySelector(".text-warning").innerHTML=data.saleTotal;
+                document.querySelector(".coupon1").innerHTML=data.couponDiscount;
+            }
+        } catch (error) {
+            console.error("Error in filtering orders by date..",error)
+        }
+      }
+
+
+      // download sale report
+
+      async function downloadReport(){
+        const saleCount = document.querySelector(".text-primary").innerText;
+        const totalSale = document.querySelector(".text-success").innerText;
+        const overallDiscount = document.querySelector(".text-warning").innerText;
+        const couponDiscount = document.querySelector(".coupon1").innerText;
+
+        // collect all table data 
+        const rows =Array.from(document.querySelectorAll("table tbody tr"));
+        const orders =rows.map((row)=>{
+            const cells =row.querySelectorAll("td")
+            return{
+                date:cells[0].innerText,
+                subTotal:cells[1].innerText,
+                paymentMethod:cells[2].innerText,
+                couponDiscount:cells[3].innerHTML,
+                productDiscount:cells[4].innerText,
+                netTotal:cells[5].innerText
+            }
+        })
+
+        try {
+            const response = await fetch("/admin/downloadReport",{
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({
+                    saleCount,totalSale,overallDiscount,couponDiscount,orders
+                })
+            })
+
+            console.log("response:",response)
+
+            if(response.ok){
+                const blob = await response.blob()
+                const url = window.URL.createObjectURL(blob)
+                const a = document.createElement("a")
+                a.href = url
+                a.download = "Sales_Report.xlsx"
+                document.body.appendChild(a)
+                a.click()
+                a.remove()
+            }else{
+                console.error("Failed to download the Report")
+            }
+        } catch (error) {
+            console.error("Error in Downloading the Sale Report..!",error);           
+        }
+      }
   </script>

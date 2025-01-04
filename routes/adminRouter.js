@@ -70,6 +70,8 @@ router.post("/editCoupon",adminAuth,coupenController.editCoupon)
 
 // dashboard Order Filtering
 router.get("/filterOrder",adminAuth,saleReportController.saleFilter)
+router.get("/filterbyDate",adminAuth,saleReportController.saleFilterByDate)
+router.post("/downloadReport",adminAuth,saleReportController.downloadReport)
 
 
 module.exports = router
