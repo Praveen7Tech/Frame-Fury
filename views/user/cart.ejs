@@ -179,7 +179,8 @@
                             title: "Error",
                             text: data.message,
                             confirmButtonText: "OK",
-                        });
+                        })
+                        .then(()=>location.reload())
                     }
                 } catch (error) {
                     console.error("Error in updating cart quantity", error);

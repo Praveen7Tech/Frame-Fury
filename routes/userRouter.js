@@ -10,10 +10,11 @@ const orderController = require("../controllers/user/orderController")
 const whishListController = require("../controllers/user/wishListController")
 const couponController = require("../controllers/user/couponController")
 const walletController = require("../controllers/user/walletController")
+const referralController = require("../controllers/user/referralController")
 const {userAuth} = require("../middlewares/auth")
 
 router.get("/pageNotFound",userController.pageNotFound)
-// hope page
+// home page
 router.get("/",userController.loadHomepage)
 
 //shopping page
@@ -69,11 +70,6 @@ router.get("/productDetails",userAuth,productController.productDetails)
 router.get("/userProfile",userAuth,profileController.profile);
 router.post("/profileUpdate",userAuth,profileController.profileUpdate)
 
-// change email
-router.get("/changeEmail", userAuth,profileController.changeEmail)
-router.post("/changeEmail",userAuth,profileController.verifyEmail)
-router.post("/verify-email-otp",userAuth,profileController.verifyEmailOtp)
-router.post("/updateEmail",userAuth,profileController.updateEmail)
 
 // change password
 router.get("/changePassword",userAuth,profileController.changePassword)
@@ -117,6 +113,9 @@ router.post("/verifyCoupon",userAuth,couponController.verifyCoupon)
 //wallet
 router.get("/wallet",userAuth,walletController.walletPage)
 router.post("/addMoneyToWallet",userAuth,walletController.AddMoneyToWallet)
+
+// Refferal code
+router.post("/GenerateReferral",userAuth,referralController.GenerateReferral)
 
 
 

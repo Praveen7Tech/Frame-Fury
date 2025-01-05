@@ -35,6 +35,10 @@ const userSchema = new Schema({
         type : Boolean,
         default : false
     },
+    referralCode:{
+        type:String,
+        default:null
+    },
     cart:[{
         type:Schema.Types.ObjectId,
         ref:"Cart"
@@ -54,16 +58,6 @@ const userSchema = new Schema({
         type: Date,
         default : Date.now
     },
-    refferalCode:{
-        type : String
-    },
-    redeemed:{
-        type : Boolean 
-    },
-    redeemedUsers:[{
-        type : Schema.Types.ObjectId,
-        ref : "User"
-    }],
     searchHistory:[{
         category : {
         type : Schema.Types.ObjectId,

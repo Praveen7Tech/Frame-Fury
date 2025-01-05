@@ -47,6 +47,6 @@ app.use("/admin",adminRouter)
 
 PORT = process.env.PORT
 app.listen(PORT,()=>{
-    console.log(`server running http://localhost:${PORT}`);
+    console.log(`User : http://localhost:${PORT}`);
     console.log(`admin : http://localhost:${PORT}/admin/login`)
 })

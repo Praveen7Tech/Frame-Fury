@@ -23,7 +23,6 @@ const loadHomepage = async (req, res) => {
     let productData = await Product.find({
       isBlocked: false,
       category: { $in: categories.map(category => category._id) },
-      quantity: { $gt: 0 },
     }).populate("category", "name").sort({createdOn:-1})
 
    
@@ -240,7 +239,7 @@ const shoppingPage = async(req,res)=>{
         const limit =12;
         const skip = (page-1)*limit;
         const products = await Product.find(
-            {isBlocked:false,category:{$in:categoryId},quantity:{$gt:0}}
+            {isBlocked:false,category:{$in:categoryId}}
         ).populate("category", "name").sort({createdOn:-1}).skip(skip).limit(limit);
 
         const totalProducts =await Product.countDocuments({
@@ -271,12 +270,12 @@ const filterProduct = async (req,res)=>{
     try {
         const user = req.session.user;
         const category = req.query.category;
+        console.log("cat :",category)
         // using ternary operator to filter
         const findCategory = category ? await Category.findOne({_id:category}) : null;
 
         const query ={
             isBlocked:false,
-            quantity:{$gt:0}
         }
 
         if(findCategory){
@@ -323,47 +322,131 @@ const filterProduct = async (req,res)=>{
 }
 
 
+// const filterByPrice = async (req, res) => {
+//     try {
+//         const user = req.session.user;
+//         const userData = await User.findOne({ _id: user });
+//         const categories = await Category.find({ isListed: true }).lean();
+//         const categoryListed =categories.map(category=> category._id)
+
+//         let minPrice = parseFloat(req.query.gt) || 0;
+//         let maxPrice = parseFloat(req.query.lt) || Number.MAX_SAFE_INTEGER;
+//         let sortOption = {};
+
+//         if (req.query.sort === "lowToHigh") {
+//             sortOption = { salePrice: 1 };
+//         } else if (req.query.sort === "highToLow") {
+//             sortOption = { salePrice: -1 };
+//         }
+
+//         let itemPerPage = 9;
+//         let currentPage = parseInt(req.query.page) || 1;
+
+//         let findProducts = await Product.find({
+//             salePrice: { $gt: minPrice, $lt: maxPrice },
+//             isBlocked: false,
+//             category:{$in:categoryListed}
+//         })
+//         .sort(sortOption)
+//         .skip((currentPage - 1) * itemPerPage)
+//         .limit(itemPerPage)
+//         .lean();
+
+//         // Get total products count for pagination
+//         let totalProducts = await Product.countDocuments({
+//             salePrice: { $gt: minPrice, $lt: maxPrice },
+//             isBlocked: false,
+//             category:{$in:categoryListed}
+//         });
+
+//         let totalPages = Math.ceil(totalProducts / itemPerPage);
+
+//         res.render("shopping-page", {
+//             user: userData,
+//             products: findProducts,
+//             category: categories,
+//             totalPages,
+//             currentPage
+//         });
+//     } catch (error) {
+//         console.error("Error in filterByPrice:", error);
+//         res.redirect("/pageNotFound");
+//     }
+// };
+
+
 const filterByPrice = async (req, res) => {
     try {
         const user = req.session.user;
         const userData = await User.findOne({ _id: user });
         const categories = await Category.find({ isListed: true }).lean();
-        const categoryListed =categories.map(category=> category._id)
+        const categoryListed = categories.map(category => category._id);
 
         let minPrice = parseFloat(req.query.gt) || 0;
         let maxPrice = parseFloat(req.query.lt) || Number.MAX_SAFE_INTEGER;
-        let sortOption = {};
+        let sortOrder = req.query.sort === "lowToHigh" ? 1 : -1;
 
-        if (req.query.sort === "lowToHigh") {
-            sortOption = { salePrice: 1 };
-        } else if (req.query.sort === "highToLow") {
-            sortOption = { salePrice: -1 };
-        }
-
-        let itemPerPage = 10;
+        let itemPerPage = 9;
         let currentPage = parseInt(req.query.page) || 1;
 
-        let findProducts = await Product.find({
-            salePrice: { $gt: minPrice, $lt: maxPrice },
-            isBlocked: false,
-            quantity: { $gt: 0 },
-            category:{$in:categoryListed}
-        })
-        .sort(sortOption)
-        .skip((currentPage - 1) * itemPerPage)
-        .limit(itemPerPage)
-        .lean();
+        //calculate currentPrice and sort/filter products
+        const findProducts = await Product.aggregate([
+            {
+                $match: {
+                    salePrice: { $gt: minPrice, $lt: maxPrice },
+                    isBlocked: false,
+                    category: { $in: categoryListed }
+                }
+            },
+            {
+                $addFields: {
+                    currentPrice: {
+                        $subtract: ["$salePrice", "$offerAmount"]
+                    }
+                }
+            },
+            {
+                $match: {
+                    currentPrice: { $gte: minPrice, $lte: maxPrice }
+                }
+            },
+            {
+                $sort: { currentPrice: sortOrder }
+            },
+            {
+                $skip: (currentPage - 1) * itemPerPage
+            },
+            {
+                $limit: itemPerPage
+            }
+        ]);
 
-        // Get total products count for pagination
-        let totalProducts = await Product.countDocuments({
-            salePrice: { $gt: minPrice, $lt: maxPrice },
-            isBlocked: false,
-            quantity: { $gt: 0 },
-            category:{$in:categoryListed}
-        });
+        // Count total products for pagination
+        const totalProductsCount = await Product.aggregate([
+            {
+                $match: {
+                    salePrice: { $gt: minPrice, $lt: maxPrice },
+                    isBlocked: false,
+                    category: { $in: categoryListed }
+                }
+            },
+            {
+                $addFields: {
+                    currentPrice: {
+                        $subtract: ["$salePrice", "$offerAmount"]
+                    }
+                }
+            },
+            {
+                $match: {
+                    currentPrice: { $gte: minPrice, $lte: maxPrice }
+                }
+            }
+        ]);
 
-        let totalPages = Math.ceil(totalProducts / itemPerPage);
+        let totalPages = Math.ceil(totalProductsCount.length / itemPerPage);
 
+        
         res.render("shopping-page", {
             user: userData,
             products: findProducts,
@@ -378,6 +461,7 @@ const filterByPrice = async (req, res) => {
 };
 
 
+
 const SearchProducts = async(req,res)=>{
     try {
         const user = req.session.user;
@@ -387,10 +471,11 @@ const SearchProducts = async(req,res)=>{
         
 
         const categories = await Category.find({isListed:true});
-        console.log("categories-",categories);
+        //console.log("categories-",categories);
         
         const categoryId = categories.map(category => category._id.toString());
         console.log("category id -",categoryId);
+        console.log("session:",req.session.filterProduct)
         
         let searchResult = [];
         if(req.session.filterProduct && req.session.filterProduct.length > 0){
@@ -403,7 +488,6 @@ const SearchProducts = async(req,res)=>{
             searchResult = await Product.find({
                 productName: {$regex:".*"+search+".*",$options:"i"},
                 isBlocked:false,
-                quantity:{$gt:0},
                 category:{$in:categoryId}
             })
         }

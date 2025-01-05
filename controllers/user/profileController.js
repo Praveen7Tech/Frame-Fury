@@ -172,83 +172,6 @@ const resetPassword = async(req,res)=>{
 }
 
 
-
-const changeEmail = async(req,res)=>{
-    try {
-        res.render("change-email")
-    } catch (error) {
-        res.redirect("/pageNotFound")
-    }
-}
-
-
-const verifyEmail = async(req,res)=>{
-    try {
-        const { email} = req.body;
-        const userId = req.session.user
-        //console.log("userid ",userId);
-        
-        const currentUser = await User.findById(userId)
-        ///console.log("current user ",currentUser);
-        
-        if(email === currentUser.email){
-            const otp= generateOtp()
-            const sendMail = await sendVerificationEmail(email,otp);
-
-            if(sendMail){
-                req.session.userOtp = otp
-                req.session.userData = req.body
-                req.session.email = email
-
-                res.render("verify-email-otp");
-                console.log("Email send :",email);
-                console.log("OTP send : ",otp);
-                  
-            }else{
-                res.json("email-error")
-            }
-        }else{
-            res.render("change-email",{message:"The entered email does not match your current email address."})
-        }
-    } catch (error) {
-        console.error("Error verifying email:", error);
-        res.redirect("/pageNotFound")
-    }
-}
-
-const verifyEmailOtp = async(req,res)=>{
-    try {
-        const enteredOtp = req.body.otp;
-        //console.log("entered otp ",enteredOtp);
-        if(enteredOtp === req.session.userOtp){
-            //console.log("session otp ",req.session.userOtp);           
-            req.session.userData = req.body.userData;
-            console.log("data",req.session.userData);
-            
-            res.render("new-email",{userData : req.session.userData})
-        }
-        else{
-            res.render("verify-email-otp",
-                {userData:req.session.userData,
-                message:"Entered OTP is not matching"
-                })
-        }
-    } catch (error) {
-        res.redirect("/pageNotFound")
-    }
-}
-
-const updateEmail = async(req,res)=>{
-    try {
-        const newEmail = req.body.newEmail;
-        const userId = req.session.user;
-        await User.findOneAndUpdate(userId,{email:newEmail})
-        res.redirect("/userProfile")
-    } catch (error) {
-        res.redirect("/pageNotFound")
-    }
-}
-
 const changePassword = async(req,res)=>{
     try {
         res.render("change-password")
@@ -483,10 +406,6 @@ const profileUpdate = async(req,res)=>{
 
 module.exports ={
     profile,
-    changeEmail,
-    verifyEmail,
-    verifyEmailOtp,
-    updateEmail,
     changePassword,
     changePasswordVerify,
     verifyPassOtp,

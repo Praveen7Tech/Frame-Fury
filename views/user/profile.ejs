@@ -1,4 +1,7 @@
 <%- include("../../views/partials/user/header") %>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
     <main class="main">
         <div class="page-header breadcrumb-wrap">
             <div class="container">
@@ -44,10 +47,12 @@
                                                 href="#account-detail" role="tab" aria-controls="account-detail"
                                                 aria-selected="true"><i class="fi-rs-user mr-10"></i>Account details</a>
                                         </li>
-                                        <!-- <li class="nav-item">
-                                            <a class="nav-link" href="page-login-register.html"><i
-                                                    class="fi-rs-sign-out mr-10"></i>Logout</a>
-                                        </li> -->
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab"
+                                                href="#Referral" role="tab" aria-controls="track-orders"
+                                                aria-selected="false"><i
+                                                    class="fi-rs-shopping-cart-check mr-10"></i>Refferal Code</a>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
@@ -214,9 +219,6 @@
                                                             <label>Email Address <span class="required">*</span></label>
                                                             <input required="" class="form-control square" name="email"
                                                                 type="email" value="<%=user.email%>">
-                                                                <a href="/changeEmail" class="btn btn-link" style="text-decoration: none;">
-                                                                    Change Email
-                                                                </a>
                                                         </div>
 
                                                         <div class="form-group col-md-12">
@@ -235,6 +237,45 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div class="tab-pane fade" id="Referral" role="tabpanel" aria-labelledby="referral-tab">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5 class="mb-0">Create Referral Code</h5>
+                                            </div>
+                                            <div class="card-body contact-from-area">
+                                                <p>Create a referral code to offer discounts to users. Fill in the details below and click "Create Referral" to generate a new code.</p>
+                                                <div class="row">
+                                                    <div class="col-lg-8">
+                                                        <!-- Form for Creating Referral Code -->
+                                                        <form id="referralForm" class="contact-form-style mt-30 mb-50">
+                                                            <!-- Referral Name -->
+                                                            <div class="input-style mb-20">
+                                                                <label>Referral Name</label>
+                                                                <input id="referralName" name="name" placeholder="Enter a name for the referral code (e.g., SUMMER2025)" type="text" class="square" required>
+                                                            </div>
+                                                
+                                                            <!-- Submit Button -->
+                                                            <button class="submit submit-auto-width" type="submit" onclick="createRefferal(event)">Create Referral</button>
+                                                        </form>
+
+                                                    <%if(user.referralCode !== null){%>
+                                                        <span>REFERRAL CODE : </span>
+                                                        <strong style="color: rgb(19, 18, 18);" ><%= user.referralCode %></strong>
+                                                        <button 
+                                                            class="btn " 
+                                                            onclick="copyReferralCode('<%= user.referralCode %>')">
+                                                            Copy
+                                                        </button>
+                                                    <%}else{%>
+                                                        <label>Oops No Refferal Code is Found, Create a New One...</label>
+                                                    <%}%>    
+                                                    </div>
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>                                  
                                 </div>
                             </div>
                         </div>
@@ -244,5 +285,81 @@
         </section>
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
     <%- include("../../views/partials/user/footer") %>
+
+    <script>
+
+       // Referral code generating function
+        async function createRefferal(event) {
+            event.preventDefault(); 
+
+            const name = document.getElementById("referralName").value;
+
+            if (!name) {
+                alert("Please enter a referral Name..!");
+                return;
+            }
+
+            try {
+                const response = await fetch("/GenerateReferral", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ name })
+                });
+
+                const result = await response.json();
+                console.log("Response:", result);
+
+                if (result.success) {
+                    Swal.fire({
+                        title: "Success.",
+                        text: "Referral Code Generated Successfully",
+                        icon: "success",
+                    })
+                    .then(()=> location.reload())
+                } else {
+                    Swal.fire({
+                        title: "Error..!",
+                        text: "Error in Creating Referral Code..!",
+                        icon: "error",
+                    });
+                }
+            } catch (error) {
+                console.error("Error in creating referral code", error);
+                Swal.fire({
+                    title: "Error..!",
+                    text: "An error occurred while creating referral code. Please try again later.",
+                    icon: "error",
+                });
+            }
+        }
+
+
+
+        // Function to copy the referral code
+        function copyReferralCode(code) {
+        // Create a temporary input element to copy text
+        const tempInput = document.createElement('input');
+        tempInput.value = code;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        tempInput.setSelectionRange(0, 99999); // For mobile devices
+        document.execCommand('copy');
+        document.body.removeChild(tempInput);
+        
+        Swal.fire({
+            title:"Coupon code copied",
+            text:"Code : "+code,
+            icon:"success",
+            showConfirmButton:false,
+            timer:1000
+        })
+    }
+
+
+
+    </script>

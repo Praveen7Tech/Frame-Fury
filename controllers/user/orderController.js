@@ -50,7 +50,7 @@ const orderCancel = async(req,res)=>{
 
             const transactionId = uuidv4();
 
-            if(order.paymentMethod ==="wallet"){
+            if(order.paymentMethod ==="wallet" || order.paymentMethod ==="Online"){
                 wallet.balance +=order.total
                 wallet.refundHistory.push({
                     refundId:transactionId,
@@ -100,7 +100,7 @@ const ReturnOrder = async(req,res)=>{
             console.log("Return Order Request Success.")
 
             // refund money to wallet
-            if(order.paymentMethod === "wallet"){
+            if(order.paymentMethod === "wallet" || order.paymentMethod ==="Online"){
                 wallet.balance += order.total
                 wallet.refundHistory.push({
                     refundId:transactionId,

@@ -7,6 +7,7 @@ const productController = require("../controllers/admin/productController")
 const orderController = require("../controllers/admin/orderController")
 const coupenController = require("../controllers/admin/coupenController")
 const saleReportController = require("../controllers/admin/saleReportControllers")
+const referralController = require("../controllers/admin/referralController")
 const {adminAuth} = require("../middlewares/auth")
 const multer = require("multer")
 const storage = require("../helpers/multer")
@@ -72,6 +73,9 @@ router.post("/editCoupon",adminAuth,coupenController.editCoupon)
 router.get("/filterOrder",adminAuth,saleReportController.saleFilter)
 router.get("/filterbyDate",adminAuth,saleReportController.saleFilterByDate)
 router.post("/downloadReport",adminAuth,saleReportController.downloadReport)
+
+// refferal page
+router.get("/Referals",adminAuth,referralController.ReferralPage)
 
 
 module.exports = router

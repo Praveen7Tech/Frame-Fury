@@ -70,6 +70,42 @@
             <div class="slider-arrow hero-slider-1-arrow"></div>
         </section>
 
+        <section class="popular-categories section-padding mt-15 mb-25">
+            <div class="container wow fadeIn animated">
+                <h3 class="section-title mb-20"><span>Popular</span> Categories</h3>
+                <div class="carausel-6-columns-cover position-relative">
+                    <div class="slider-arrow slider-arrow-2 carausel-6-columns-arrow" id="carausel-6-columns-arrows">
+                    </div>
+
+                    <!-- CATEGORY LOGOS -->
+
+                    <div class="carausel-6-columns" id="carausel-6-columns">
+                        <% const images1 = [
+                            "assets/imgs/shop/porch1.jpg",
+                            "assets/imgs/shop/lambo.jpg",
+                            "assets/imgs/shop/ferrari.webp",
+                            "assets/imgs/shop/mercedes.jpg",
+                            "assets/imgs/shop/mclaren.jpg",
+                            "assets/imgs/shop/rolls.jpg",
+                            "assets/imgs/shop/buggati.jpg"
+                        ]; %>
+                    
+                        <% for (let i = 0; i < category.length; i++) { %>
+                            <div class="card-1">
+                                <figure class="img-hover-scale overflow-hidden">
+                                    <a href="/filter?category=<%= category[i]._id %>">
+                                        <img src="<%= images1[i % images1.length] %>" alt="<%= category[i].name %>">
+                                    </a>
+                                </figure>
+                                <h5><a href="shop-grid-right.html"><%= category[i].name %></a></h5>
+                            </div>
+                        <% } %>
+                    </div>                    
+
+                </div>
+            </div>
+        </section>
+
         <section class="product-tabs section-padding position-relative wow fadeIn animated">
             <div class="bg-square"></div>
             <div class="container">
@@ -120,9 +156,15 @@
                                                 </a>
 
                                             </div>
+                                        <%if(products[i].offer){%>    
+                                            <div class="product-badges product-badges-position product-badges-mrg">
+                                                <span class="hot">Special Offer</span>
+                                            </div>
+                                        <%}else{%>    
                                             <div class="product-badges product-badges-position product-badges-mrg">
                                                 <span class="hot">Hot</span>
                                             </div>
+                                        <%}%>    
                                         </div>
                                         <div class="product-content-wrap">
                                             <div class="product-category">
@@ -271,34 +313,42 @@
                 </div>
             </div>
         </section>
-        <section class="popular-categories section-padding mt-15 mb-25">
+        
+        <!-- <section class="popular-categories section-padding mt-15 mb-25">
             <div class="container wow fadeIn animated">
                 <h3 class="section-title mb-20"><span>Popular</span> Categories</h3>
                 <div class="carausel-6-columns-cover position-relative">
                     <div class="slider-arrow slider-arrow-2 carausel-6-columns-arrow" id="carausel-6-columns-arrows">
                     </div>
 
-
-                    <!-- CATEGORY LOGOS -->
+                    
 
                     <div class="carausel-6-columns" id="carausel-6-columns">
-                        <%for(let i=0;i<category.length;i++){%>
+                        <% const images = [
+                            "assets/imgs/shop/porch1.jpg",
+                            "assets/imgs/shop/lambo.jpg",
+                            "assets/imgs/shop/ferrari.webp",
+                            "assets/imgs/shop/mercedes.jpg",
+                            "assets/imgs/shop/mclaren.jpg",
+                            "assets/imgs/shop/rolls.jpg",
+                            "assets/imgs/shop/buggati.jpg"
+                        ]; %>
+                    
+                        <% for (let i = 0; i < category.length; i++) { %>
                             <div class="card-1">
-                                <figure class=" img-hover-scale overflow-hidden">
-                                    <a href="/filter?category=<%=category[i]._id%>"><img
-                                            src="assets/imgs/shop/porch1.jpg" alt=""></a>
+                                <figure class="img-hover-scale overflow-hidden">
+                                    <a href="/filter?category=<%= category[i]._id %>">
+                                        <img src="<%= images[i % images.length] %>" alt="<%= category[i].name %>">
+                                    </a>
                                 </figure>
-                                <h5><a href="shop-grid-right.html">
-                                        <%=category[i].name%>
-                                    </a></h5>
+                                <h5><a href="shop-grid-right.html"><%= category[i].name %></a></h5>
                             </div>
-                            <%}%>
-                           
-                    </div>
+                        <% } %>
+                    </div>                    
 
                 </div>
             </div>
-        </section>
+        </section> -->
 
     </main>
 

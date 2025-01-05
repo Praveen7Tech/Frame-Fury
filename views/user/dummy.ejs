@@ -69,3 +69,26 @@ onst order = await Order.find();
                     }
                 }
             }
+
+
+
+
+
+
+
+
+
+
+            <div id="referralCodeContainer" class="mt-20" style="display: none;">
+                <label>Generated Referral Code</label>
+                
+                <div class="input-group">
+                    <input id="referralCode" type="text" class="square" readonly>
+                    <button class="btn btn-primary" onclick="copyReferralCode()">Copy</button>
+                </div>
+            </div>
+
+
+            // Display the referral code
+            document.getElementById("referralCode").value = result.referralCode;
+            document.getElementById("referralCodeContainer").style.display = "block";

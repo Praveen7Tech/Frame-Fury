@@ -199,9 +199,15 @@
                                     </div>
                                     <div class="clearfix product-price-cover">
                                         <div class="product-price primary-color float-left">
+                                        <%if(product.offer){%>    
+                                            <ins><span class="text-brand">
+                                                <%= Math.floor(product.salePrice-(product.salePrice * product.offer / 100))%>
+                                            </span></ins>
+                                        <%}else{%>    
                                             <ins><span class="text-brand">
                                                     <%=product.salePrice%>
                                                 </span></ins>
+                                        <%}%>        
                                             <ins><span class="old-price font-md ml-15">
                                                     <%=product.regularPrice%>
                                                 </span></ins>

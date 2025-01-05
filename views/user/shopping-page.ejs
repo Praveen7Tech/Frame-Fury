@@ -86,12 +86,17 @@
                                                     data-bs-toggle="modal" data-bs-target="#quickViewModal">
                                                     <i class="fi-rs-search"></i></a>
                                                 <a aria-label="Add To Wishlist" class="action-btn hover-up"
-                                                    href="/wishList"><i class="fi-rs-heart"></i></a>
-                                               
+                                                    href="/wishList"><i class="fi-rs-heart"></i></a>      
                                             </div>
+                                        <%if(products[i].offer){%>     
+                                            <div class="product-badges product-badges-position product-badges-mrg">
+                                                <span class="hot">Special Offer</span>
+                                            </div>
+                                        <%}else{%>    
                                             <div class="product-badges product-badges-position product-badges-mrg">
                                                 <span class="hot">Hot</span>
                                             </div>
+                                        <%}%>    
                                         </div>
                                         <div class="product-content-wrap">
                                             <div class="product-category">
