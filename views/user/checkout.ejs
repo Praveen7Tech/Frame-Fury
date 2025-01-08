@@ -1,7 +1,7 @@
 <%- include("../../views/partials/user/header") %>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
-        .copy-btn {
+    .copy-btn {
     background-color:transparent; /* Green */
     color: white;
     border: none;
@@ -58,7 +58,7 @@
                                 <h5>Select Shipping Address:</h5>
                                 <% addresses.forEach((addr, index)=> { %>
                                     <div class="address-option">
-                                        <input type="radio" name="selectedAddress" id="address-<%= index %>"
+                                        <input style="height: 20px;" type="radio" name="selectedAddress" id="address-<%= index %>"
                                             value="<%= addr._id %>" <%=index===0 ? 'checked' : '' %>>
                                         <label for="address-<%= index %>">
                                             <p><strong>Address Type:</strong>
@@ -235,37 +235,47 @@
             <section class="banners mb-15">
                 <div class="container">
                     <div class="row">
-                        <%for(let i=0;i<coupon.length;i++){%>
-                        <div class="col-lg-4 col-md-6">
-                          
-                            <div class="banner-img wow fadeIn animated">
-                                <img src="assets/imgs/banner/frame-3.png" alt="">
-                                <div class="banner-text">
-                                    <span>Exclusive Coupon</span>
-                                    <h4>
-                                        Save <span style="color: rgb(70, 213, 14);"><%= coupon[i].offerPrice %></span> 
-                                        on every minimum Purchase at 
-                                        <span style="color: rgb(218, 110, 90);"><%= coupon[i].minimumPrice %></span>
-                                    </h4>
-                                    <span>COUPON CODE:</span>
-                                    <strong style="color: white;" id="couponCode-<%= i %>"><%= coupon[i].name %></strong>
-                                    <button 
-                                        class="copy-btn" 
-                                        onclick="copyCouponCode('<%= coupon[i].name %>')">
-                                        Copy
-                                    </button>
-                                    <br>
-                                    <span>Expires On:</span>
-                                    <strong style="color: white;"><%= new Date(coupon[i].expireOn).toLocaleDateString() %></strong>
+                        <% 
+                            // Predefined list of images
+                            const images = [
+                                "assets/imgs/banner/coupon-4.webp",
+                                "assets/imgs/banner/coupon-2.webp",
+                                "assets/imgs/banner/coupon-3.webp",
+                                "assets/imgs/banner/frame-3.png"
+                            ];
+                        %>
+            
+                        <% for (let i = 0; i < coupon.length; i++) { %>
+                            <div class="col-lg-4 col-md-6"> 
+                                <div class="banner-img wow fadeIn animated">
+                                    <!-- Dynamically assign images using modulus operator -->
+                                    <img src="<%= images[i % images.length] %>" alt="Coupon Image">
+                                    <div class="banner-text">
+                                        <span>Exclusive Coupon</span>
+                                        <h4>
+                                            <span style="color: rgb(136, 206, 244);">Save </span>
+                                            <span style="color: rgb(70, 213, 14);"><%= coupon[i].offerPrice %></span> 
+                                            <span style="color: aliceblue;">on every minimum Purchase at</span> 
+                                            <span style="color: rgb(240, 41, 6);"><%= coupon[i].minimumPrice %></span>
+                                        </h4>
+                                        <span>COUPON CODE:</span>
+                                        <strong style="color: white;" id="couponCode-<%= i %>"><%= coupon[i].name %></strong>
+                                        <button 
+                                            class="copy-btn" 
+                                            onclick="copyCouponCode('<%= coupon[i].name %>')">
+                                            Copy
+                                        </button>
+                                        <br>
+                                        <span>Expires On:</span>
+                                        <strong style="color: white;"><%= new Date(coupon[i].expireOn).toLocaleDateString() %></strong>
+                                    </div>
                                 </div>
                             </div>
-                            
-                           
-                        </div>
-                        <%}%> 
+                        <% } %> 
                     </div>
                 </div>
             </section>
+            
     </main>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -308,6 +318,7 @@
     
                 if (data.success) {
                     discount = data.discount; 
+                    document.getElementById("couponDiscount").textContent = `${discount.toFixed(2)}`
                     currentTotal = subTotal - discount + deliveryCharge; // Update current total
                     updateTotalDisplay();
     
@@ -341,6 +352,7 @@
             event.preventDefault()
 
             discount =0
+            document.getElementById("couponDiscount").textContent ="0.00"
             currentTotal = subTotal + deliveryCharge
             updateTotalDisplay()
             console.log("sub value ",subTotal);

@@ -87,7 +87,6 @@ const saleFilterByDate = async(req,res)=>{
 const downloadReport = async(req,res)=>{
     try {
         const {saleCount,totalSale,overallDiscount,couponDiscount,orders} = req.body;
-        //console.log("qq",req.body)
 
         // craete excel workbook and worksheet
         const workBook =new ExcelJs.Workbook();

@@ -51,9 +51,22 @@
                                                         <%= item.productId.description || "No description available" %>
                                                     </p>
                                                 </td>
-                                                <td class="price" data-title="Price"><span>
-                                                        <%= Math.floor(item.productId.salePrice -(item.productId.salePrice * item.productId.offer / 100)) %>
-                                                    </span></td>
+                                                <td class="price" data-title="Price">
+                                                    <%
+                                                      const salePrice = item.productId.salePrice;
+                                                      const productOffer = item.productId.offer || 0;
+                                                      const categoryOffer = item.productId.category.categoryOffer || 0;
+                                                  
+                                                      // Calculate the best offer
+                                                      const bestOffer = Math.max(productOffer, categoryOffer);
+                                                  
+                                                      // Calculate the final price after applying the best offer
+                                                      const finalPrice = bestOffer > 0 ? Math.floor(salePrice - (salePrice * bestOffer / 100)) : salePrice;
+                                                    %>
+                                                  
+                                                    <span><%= finalPrice %></span>
+                                                  </td>
+                                                  
                                                 <td class="text-center" data-title="Stock">
                                                     <div class="detail-qty border radius  m-auto">
                                                         <a href="#" class="qty-down"

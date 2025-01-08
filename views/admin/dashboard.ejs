@@ -5,8 +5,11 @@
             <h2 class="content-title card-title">Dashboard</h2>
         </div>
         <div class="col-md-3 d-flex align-items-end">
-            <button
-            id="downloadReport" class="btn btn-primary w-100" onclick="downloadReport()">Download Sale Report</button>
+            <button id="downloadReport" class="btn btn-primary w-100" onclick="downloadReport()">Download Sale Report</button>
+            <!-- <button id="downloadPdf" class="btn btn-primary w-100">PDF format</button> -->
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+            <button id="downloadPdf" class="btn btn-primary w-100" onclick="downloadPdf()">PDF format</button>
         </div>
     </div>
 
@@ -118,7 +121,7 @@
                                 </tr>
                                 <%})%>
                             <%}%>   
-                                <!-- Add more rows dynamically -->
+                                
                             </tbody>
                         </table>
                     </div>
@@ -215,7 +218,7 @@
       }
 
 
-      // download sale report
+      // download sale report EXCEL
 
       async function downloadReport(){
         const saleCount = document.querySelector(".text-primary").innerText;
@@ -265,5 +268,17 @@
         } catch (error) {
             console.error("Error in Downloading the Sale Report..!",error);           
         }
+      }
+
+      //Sales report download PDF
+
+      async function downloadPdf(){
+        
+        const saleCount = document.querySelector(".text-primary").innerText
+        const totalSale = document.getElementById(".text-success").innerText
+        const productDiscount = document.getElementById(".text-warning").innerText
+        const couponDiscount = document.getElementById(".coupon1").innerText
+
+        const rows =Array.from(document.querySelectorAll("table tbody tr"))
       }
   </script>

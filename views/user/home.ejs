@@ -156,7 +156,7 @@
                                                 </a>
 
                                             </div>
-                                        <%if(products[i].offer){%>    
+                                        <%if(products[i].offer || products[i].category.categoryOffer > 0){%>    
                                             <div class="product-badges product-badges-position product-badges-mrg">
                                                 <span class="hot">Special Offer</span>
                                             </div>
@@ -194,15 +194,19 @@
                                             <!-- if the product have a product offer it will show otherwise show the saleprice -->
                                              
                                             <div class="product-price">
-                                            <%if(products[i].offer > 0){%>    
-                                                <span>
-                                                    <%=Math.floor(products[i].salePrice - (products[i].salePrice * products[i].offer / 100))%>
-                                                </span>
-                                            <%}else{%>
-                                                <span>
-                                                    <%=products[i].salePrice%>
-                                                </span>
-                                            <%}%>
+                                                <% 
+                                                const productOffer = products[i].offer || 0;
+                                                const categoryOffer = products[i].category.categoryOffer || 0;
+                                                const bestOffer = Math.max(productOffer, categoryOffer);
+                                                const salePrice = products[i].salePrice;
+                                                const finalPrice = bestOffer > 0 ? Math.floor(salePrice - (salePrice * bestOffer / 100)) : salePrice;
+                                              %>
+                                            
+                                              <span><%= finalPrice %></span>
+                                            
+                                              <% if (finalPrice < salePrice) { %>
+                                                <span class="old-price"><%= salePrice %></span>
+                                              <% } %>
                                                 <span class="old-price">
                                                     <%=products[i].regularPrice%>>
                                                 </span>

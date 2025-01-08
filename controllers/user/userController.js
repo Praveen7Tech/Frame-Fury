@@ -16,24 +16,24 @@ const pageNotFound = async (req, res) => {
 }
 
 const loadHomepage = async (req, res) => {
-  try {
-    const user = req.session.user; 
-    const categories = await Category.find({ isListed: true });
-
-    let productData = await Product.find({
-      isBlocked: false,
-      category: { $in: categories.map(category => category._id) },
-    }).populate("category", "name").sort({createdOn:-1})
-
-   
-    // console.log("acesnding-",productData);
-
-    res.render("home", { user, products: productData ,category:categories});
-  } catch (error) {
-    console.error("Home page not found", error.message);
-    res.status(500).send("Server error");
-  }
-};
+    try {
+      const user = req.session.user;
+      const categories = await Category.find({ isListed: true });
+  
+      const productData = await Product.find({
+        isBlocked: false,
+        category: { $in: categories.map(category => category._id) },
+      })
+        .populate("category", "name categoryOffer") // Populate category offer
+        .sort({ createdOn: -1 });
+  
+      res.render("home", { user, products: productData, category: categories });
+    } catch (error) {
+      console.error("Home page not found", error.message);
+      res.status(500).send("Server error");
+    }
+  };
+  
 
 
 const loadSignup = async (req, res) => {
@@ -233,19 +233,18 @@ const shoppingPage = async(req,res)=>{
         const userData = await User.findOne({_id:user});
         const categories = await Category.find({isListed:true});
         const categoryId = categories.map((category) => category._id.toString());
-        console.log("categoryID-",categoryId);
+        //console.log("categoryID-",categoryId);
         
         const page = parseInt(req.query.page) || 1;
         const limit =12;
         const skip = (page-1)*limit;
         const products = await Product.find(
             {isBlocked:false,category:{$in:categoryId}}
-        ).populate("category", "name").sort({createdOn:-1}).skip(skip).limit(limit);
+        ).populate("category", "name categoryOffer").sort({createdOn:-1}).skip(skip).limit(limit);
 
         const totalProducts =await Product.countDocuments({
             isBlocked:false,
             category:{$in:categoryId},
-            quantity:{$gt:0}
         });
 
         const totalPages = Math.ceil(totalProducts / limit);

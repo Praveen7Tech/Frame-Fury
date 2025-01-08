@@ -6,88 +6,106 @@ const Category = require("../../models/categorySchema");
 
 const cartPage = async (req, res) => {
     try {
-        const userId = req.session.user;
-
-        const cart = await Cart.findOne({ userId }).populate("items.productId");
-        const user = await User.findById(userId);
-        const categories = await Category.find({ isListed: true });
-        
-        
-        const listedCategory = categories.map(category => category._id.toString());
-
-        const findProduct = cart.items.filter(item => {
-            const product = item.productId;
-            return (
-                product.isBlocked === false && 
-                listedCategory.includes(product.category.toString())
-            );
-        });
-
-        res.render("cart", {
-            user,
-            cart: findProduct, 
-        });
+      const userId = req.session.user;
+  
+      const cart = await Cart.findOne({ userId }).populate({
+        path: "items.productId",
+        populate: { path: "category", select: "name categoryOffer" },
+      });
+  
+      const user = await User.findById(userId);
+      const categories = await Category.find({ isListed: true });
+  
+      const listedCategory = categories.map(category => category._id.toString());
+  
+      const findProduct = cart.items.filter(item => {
+        const product = item.productId;
+        return (
+          product.isBlocked === false &&
+          listedCategory.includes(product.category._id.toString())
+        );
+      });
+  
+      res.render("cart", {
+        user,
+        cart: findProduct,
+      });
     } catch (error) {
-        console.error("Error in showing cart page", error);
-        res.redirect("/pageNotFound");
+      console.error("Error in showing cart page", error);
+      res.redirect("/pageNotFound");
     }
-};
+  };
+  
 
-
-const addToCart = async (req, res) => {
+  const addToCart = async (req, res) => {
     try {
-        const productId = req.body.productId;
-        const userId = req.session.user;
-        const cartLimit = 5;
-
-        let cart = await Cart.findOne({ userId });
-        if (!cart) {
-            cart = new Cart({ userId, items: [] });
+      const productId = req.body.productId;
+      const userId = req.session.user;
+      const cartLimit = 5;
+  
+      // Find the user's cart
+      let cart = await Cart.findOne({ userId });
+      if (!cart) {
+        cart = new Cart({ userId, items: [] });
+      }
+  
+      // Find the product by ID and populate its category to get the category offer
+      const product = await Product.findById(productId).populate("category", "categoryOffer");
+  
+      if (!product) {
+        return res.status(404).json({ status: false, message: "Product not found" });
+      }
+  
+      if (product.quantity <= 0) {
+        return res.status(400).json({ status: false, message: "Product is out of stock..!" });
+      }
+  
+      // Get product and category offers
+      const productOffer = product.offer || 0;
+      const categoryOffer = product.category?.categoryOffer || 0;
+  
+      const bestOffer = Math.max(productOffer, categoryOffer);
+  
+      // Calculate the updated price based on the best offer
+      const updatedPrice = bestOffer > 0 ? product.salePrice - (product.salePrice * bestOffer / 100) : product.salePrice;
+  
+      // Check if the product is already in the cart
+      const productInCart = cart.items.find((item) => item.productId.toString() === productId);
+  
+      if (productInCart) {
+        if (productInCart.quantity >= cartLimit) {
+          return res.status(200).json({ status: false, message: "Maximum quantity for this product reached...!" });
         }
-
-        const productInCart = cart.items.find((item) => item.productId.toString() === productId);
-
-        const product = await Product.findById(productId)
-        if(!product){
-            return res.status(404).json({status:false, message:"product not found"})
-        }
-
-        if(product.quantity <= 0){
-            return res.status(400).json({status:false, message:"Product is out of stock..!"})
-        }
-
-        const updatedPrice = product.salePrice - (product.salePrice * product.offer / 100)
-        //console.log("updated price-",updatedPrice)
-
-        if (productInCart) {
-           if(productInCart.quantity >= cartLimit){
-            return res.status(200).json({status:false, message:"Maximum quantity add this product to cart is reached...!"})
-           }
-
-           productInCart.quantity +=1;
-           productInCart.totalPrice = productInCart.price * productInCart.quantity;
-           product.quantity -= 1; // decrasing the quantity from the stock
-        }else{
-           
-            cart.items.push({
-                productId,
-                price:product.salePrice,
-                totalPrice:updatedPrice,
-                quantity:1
-            })
-
-            product.quantity -=1;
-        }
-
-        await product.save();
-        await cart.save();
-        console.log("Product added to cart successfully");
-        return res.status(200).json({ status: true, message: "Product added to Cart Successfully." });
+  
+        // Update the quantity and total price
+        productInCart.quantity += 1;
+        productInCart.totalPrice = updatedPrice * productInCart.quantity;
+        product.quantity -= 1; // Decrease the quantity from stock
+      } else {
+        // Add new product to the cart
+        cart.items.push({
+          productId,
+          price: Math.floor(updatedPrice),
+          totalPrice: Math.floor(updatedPrice),
+          quantity: 1,
+        });
+  
+        product.quantity -= 1; // Decrease the quantity from stock
+      }
+  
+      // Save the updated product and cart
+      await product.save();
+      await cart.save();
+  
+      console.log("Product added to cart successfully");
+      return res.status(200).json({ status: true, message: "Product added to Cart Successfully." });
+  
     } catch (error) {
-        console.error("Error in add to cart", error);
-        return res.status(500).json({ status: false, message: "Server Error!" });
+      console.error("Error in add to cart", error);
+      return res.status(500).json({ status: false, message: "Server Error!" });
     }
-};
+  };
+  
 
 
 
