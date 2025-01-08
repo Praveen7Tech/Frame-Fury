@@ -1,4 +1,5 @@
 const ExcelJs = require("exceljs")
+const PDFdocucument = require("pdfkit")
 const Order = require("../../models/orderSchema")
 
 const saleFilter = async(req,res)=>{
@@ -127,8 +128,50 @@ const downloadReport = async(req,res)=>{
     }
 }
 
+
+const downloadPdfFormat = async(req,res)=>{
+    try {
+        const {saleCount,totalSale,productDiscount,couponDiscount,orders} = req.body
+        console.log("body",req.body)
+        const doc = new PDFdocucument();
+        res.setHeader("Content-Type","application/json")
+        res.setHeader("Content-Disposition","attachment; filenmae='Sales_Report.pdf'")
+
+        // pipe the pdf to the response
+        doc.pipe(res);
+
+        //pdf Content
+        doc.fontSize(18).text("Sale-Report",{align:"center"})
+        doc.moveDown()
+        doc.fontSize(12).text(`Total Sales Count : ${saleCount}`)
+        doc.text(`Total Sale Amount : ${totalSale}`)
+        doc.text(`Overal Product Discount : ${productDiscount}`)
+        doc.text(`Overal Coupon Discount : ${couponDiscount}`)
+        doc.moveDown()
+
+        //table content
+        doc.text("Orders",{underline:true})
+        orders.forEach((order,index)=>{
+            doc.moveDown()
+            doc.text(`Order #${index +1}`)
+            doc.text(`Date ${order.date}`)
+            doc.text(`SubTotal ${order.subTotal}`)
+            doc.text(`Payment Method ${order.paymentMethod}`)
+            doc.text(`Coupon Discount ${order.couponDiscount}`)
+            doc.text(`Product Discount ${order.productDiscount}`)
+            doc.text(`Net Total ${order.netTotal}`)
+            doc.moveDown()
+        })
+        doc.end()
+    } catch (error) {
+        console.error("Error in Creating PDF format sale report",error);
+        res.status(500).json({error:"Internal Server error  "})
+    }
+}
+
 module.exports = {
     saleFilter,
     saleFilterByDate,
-    downloadReport
+    downloadReport,
+    downloadPdfFormat
 }

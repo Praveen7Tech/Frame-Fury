@@ -131,6 +131,7 @@
     </div>
 </section>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <%- include("../../views/partials/admin/footer") %>
 
   <script>
@@ -275,10 +276,49 @@
       async function downloadPdf(){
         
         const saleCount = document.querySelector(".text-primary").innerText
-        const totalSale = document.getElementById(".text-success").innerText
-        const productDiscount = document.getElementById(".text-warning").innerText
-        const couponDiscount = document.getElementById(".coupon1").innerText
+        const totalSale = document.querySelector(".text-success").innerText
+        const productDiscount = document.querySelector(".text-warning").innerText
+        const couponDiscount = document.querySelector(".coupon1").innerText
 
         const rows =Array.from(document.querySelectorAll("table tbody tr"))
+        const orders = rows.map((row)=>{
+            const cells =row.querySelectorAll("td")
+            return{
+                date:cells[0].innerText,
+                subTotal:cells[1].innerText,
+                paymentMethod:cells[2].innerText,
+                couponDiscount:cells[3].innerText,
+                productDiscount:cells[4].innerText,
+                netTotal:cells[5].innerText
+            }
+        })
+        try {
+            const response = await fetch("/admin/saleReportDownloadPDF",{
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({
+                    saleCount,totalSale,productDiscount,couponDiscount,orders
+                })
+            })
+
+            console.log("res",response)
+            if(response.ok){
+                const blob =await response.blob()
+                const url = window.URL.createObjectURL(blob)
+                const a = document.createElement("a")
+                a.href = url
+                a.download = "Sale_Report.pdf"
+                document.body.appendChild(a)
+                a.click()
+                a.remove()
+            }
+            else{
+                console.error("Failed to Download the Sale report in Pdf format.");
+            }
+        } catch (error) {
+            console.error("Error in dowloading the sale report in PDF method..",error)
+        }
       }
   </script>

@@ -73,6 +73,7 @@ router.post("/editCoupon",adminAuth,coupenController.editCoupon)
 router.get("/filterOrder",adminAuth,saleReportController.saleFilter)
 router.get("/filterbyDate",adminAuth,saleReportController.saleFilterByDate)
 router.post("/downloadReport",adminAuth,saleReportController.downloadReport)
+router.post("/saleReportDownloadPDF",adminAuth,saleReportController.downloadPdfFormat)
 
 // refferal page
 router.get("/Referals",adminAuth,referralController.ReferralPage)
