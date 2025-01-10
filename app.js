@@ -1,12 +1,14 @@
 const express = require("express");
 const path = require("path");
 const dotenv = require("dotenv");
+//const flash = require("connect-flash")
 const session = require("express-session");
 const passport = require("./config/passport")
 dotenv.config();
 const db = require("./config/db");
 const userRoter = require("./routes/userRouter");
 const adminRouter = require("./routes/adminRouter")
+
 db();
 
 const app = express();
@@ -24,6 +26,14 @@ app.use(session({
         maxAge:72*60*60*1000
     }
 }))
+
+// app.use(flash());
+
+// app.use((req, res, next) => {
+//   res.locals.success = req.flash('success');
+//   res.locals.error = req.flash('error');
+//   next();
+// });
 
 // accessing passport
 app.use(passport.initialize());

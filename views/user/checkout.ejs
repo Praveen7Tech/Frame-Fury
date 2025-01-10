@@ -395,6 +395,7 @@
                     })
 
                     const data = await response.json();
+                    console.log("data:",data)
 
                     if(data.success){
                        const {orderId,amount,currency,key} = data;
@@ -428,6 +429,7 @@
                             })
 
                             const verifyData = await verifyResponse.json()
+                            console.log("verify:",verifyData)
                             if(verifyData.success){
                                 Swal.fire({
                                     title:"Payment Success",
@@ -446,6 +448,39 @@
                             });
                             }
                         },
+                        modal: {
+                            ondismiss: async function () {
+                                console.log("Payment Cancelled or Failed");
+
+                                // Log the failed order to the backend
+                                const cancelResponse = await fetch("/verifyRazorPayOrder", {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json"
+                                    },
+                                    body: JSON.stringify({
+                                        selectedAddress,
+                                        paymentMethod,
+                                        deliveryMethod,
+                                        couponCode,
+                                        orderId,
+                                        paymentId: null,
+                                        razorpaySignature: null,
+                                        paymentStatus: "Failed" // Mark as failed
+                                    })
+                                });
+
+                                const cancelData = await cancelResponse.json();
+                                console.log("Cancel Response:", cancelData);
+
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Payment Failed",
+                                    text: "Your payment was unsuccessful. Order has been placed with status 'Payment Failed'.",
+                                    confirmButtonText: "OK"
+                                }).then(() => window.location.href = "/cart");
+                            }
+                        },                     
                         theme:{color:"#3399cc"},
                        }
 
