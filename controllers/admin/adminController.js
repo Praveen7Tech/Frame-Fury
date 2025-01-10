@@ -40,6 +40,88 @@ const login = async(req,res)=>{
     }
 }
 
+const dashBoard = async(req,res)=>{
+    try {
+
+        // best selling product order
+        const product = await Order.aggregate([
+            {$unwind:"$items"},
+            {$group:
+                {_id:"$items.productId",
+                    totalOrder:{"$sum":1}
+                }
+            },
+            {
+                $lookup:{
+                    from:"products",
+                    localField:"_id",
+                    foreignField:"_id",
+                    as:"productDetails"
+                }
+            },
+            { $unwind:"$productDetails" },
+            {
+                $project:{
+                    _id:1,
+                    productName:"$productDetails.productName",
+                    totalOrder:1,
+                    productImage:{$arrayElemAt:["$productDetails.productImage",0]}
+                }
+            },
+            {
+                $sort:{totalOrder:-1}
+            }
+            
+        ])
+
+        // best selling category order
+        const category = await Order.aggregate([
+            {$unwind:"$items"},
+            {
+                $lookup:{
+                    from:"products",
+                    localField:"items.productId",
+                    foreignField:"_id",
+                    as:"productDetails"
+                }
+            },
+            {
+                $unwind:"$productDetails"
+            },
+            {
+                $group:{
+                    _id:"$productDetails.category",
+                    totalOrder:{$sum:"$items.quantity"}
+                }
+            },
+            {
+                $lookup:{
+                    from:"categories",
+                    localField:"_id",
+                    foreignField:"_id",
+                    as:"categoryDetails"
+                }
+            },
+            {
+                $unwind:"$categoryDetails"
+            },
+            {
+                $project:{
+                    categoryName:"$categoryDetails.name",
+                    totalOrder:1
+                }
+            },
+            {$sort:{totalOrder:-1}}
+        ])
+
+        console.log("pr",product)
+
+        res.render("adminDashboard",{product,category})
+    } catch (error) {
+        console.error("Error in Loading Admin Dashboard",error);
+    }
+}
+
 const loadDashboard = async(req,res)=>{
    try {
     const order = await Order.find().sort({createdAt:-1})
@@ -81,5 +163,6 @@ module.exports = {
     login,
     loadDashboard,
     pageerror,
-    logout
+    logout,
+    dashBoard
 }

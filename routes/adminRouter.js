@@ -16,7 +16,8 @@ const uploads = multer({storage:storage})
 router.get("/pageerror", adminController.pageerror)
 
 //dashboard management
-router.get("/", adminAuth, adminController.loadDashboard)
+router.get("/", adminAuth, adminController.dashBoard)
+router.get("/saleReport", adminAuth, adminController.loadDashboard)
 
 //login management
 router.get("/login",adminController.loadLogin)
