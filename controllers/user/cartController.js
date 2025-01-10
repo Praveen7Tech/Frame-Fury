@@ -181,10 +181,10 @@ const updateCartQuantity = async(req,res)=>{
         product.quantity -= qtyDefference;
         if(product.quantity <= 0){
             return res.status(400).json({statusbar:false, message:"Insufficient stock..."})
-        }
+        } 
        
         findProduct.quantity = quantity;
-        findProduct.totalPrice = (findProduct.price - (findProduct.price * product.offer / 100)) * findProduct.quantity;
+        findProduct.totalPrice = findProduct.price * quantity
 
         await product.save();
         await cart.save();
