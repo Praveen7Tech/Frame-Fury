@@ -17,6 +17,7 @@ router.get("/pageerror", adminController.pageerror)
 
 //dashboard management
 router.get("/", adminAuth, adminController.dashBoard)
+router.get("/filterData",adminAuth,adminController.filterData)
 router.get("/saleReport", adminAuth, adminController.loadDashboard)
 
 //login management
@@ -70,7 +71,7 @@ router.post("/addCoupon",adminAuth,coupenController.addCopen)
 router.get("/deleteCoupon",adminAuth,coupenController.deleteCoupon)
 router.post("/editCoupon",adminAuth,coupenController.editCoupon)
 
-// dashboard Order Filtering
+// sale report Order Filtering
 router.get("/filterOrder",adminAuth,saleReportController.saleFilter)
 router.get("/filterbyDate",adminAuth,saleReportController.saleFilterByDate)
 router.post("/downloadReport",adminAuth,saleReportController.downloadReport)

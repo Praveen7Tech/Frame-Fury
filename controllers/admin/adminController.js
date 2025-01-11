@@ -2,6 +2,7 @@ const User = require("../../models/userSchema");
 const mongoose =require("mongoose");
 const Order = require("../../models/orderSchema")
 const bcrypt = require("bcrypt");
+//const { default: items } = require("razorpay/dist/types/items");
 
 
 const pageerror = async(req,res)=>{
@@ -48,7 +49,7 @@ const dashBoard = async(req,res)=>{
             {$unwind:"$items"},
             {$group:
                 {_id:"$items.productId",
-                    totalOrder:{"$sum":1}
+                    totalOrder:{$sum:"$items.quantity"}
                 }
             },
             {
@@ -114,7 +115,7 @@ const dashBoard = async(req,res)=>{
             {$sort:{totalOrder:-1}}
         ])
 
-        console.log("pr",product)
+        //console.log("pr",product)
 
         res.render("adminDashboard",{product,category})
     } catch (error) {
@@ -156,6 +157,136 @@ const logout = async(req,res)=>{
 }
 
 
+const filterData = async (req, res) => {
+    try {
+        const { filterValue } = req.query;
+        console.log("query:", filterValue);
+
+        const today = new Date();
+        let dayStart,dayEnd
+
+
+        if (filterValue === "daily") {
+            dayStart=new Date(today.setHours(0,0,0,0));
+            dayEnd=new Date(today.setHours(23,59,59,999))
+        } else if (filterValue === "weekly") {
+            dayStart=new Date(today.setDate(today.getDate() - today.getDate()));
+            dayEnd=new Date(today.setDate(dayStart.getDate() + 6)) 
+        } else if (filterValue === "monthly") {
+            dayStart=new Date(today.getFullYear(),today.getMonth(),1);
+            dayEnd=new Date(today.getFullYear(),today.getMonth() +1,0)
+        } else if (filterValue === "yearly") {
+            dayStart=new Date(today.getFullYear(),0,1);
+            dayEnd=new Date(today.getFullYear,11,31)
+        }
+        else{
+            dayStart=new Date(0);
+            dayEnd=new Date()
+        }
+
+        // get top products
+        const products = await Order.aggregate([
+            {
+                $match: {
+                    createdAt: { $gte:dayStart,$lte:dayEnd} 
+                }
+            },
+            {
+                $unwind: "$items" 
+            },
+            {
+                $group: {
+                    _id: "$items.productId",
+                    totalOrder: { $sum: "$items.quantity" } 
+                }
+            },
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "productDetails"
+                }
+            },
+            {
+                $unwind: "$productDetails"
+            },
+            {
+                $project: {
+                    productName: "$productDetails.productName",
+                    totalOrder: 1,
+                    productImage:{$arrayElemAt:["$productDetails.productImage",0]}
+                }
+            },
+            {
+                $sort: { totalOrder: -1 } 
+            }
+        ]);
+
+
+        // top categories
+        const categories = await Order.aggregate([
+            {
+                $match: {
+                    createdAt: { $gte:dayStart,$lte:dayEnd } 
+                }
+            },
+            {
+                $unwind:"$items"
+            },
+            {
+                $lookup:{
+                    from:"products",
+                    localField:"items.productId",
+                    foreignField:"_id",
+                    as:"productDetails"
+                }
+            },
+            {
+                $unwind:"$productDetails"
+            },
+            {
+                $group:{
+                    _id:"$productDetails.category",
+                    totalOrder:{$sum:"$items.quantity"}
+                }
+            },
+            {
+                $lookup:{
+                    from:"categories",
+                    localField:"_id",
+                    foreignField:"_id",
+                    as:"categoryDetails"
+                }
+            },
+            { 
+                $unwind:"$categoryDetails"
+            },
+            {
+                $project:{
+                    categoryName:"$categoryDetails.name",
+                    totalOrder:1,
+                }
+            },
+            {
+                $sort:{
+                    totalOrder:-1
+                }
+            }
+        ])
+
+        console.log("Filtered Products:",dayStart,dayEnd);
+
+        
+        res.status(200).json({ products,categories });
+    } catch (error) {
+        console.error("Error in filtering data pro and cat:", error);
+        res.status(500).json({ message: "Internal Server Error." });
+    }
+};
+
+
+
 
 
 module.exports = {
@@ -164,5 +295,6 @@ module.exports = {
     loadDashboard,
     pageerror,
     logout,
-    dashBoard
+    dashBoard,
+    filterData
 }

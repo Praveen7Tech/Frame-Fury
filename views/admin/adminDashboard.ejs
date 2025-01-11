@@ -77,10 +77,12 @@
                     <canvas id="salesChart"></canvas>
                 </div>
                 <div class="d-flex justify-content-end">
-                    <select class="form-select select-filter" aria-label="Filter by">
-                        <option value="yearly">Yearly</option>
-                        <option value="monthly">Monthly</option>
+                    <select class="form-select select-filter" aria-label="Filter by" id="filter-data" onchange="filterData()">
+                        <option value="default">Default</option>
+                        <option value="daily">Daily</option>
                         <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="yearly">Yearly</option>
                     </select>
                 </div>
             </div>
@@ -92,7 +94,7 @@
         <div class="col-lg-6">
             <div class="card p-4">
                 <h4>Top 10 Best Selling Products</h4>
-                <ul class="list-group">
+                <ul id="productList" class="list-group">
                     <% if (product) { %> 
                         <% product.forEach(item => { %>   
                             <li class="list-group-item">
@@ -103,7 +105,7 @@
                                 <div class="product-name"><%= item.productName %></div>
                                 
                                 <!-- Display sold count -->
-                                <span class="badge bg-primary rounded-pill sold-count"><%= item.totalOrder %> SOLD</span>
+                                <span class="badge bg-primary rounded-pill sold-count"><%= item.totalOrder %>Items SOLD</span>
                             </li>
                         <% }) %> 
                     <% } %>    
@@ -115,7 +117,7 @@
         <div class="col-lg-6">
             <div class="card p-4">
                 <h4>Top 10 Best Selling Categories</h4>
-                <ul class="list-group">
+                <ul id="categoryList" class="list-group">
                     <% if (category) { %>
                         <% category.forEach(cat => { %>   
                             <li class="list-group-item">
@@ -123,7 +125,7 @@
                                 <div class="product-name"><%= cat.categoryName %></div>
                                 
                                 <!-- Display sold count -->
-                                <span class="badge bg-success rounded-pill sold-count"><%= cat.totalOrder %> SOLD</span>
+                                <span class="badge bg-success rounded-pill sold-count"><%= cat.totalOrder %>Items SOLD</span>
                             </li>
                         <% }) %> 
                     <% } %>    
@@ -160,6 +162,56 @@
             }
         }
     });
+</script>
+
+<script>
+
+     async function filterData(){
+        const filterValue = document.getElementById("filter-data").value;
+        console.log("type:",filterValue)
+        try {
+            const response = await fetch(`/admin/filterData?filterValue=${filterValue}`)
+
+            const data = await response.json()
+            console.log("data:",data)
+
+            if(data.products){
+                const productList = document.querySelector("#productList")
+                productList.innerHTML="";
+
+                data.products.forEach(pro=>{
+                    productList.insertAdjacentHTML(
+                        "beforeend",
+                    `   <li class="list-group-item">
+                            <img src="/uploads/re-image/${encodeURIComponent(pro.productImage)}" alt="img" width="50" height="50" />
+                                
+                            <div class="product-name">${pro.productName}</div>
+                                
+                            <span class="badge bg-primary rounded-pill sold-count">${pro.totalOrder} SOLD</span>
+                         </li>
+                    `);
+                });
+
+                const categoryList = document.querySelector("#categoryList")
+                categoryList.innerHTML =""
+
+                data.categories.forEach(cat=>{
+                    categoryList.insertAdjacentHTML(
+                        "beforeend",
+                    `<li class="list-group-item">
+                        <div class="product-name">${cat.categoryName}</div>
+                                
+                        <span class="badge bg-success rounded-pill sold-count">${cat.totalOrder} SOLD</span>
+                    </li>
+                    `);
+                });
+            }
+        } catch (error) {
+            console.error('Error in fetching filter data product and category',error);
+            
+        }
+     }
+
 </script>
 
 </body>
