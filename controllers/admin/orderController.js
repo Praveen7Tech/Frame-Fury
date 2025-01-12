@@ -3,10 +3,18 @@ const Address = require("../../models/addressSchema")
 
 const orderList = async(req,res)=>{
     try {
-        const order = await Order.find().populate("userId", 'name email').populate("items.productId","productName productImage").sort({createdAt:-1}).exec()
+         
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10;
+        const skip = (page - 1)* limit
 
-        //console.log("order-",order)
-        res.render("orderList",{order})
+        const order = await Order.find().populate("userId", 'name email').populate("items.productId","productName productImage").sort({createdAt:-1}).skip(skip).limit(limit).exec()
+
+        const totalOrder = await Order.countDocuments()
+        const totalPages = Math.ceil(totalOrder / limit)
+
+        console.log("order-",totalOrder,totalPages)
+        res.render("orderList",{order,totalPages:totalPages,currentPage:page})
     } catch (error) {
         console.error("error in load order page",error);        
         res.redirect("/pageerror")

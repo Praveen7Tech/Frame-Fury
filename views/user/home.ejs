@@ -2,6 +2,12 @@
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        .wishlist-added {
+    color: red;
+}
+
+    </style>
 
     <main class="main">
         <section class="home-slider position-relative pt-50">
@@ -150,9 +156,9 @@
                                                 <a aria-label="Quick view" class="action-btn hover-up"
                                                     data-bs-toggle="modal" data-bs-target="#quickViewModal"><i
                                                         class="fi-rs-eye"></i></a>
-                                                <a aria-label="Add To Wishlist" class="action-btn hover-up" href="#"
-                                                    onclick="addToWishlist('<%=products[i]._id %>')"><i
-                                                        class="fi-rs-heart"></i>
+                                                <a aria-label="Add To Wishlist" class="action-btn hover-up  <%= wishList.includes(products[i]._id.toString()) ? 'wishlist-added' : '' %> "
+                                                    onclick="addToWishlist('<%=products[i]._id %>')">
+                                                    <i class="fi-rs-heart"></i>
                                                 </a>
 
                                             </div>
@@ -215,7 +221,7 @@
                                             <a aria-label="Add To Cart" class="action-btn hover-up" href="/addToCart/id=<%=products[i]._id%>"><i class="fi-rs-shopping-bag-add"></i></a>
                                         </div> -->
                                             <div class="product-action-1 show">
-                                                <a aria-label="Add To Cart" class="action-btn hover-up" href="#"><i
+                                                <a aria-label="Add To Cart" class="action-btn hover-up" ><i
                                                         class="fi-rs-shopping-bag-add"
                                                         onclick="addToCart('<%=products[i]._id%>')"></i>
                                                 </a>
@@ -361,6 +367,7 @@
         <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+        <!-- add to cart -->
         <script>
 
             function addToCart(productId) {
@@ -399,6 +406,7 @@
 
         </script>
 
+        <!-- add to wishlist -->
         <script>
 
             function addToWishlist(productId){

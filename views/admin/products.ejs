@@ -202,7 +202,7 @@
                         <a href="#">Add Offer</a>
                     </button>
                 <%}else{%>    
-                    <button class="btn btn-unblock" onclick="editOffer('<%= data[i]._id%>')">
+                    <button class="btn btn-unblock" onclick="editOffer('<%= data[i]._id%>','<%= data[i].productName%>','<%= data[i].offer %>')">
                         <a href="#">Edit offer</a>
                     </button>
                     <button class="btn btn-remove" onclick="removeOffer('<%= data[i]._id%>')">
@@ -308,13 +308,13 @@
 <!-- edit offer -->
 <script>
 
-    function editOffer(productId,productName){
+    function editOffer(productId,productName,offer){
         Swal.fire({
             title:`Edit offer for ${productName}`,
             html: `
             <div>
                 <label>Offer Amount (%)</label>
-                <input type="number" id="offerAmount" class="swal2-input" placeholder="Enter offer percentage">
+                <input type="number" id="offerAmount" class="swal2-input" placeholder="Enter offer percentage" value="${offer}">
             </div>
             `,
             showCancelButton:true,

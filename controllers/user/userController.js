@@ -1,6 +1,7 @@
 const User = require("../../models/userSchema");
 const Category = require("../../models/categorySchema");
-const Product = require("../../models/productSchema")
+const Product = require("../../models/productSchema");
+const Wishlist = require("../../models/wishListSchema")
 const dotenv = require("dotenv")
 dotenv.config();
 const nodemailer = require("nodemailer");
@@ -27,9 +28,20 @@ const loadHomepage = async (req, res) => {
         .populate("category", "name categoryOffer") // Populate category offer
         .sort({ createdOn: -1 });
   
-      res.render("home", { user, products: productData, category: categories });
+
+        // dynamically showing product is alraedy in wishlist
+        let wishList=[];
+        if(user){
+            const userWishList = await Wishlist.findOne({userId:user._id}).populate("products")
+            if(userWishList){
+                wishList = userWishList.products.map(item => item.productId._id.toString())
+            }
+        }
+        
+
+      res.render("home", { user, products: productData, category: categories, wishList:wishList});
     } catch (error) {
-      console.error("Home page not found", error.message);
+      console.error("Home page not found", error);
       res.status(500).send("Server error");
     }
   };
@@ -78,7 +90,8 @@ async function sendVerificationEmail(email, otp) {
 
 const signup = async (req, res) => {
     try {
-        const { name, phone, email, password, cPassword } = req.body;
+        const { name, phone, email, password, cPassword, referalCode} = req.body;
+        console.log("bd",req.body)
 
         if (password !== cPassword) {
             return res.render("signup", { message: "Password do not match" })
@@ -97,7 +110,7 @@ const signup = async (req, res) => {
         }
 
         req.session.userOtp = otp;
-        req.session.userData = { name, phone, email, password };
+        req.session.userData = { name, phone, email, password, referalCode };
 
         res.render("verify-otp");
         console.log("OTP send : ", otp);
@@ -126,6 +139,7 @@ const verifyOtp = async (req, res) => {
 
         if (otp === req.session.userOtp) {
             const user = req.session.userData
+            console.log("userr check-",user)
 
             const passwordHash = await securePassword(user.password);
 
@@ -133,7 +147,8 @@ const verifyOtp = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
-                password: passwordHash
+                password: passwordHash,
+                refferedCode:user.referalCode ? user.referalCode : null,
             })
 
             await saveUserData.save();

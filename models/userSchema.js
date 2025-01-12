@@ -39,6 +39,10 @@ const userSchema = new Schema({
         type:String,
         default:null
     },
+    refferedCode:{
+        type:String,
+        default:null
+    },
     cart:[{
         type:Schema.Types.ObjectId,
         ref:"Cart"

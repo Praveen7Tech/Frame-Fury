@@ -56,7 +56,14 @@
                                 <td><%= coupon.expireOn.toISOString().split('T')[0] %></td>
                                 <td><%= coupon.isList ? 'active' : 'Inactive'%></td>
                                 <td>
-                                    <button class="btn btn-warning btn-sm" onclick="editOffer('<%= coupon._id%>')">Edit</button>
+                                    <button class="btn btn-warning btn-sm" onclick="editOffer(
+                                        '<%= coupon._id %>', 
+                                        <%= coupon.offerPrice %>, 
+                                        '<%= coupon.expireOn.toISOString().split('T')[0] %>', 
+                                        <%= coupon.minimumPrice %>
+                                       )">Edit
+                                    </button>
+
                                     <button class="btn btn-danger btn-sm" onclick="deleteCoupon('<%= coupon._id%>')">Delete</button>
                                 </td>
                             </tr>
@@ -139,71 +146,71 @@
          }
 
          // Edit Coupon function
-         function editOffer(couponId) {
-    Swal.fire({
-        title: "Edit this Coupon",
-        html: `
-            <div>
-                <label>Discount Amount </label>
-                <input type="number" id="DiscountAmount" class="swal2-input" placeholder="Enter Discount Amount">
-                <label>Expiry Date</label>
-                <input type="date" id="expiryDate" class="swal2-input">
-                <label>Min Purchase Amount</label>
-                <input type="number" id="minPurchaseAmount" class="swal2-input" placeholder="Enter Minimum Purchase Amount">
-            </div>
-        `,
-        showCancelButton: true,
-        confirmButtonText: "Update",
-        preConfirm: () => {
-            const popup = Swal.getPopup(); // Get the modal DOM node
-            const DiscountAmount = popup.querySelector("#DiscountAmount").value;
-            const expiryDate = popup.querySelector("#expiryDate").value;
-            const minPurchase = popup.querySelector("#minPurchaseAmount").value;
+         function editOffer(couponId,offerPrice,expireOn,minimumPrice) {
+            Swal.fire({
+                title: "Edit this Coupon",
+                html: `
+                    <div>
+                        <label>Discount Amount</label>
+                        <input type="number" id="DiscountAmount" class="swal2-input" placeholder="Enter Discount Amount" value="${offerPrice}">
+                        <label>Expiry Date</label>
+                        <input type="date" id="expiryDate" class="swal2-input" value="${expireOn}">
+                        <label>Min Purchase Amount</label>
+                        <input type="number" id="minPurchaseAmount" class="swal2-input" placeholder="Enter Minimum Purchase Amount" value="${minimumPrice}">
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: "Update",
+                preConfirm: () => {
+                    const popup = Swal.getPopup(); // Get the modal DOM node
+                    const DiscountAmount = popup.querySelector("#DiscountAmount").value;
+                    const expiryDate = popup.querySelector("#expiryDate").value;
+                    const minPurchase = popup.querySelector("#minPurchaseAmount").value;
 
-            console.log("DiscountAmount:", DiscountAmount);
-            console.log("expiryDate:", expiryDate);
-            console.log("minPurchase:", minPurchase);
+                    console.log("DiscountAmount:", DiscountAmount);
+                    console.log("expiryDate:", expiryDate);
+                    console.log("minPurchase:", minPurchase);
 
-            // Validation
-            if (!DiscountAmount || DiscountAmount <= 0) {
-                Swal.showValidationMessage("Please Enter A valid Amount.");
-                return false;
-            }
-
-            return { couponId, DiscountAmount, expiryDate, minPurchase };
-        },
-    }).then((result) => {
-        if (result.isConfirmed) {
-            const { couponId, DiscountAmount, expiryDate, minPurchase } = result.value;
-
-            fetch("/admin/editCoupon", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    couponId,
-                    amount: DiscountAmount,
-                    expiryDate,
-                    minPurchase,
-                }),
-            })
-                .then((response) => {
-                    if (response.ok) {
-                        Swal.fire("Success", "Coupon Updated Successfully", "success").then(() =>
-                            location.reload()
-                        );
-                    } else {
-                        Swal.fire("Error", "Error in Updating Coupon", "error");
+                    // Validation
+                    if (!DiscountAmount || DiscountAmount <= 0) {
+                        Swal.showValidationMessage("Please Enter A valid Amount.");
+                        return false;
                     }
-                })
-                .catch((err) => {
-                    console.error(err);
-                    Swal.fire("Error.!", "An Error occurred While Updating Coupon.");
-                });
+
+                    return { couponId, DiscountAmount, expiryDate, minPurchase };
+                },
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const { couponId, DiscountAmount, expiryDate, minPurchase } = result.value;
+
+                    fetch("/admin/editCoupon", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            couponId,
+                            amount: DiscountAmount,
+                            expiryDate,
+                            minPurchase,
+                        }),
+                    })
+                        .then((response) => {
+                            if (response.ok) {
+                                Swal.fire("Success", "Coupon Updated Successfully", "success").then(() =>
+                                    location.reload()
+                                );
+                            } else {
+                                Swal.fire("Error", "Error in Updating Coupon", "error");
+                            }
+                        })
+                        .catch((err) => {
+                            console.error(err);
+                            Swal.fire("Error.!", "An Error occurred While Updating Coupon.");
+                        });
+                }
+            });
         }
-    });
-}
 
     </script>
     

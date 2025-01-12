@@ -4,6 +4,10 @@ const Order = require("../../models/orderSchema")
 
 const saleFilter = async(req,res)=>{
     try {
+        // const page =parseInt(req.query.page) || 1;
+        // const limit = 10;
+        // const skip = (page - 1)*limit
+
         const {filterType} = req.query
         console.log("fill quey-",filterType);
 
@@ -41,13 +45,28 @@ const saleFilter = async(req,res)=>{
 
         const orders = await Order.find({createdAt:{$gte:dayStart,$lte:dayEnd}}).sort({createdAt:-1})
 
+        // const totalOrder = await Order.countDocuments()
+        // const totalPages = totalOrder / limit
+        const saleCount = orders.length
+
         // dynamically changing values
         const orderCount = orders.length
         const orderTotal = orders.reduce((sum, order) => sum + order.total ,0)
         const overalDiscount = orders.reduce((sum, order)=> sum + order.productOfferTotal ,0)
         const couponDiscountTotal = orders.reduce((sum, order) => sum + order.couponDiscount ,0)
 
-        res.status(200).json({orders,orderCount,orderTotal,overalDiscount,couponDiscountTotal});
+        console.log("ppp",orderCount)
+
+        res.status(200).json({
+            orders,
+            orderCount,
+            orderTotal,
+            overalDiscount,
+            couponDiscountTotal,
+            // totalPages:totalPages,
+            // currentPage:page
+            saleCount
+        });
         
     } catch (error) {
         console.error("Error in Sale order filtering",error);

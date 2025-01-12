@@ -11,13 +11,27 @@ dotenv.config()
 const profile = async(req,res)=>{
     try {
         const userId = req.session.user
+        const page =parseInt(req.query.page) || 1;
+        const limit = 5;
+        const skip = (page - 1)* limit
+
         const userData = await User.findById(userId)
         const addressData = await Address.findOne({userId:userId})
 
-        const orderData = await Order.find({userId:userId}).sort({createdAt:-1}).exec()
-        //console.log("orders : ",orderData);
+        const orderData = await Order.find({userId:userId}).sort({createdAt:-1}).skip(skip).limit(limit).exec()
+        const totalOrders =await Order.countDocuments({userId:userId})
+        const totaLPages = Math.ceil(totalOrders / limit)
+
+        console.log("orders : ",totalOrders,"pages",totaLPages);
+
         
-        res.render("profile",{user:userData , userAddress:addressData, orders:orderData})
+        res.render("profile",{
+            user:userData,
+            userAddress:addressData,
+            orders:orderData,
+            totalPages:totaLPages,
+            currentPage:page
+        })
     } catch (error) {
         console.error("Error in fetching user profile",error);
         res.redirect("/pageNotFound")   

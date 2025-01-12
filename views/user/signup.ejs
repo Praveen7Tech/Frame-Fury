@@ -44,6 +44,17 @@
                     <input type="password" class="form-control" id="confirm-password" name="cPassword" placeholder="confirm password" required>
                     <div id="error5" class="error-message"></div>
                 </div>
+
+                <div class="mb-2">
+                  <input type="checkbox" id="showReferal" onclick="toggleReferalCode()">
+                  <label for="showReferal">Have a Referral Code?</label>
+                </div>
+                
+                <div class="mb-2" id="referalField" style="display: none;">
+                  <input type="text" class="form-control" id="referralCode" name="referalCode" placeholder="Referral Code">
+                  <div id="error5" class="error-message"></div>
+                </div>
+                
                     
                     <%if(locals.message && message.length>0){%>
                       <div class="alert alert-danger text-center">
@@ -71,6 +82,21 @@
         </div>
     </div>
 </div>
+
+<!-- Referral code togle -->
+<script>
+  function toggleReferalCode() {
+    const referalField = document.getElementById('referalField');
+    const checkbox = document.getElementById('showReferal');
+
+    if (checkbox.checked) {
+      referalField.style.display = 'block';
+    } else {
+      referalField.style.display = 'none';
+    }
+  }
+</script>
+
 
 
 <script>

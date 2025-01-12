@@ -86,7 +86,7 @@
                                                     data-bs-toggle="modal" data-bs-target="#quickViewModal">
                                                     <i class="fi-rs-search"></i></a>
                                                 <a aria-label="Add To Wishlist" class="action-btn hover-up"
-                                                    href="/wishList"><i class="fi-rs-heart"></i></a>      
+                                                onclick="addToWishlist('<%=products[i]._id %>')"><i class="fi-rs-heart" ></i></a>      
                                             </div>
                                         <%if(products[i].offer || products[i].category.categoryOffer){%>     
                                             <div class="product-badges product-badges-position product-badges-mrg">
@@ -252,39 +252,83 @@
     <%- include("../../views/partials/user/footer") %>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- add to cart -->
     <script>
 
-function addToCart(productId) {
+        function addToCart(productId) {
 
-$.ajax({
-    url: "/addToCart",
-    method: "POST",
-    data: { productId: productId },
-    success: (response) => {
-        if (response.status) {
-            Swal.fire({
-                title: "Added To Cart",
-                text: "The Product Has been Added to Your Cart",
-                icon: "Success",
-                timer: 2000
-            })
-        } else {
-            Swal.fire({
-                title: "Product Alredy in Cart",
-                text: response.message,
-                icon: "info",
-                timer: 2000
+            $.ajax({
+                url: "/addToCart",
+                method: "POST",
+                data: { productId: productId },
+                success: (response) => {
+                    if (response.status) {
+                        Swal.fire({
+                            title: "Added To Cart",
+                            text: "The Product Has been Added to Your Cart",
+                            icon: "Success",
+                            timer: 2000
+                        })
+                    } else {
+                        Swal.fire({
+                            title: "Product Alredy in Cart",
+                            text: response.message,
+                            icon: "info",
+                            timer: 2000
+                        })
+                    }
+                },
+                error: (error) => {
+                    Swal.fire({
+                        title: "Error",
+                        text: "Error Adding the Poduct to your Cart..!",
+                        icon: "error",
+                        timer: 2000
+                    })
+                }
             })
         }
-    },
-    error: (error) => {
-        Swal.fire({
-            title: "Error",
-            text: "Error Adding the Poduct to your Cart..!",
-            icon: "error",
-            timer: 2000
-        })
-    }
-})
-}
+    </script>
+
+    <!-- add to wishlist -->
+    <script>
+
+        function addToWishlist(productId){
+            fetch("/addToWishlist",{
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({productId})
+            })
+            .then(response=> response.json())
+            .then(data=>{
+                if(data.success){
+                    Swal.fire({
+                        icon:"success",
+                        title:"Added to WishList",
+                        text:data.message,
+                        timer:2000,
+                        showConfrimButton:false
+                    })
+                }else{
+                    Swal.fire({
+                        icon:"Warning",
+                        titile:"Ooop..",
+                        text:data.message,
+                        timer:2000,
+                        showConfrimButton:false
+                    })
+                }
+            })
+            .catch(error=>{
+                console.error("Error",error);  
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong. Please try again later.'
+                })
+            })
+        }
     </script>
