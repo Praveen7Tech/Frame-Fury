@@ -43,6 +43,10 @@ const userSchema = new Schema({
         type:String,
         default:null
     },
+    referralPoint:{
+        type:Number,
+        default:0
+    },
     cart:[{
         type:Schema.Types.ObjectId,
         ref:"Cart"

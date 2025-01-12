@@ -109,8 +109,20 @@ const signup = async (req, res) => {
             return res.json("email error")
         }
 
+        if(referalCode){
+            const existReferral = await User.findOne({referralCode:referalCode})
+            console.log("refff",existReferral)
+            if(!existReferral){
+                return res.render("signup",{message:"Invalid Referral code...!"})
+            }
+            req.session.referalCode = referalCode
+            
+        }
+        
+
+        console.log("session", req.session.referalCode)
         req.session.userOtp = otp;
-        req.session.userData = { name, phone, email, password, referalCode };
+        req.session.userData = { name, phone, email, password };
 
         res.render("verify-otp");
         console.log("OTP send : ", otp);
@@ -148,10 +160,20 @@ const verifyOtp = async (req, res) => {
                 email: user.email,
                 phone: user.phone,
                 password: passwordHash,
-                refferedCode:user.referalCode ? user.referalCode : null,
+                refferedCode:req.session.referalCode ? req.session.referalCode : null,
             })
 
             await saveUserData.save();
+
+            // adding referal point to the refered user
+            const referralUser = await User.findOne({referralCode:req.session.referalCode})
+            if(referralUser){
+                referralUser.referralPoint += 1000
+
+                await referralUser.save()
+            }
+            console.log("user ref ",referralUser)
+
             res.json({ success: true, redirectUrl: "/login" })
         }
         else {
