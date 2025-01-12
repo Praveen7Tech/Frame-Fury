@@ -115,9 +115,22 @@ const dashBoard = async(req,res)=>{
             {$sort:{totalOrder:-1}}
         ])
 
-        //console.log("pr",product)
 
-        res.render("adminDashboard",{product,category})
+        // chart data for product
+        const productData = product.map(product =>({
+            productName : product.productName,
+            totalOrder : product.totalOrder
+        }))
+
+        // chart data for category
+        const categoryData = category.map(category=>({
+            categoryName : category.categoryName,
+            totalOrder : category.totalOrder
+        }))
+
+        //console.log("pr",categoryData)
+
+        res.render("adminDashboard",{product,category,productData,categoryData})
     } catch (error) {
         console.error("Error in Loading Admin Dashboard",error);
     }
@@ -275,10 +288,23 @@ const filterData = async (req, res) => {
             }
         ])
 
-        console.log("Filtered Products:",dayStart,dayEnd);
+
+        // update chart data
+        const productData = products.map(product=>({
+            productName : product.productName,
+            totalOrder : product.totalOrder
+        }))
+
+
+        const categoryData = categories.map(category=>({
+            categoryName : category.categoryName,
+            totalOrder : category.totalOrder
+        }))
+
+        //console.log("Filtered Products:",catData)
 
         
-        res.status(200).json({ products,categories });
+        res.status(200).json({ products,categories,productData,categoryData});
     } catch (error) {
         console.error("Error in filtering data pro and cat:", error);
         res.status(500).json({ message: "Internal Server Error." });

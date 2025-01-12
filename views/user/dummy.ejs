@@ -1,37 +1,261 @@
-// if(generatedSignature === razorpaySignature){
+<%- include("../../views/partials/admin/header") %>
 
-    //     const order = new Order({
-    //         userId,
-    //         address: addressDetails, 
-    //         deliveryCharge,
-    //         deliveryMethod,
-    //         subTotal:Math.floor(subTotal),
-    //         total:Math.floor(total),
-    //         couponDiscount:discount,
-    //         paymentMethod,
-    //         couponCode,
-    //         items: findProduct,
-    //         productOfferTotal,
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+        .dashboard-title {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 32px;
+            font-weight: bold;
+        }
+        .card {
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin-bottom: 30px;
+        }
+        .select-filter {
+            width: 25%;
+        }
+    </style>
+</head>
+<body>
 
-    //         orderId,                       //razorpay implimentation
-    //         paymentId,
-    //         paymentStatus:"Paid",
+<div class="container mt-5">
+    <!-- Dashboard Title -->
+    <h1 class="dashboard-title text-center">Admin Dashboard</h1>
 
-    //     });
+    <!-- Chart Section -->
+    <div class="row mb-4">
+        <!-- Sales Overview Chart -->
+        <div class="col-lg-6">
+            <div class="card p-4">
+                <h4>Product Sales Overview</h4>
+                <div class="chart-container">
+                    <canvas id="productChart"></canvas>
+                </div>
+            </div>
+        </div>
 
-    //     await order.save()
+        <!-- Category Sales Flow Chart -->
+        <div class="col-lg-6">
+            <div class="card p-4">
+                <h4>Category Sales Overview</h4>
+                <div class="chart-container">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    //     await Cart.findOneAndUpdate({ userId }, { items: [] });
+    <!-- Filter Dropdown -->
+    <div class="d-flex justify-content-end mb-4">
+        <select class="form-select select-filter" aria-label="Filter by" id="filter-data" onchange="filterData()">
+            <option value="default">Default</option>
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+            <option value="yearly">Yearly</option>
+        </select>
+    </div>
 
-    //     res.json({ success: true, orderId: order._id ,discount});
-    //     console.log("Order placed successfully");
+    <!-- Best Selling Products Section -->
+    <div class="row mb-4">
+        <div class="col-lg-6">
+            <div class="card p-4">
+                <h4>Top 10 Best Selling Products</h4>
+                <ul id="productList" class="list-group">
+                    <% if (product) { %> 
+                        <% product.forEach(item => { %>   
+                            <li class="list-group-item">
+                                <img src="/uploads/re-image/<%= item.productImage %>" alt="img" width="50" height="50">
+                                <div class="product-name"><%= item.productName %></div>
+                                <span class="badge bg-primary rounded-pill sold-count"><%= item.totalOrder %> Items SOLD</span>
+                            </li>
+                        <% }) %> 
+                    <% } %>    
+                </ul>
+            </div>
+        </div>
 
-    // }else{
-    //     res.status(400).json({success:false,message:"Payment Verification Failed..!"})
-    // }
+        <!-- Best Selling Categories Section -->
+        <div class="col-lg-6">
+            <div class="card p-4">
+                <h4>Top 10 Best Selling Categories</h4>
+                <ul id="categoryList" class="list-group">
+                    <% if (category) { %>
+                        <% category.forEach(cat => { %>   
+                            <li class="list-group-item">
+                                <div class="product-name"><%= cat.categoryName %></div>
+                                <span class="badge bg-success rounded-pill sold-count"><%= cat.totalOrder %> Items SOLD</span>
+                            </li>
+                        <% }) %> 
+                    <% } %>    
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap and Chart.js Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Sample Chart.js Configuration
+    const productData = <%- JSON.stringify(productData) %>;
+    const categoryData = <%- JSON.stringify(categoryData)%>;
+
+// Select the canvas element
+    const ctx = document.getElementById('productChart').getContext('2d');
+
+// Create a new Chart.js instance with real data
+    const productChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: productData.map(item => item.productName),  // Product names as labels
+            datasets: [{
+                label: 'Sales',
+                data: productData.map(item => item.totalOrder),  // Total orders as data
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    
+    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+    const categoryChart = new Chart(categoryCtx, {
+        type: 'doughnut', // You can change the chart type if needed
+        data: {
+            labels: categoryData.map(item=> item.categoryName), // Initially empty
+            datasets: [{
+                label: 'Category Sales',
+                data: categoryData.map(item => item.totalOrder),
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(153, 102, 255, 0.6)',
+                    'rgba(255, 159, 64, 0.6)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+
+</script>
+
+<script>
+
+     async function filterData(){
+        const filterValue = document.getElementById("filter-data").value;
+        console.log("type:",filterValue)
+        try {
+            const response = await fetch(`/admin/filterData?filterValue=${filterValue}`)
+
+            const data = await response.json()
+            console.log("data:",data)
+
+            if(data.products){
+                const productList = document.querySelector("#productList")
+                productList.innerHTML="";
+
+                // update products data
+                data.products.forEach(pro=>{
+                    productList.insertAdjacentHTML(
+                        "beforeend",
+                    `   <li class="list-group-item">
+                            <img src="/uploads/re-image/${encodeURIComponent(pro.productImage)}" alt="img" width="50" height="50" />
+                                
+                            <div class="product-name">${pro.productName}</div>
+                                
+                            <span class="badge bg-primary rounded-pill sold-count">${pro.totalOrder}Items SOLD</span>
+                         </li>
+                    `);
+                });
+
+                // update category data
+                const categoryList = document.querySelector("#categoryList")
+                categoryList.innerHTML =""
+
+                data.categories.forEach(cat=>{
+                    categoryList.insertAdjacentHTML(
+                        "beforeend",
+                    `<li class="list-group-item">
+                        <div class="product-name">${cat.categoryName}</div>
+                                
+                        <span class="badge bg-success rounded-pill sold-count">${cat.totalOrder}Items SOLD</span>
+                    </li>
+                    `);
+                });
+
+                //update chart data
+                updateSalesChart(data.productData)
+                categoryChartData(data.categoryData)
+
+            }
+        } catch (error) {
+            console.error('Error in fetching filter data product and category',error);
+            
+        }
+     }
 
 
+     function updateSalesChart(salesData){
 
+        productChart.data.labels = salesData.map(item => item.productName);
+        productChart.data.datasets[0].data = salesData.map(item => item.totalOrder);
 
+        productChart.update()
+     }
 
-    ,'<%=order.deliveryMethod%>','<%=order.couponCode%>'
+     function categoryChartData(catData){
+        
+        categoryChart.data.labels = catData.map(item => item.categoryName);
+        categoryChart.data.datasets[0].data = catData.map(item => item.totalOrder);
+
+        categoryChart.update()
+     }
+
+</script>
+
+</body>
+</html>
+
+<%- include("../../views/partials/admin/footer") %>
