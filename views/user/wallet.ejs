@@ -2,57 +2,139 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
+        /* Wallet Card Styling */
         .wallet-card {
             background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
             color: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
-
-        .transaction-item:not(:last-child) {
-            border-bottom: 1px solid #e0e0e0;
+    
+        /* Referral Card Styling */
+        .referral-card {
+            background: linear-gradient(135deg, #f12711 0%, #f5af19 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
-
-        .nav-pills .nav-link.active {
-            background-color: #6a11cb;
+    
+        /* Button Styles */
+        .btn-custom {
+            border-radius: 25px;
+            padding: 10px 20px;
+            color: white;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+    
+        .btn-custom-light {
+            background-color: white;
+            color: #6a11cb;
+            border: none;
+        }
+    
+        .btn-custom-dark {
+            background-color: #2575fc;
+            border: none;
+        }
+    
+        .btn-custom:hover {
+            opacity: 0.9;
+        }
+    
+        /* Label Styling */
+        .form-label {
+            color: white;
+            font-weight: bold;
         }
     </style>
+    
     </head>
 
     <body>
         <div class="container py-5">
             <h1 class="text-center mb-5">My Wallet</h1>
-
-            <div class="row">
-                <div class="col-md-6 mb-4">
-                    <div class="card wallet-card">
-                        <div class="card-body">
-                        <%if(wallet){%>    
-                            <h5 class="card-title">Current Balance</h5>
-                            <h2 class="card-text mb-4">₹ <%= wallet.balance%></h2>
-                        <%}else{%>
-                            <h2 class="card-text mb-4">Your Waleet is Empty.. Add some Amount.</h2>
-                        <%}%>    
-                            <div class="d-flex justify-content-between">
-                                <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#addMoneyModal">Add
-                                    Funds</button>
-                                <button class="btn btn-outline-light">Withdraw</button>
+            <div class="container py-5">
+                <div class="row">
+                    <!-- Wallet Section -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card wallet-card">
+                            <div class="card-body">
+                                <% if (wallet) { %>
+                                    <h5 class="card-title">Current Balance</h5>
+                                    <h2 class="card-text mb-4" style="color: aliceblue;">₹ <%= wallet.balance %></h2>
+                                <% } else { %>
+                                    <h2 class="card-text mb-4">Your Wallet is Empty.. Add some Amount.</h2>
+                                <% } %>
+                                <div class="d-flex justify-content-between">
+                                    <button class="btn btn-custom btn-custom-light" data-bs-toggle="modal" data-bs-target="#addMoneyModal">
+                                        Add Funds
+                                    </button>
+                                    <!-- <button class="btn btn-custom btn-custom-dark">Withdraw</button> -->
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="col-md-6 mb-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title mb-4">Quick Actions</h5>
-                            <div class="d-grid gap-2">
-                                <button class="btn btn-primary">Make a Payment</button>
-                                <button class="btn btn-secondary">Transfer Funds</button>
-                                <button class="btn btn-info">View Statements</button>
+        
+                    <!-- Referral Points Section -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card referral-card">
+                            <div class="card-body">
+                                <h5 class="card-title">Referral Points</h5>
+                                <% if (userData.referralPoint) { %>
+                                    <div class="mb-3">
+                                        <label class="form-label">Total Points Earned:</label>
+                                        <input type="text" class="form-control" value="<%= userData.referralPoint %>" readonly>
+                                    </div>
+                                <% } else { %>
+                                    <h6>No Referral Points Available</h6>
+                                <% } %>
+                                <!-- <div class="d-grid gap-2 mt-4">
+                                    <button class="btn btn-custom btn-custom-light" data-bs-toggle="modal" data-bs-target="#referralHistoryModal">
+                                        View Referral History
+                                    </button>
+                                </div> -->
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+
+                <!-- Referral History Modal -->
+            <!-- <div class="modal fade" id="referralHistoryModal" tabindex="-1" aria-labelledby="referralHistoryModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="referralHistoryModalLabel">Referral History</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <ul class="list-unstyled">
+                                <% if (wallet && wallet.referralHistory && wallet.referralHistory.length > 0) { %>
+                                    <% wallet.referralHistory.forEach(data => { %>
+                                        <li class="transaction-item py-3">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <h6 class="mb-1">Referred User: <%= data.referredUser %></h6>
+                                                    <small class="text-muted"><%= new Date(data.date).toLocaleString() %></small>
+                                                </div>
+                                                <span class="text-success">+<%= data.points %> Points</span>
+                                            </div>
+                                        </li>
+                                    <% }) %>
+                                <% } else { %>
+                                    <h6>No Referral History Available</h6>
+                                <% } %>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+
+                
 
             <div class="row">
                 <div class="col-12">

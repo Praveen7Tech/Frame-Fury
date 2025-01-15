@@ -27,6 +27,18 @@
     transform: translateY(0);
 }
 
+.faded-btn {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    opacity: 0.5; /* Makes the button look faded */
+    cursor: not-allowed; /* Shows a "not-allowed" cursor to indicate it's disabled */
+    font-weight: bold;
+}
+
+
 
 </style>
 
@@ -121,37 +133,40 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
+                                                            <% if (orders) { %>   
+                                                                <% orders.forEach(order => { %> 
+                                                                    <tr>
+                                                                        <td><%= order._id %></td>
+                                                                        <td><%= new Date(order.createdAt).toLocaleString() %></td>
+                                                                        <td><%= order.orderStatus %></td>
+                                                                        <td><%= order.paymentStatus %></td>
+                                                                        <td><%= order.total %></td>
                                                         
-                                                        <%if(orders){%>   
-                                                            <%orders.forEach(order=>{%> 
-                                                            <tr>
-                                                                <td><%=order._id%></td>
-                                                                <td><%=new Date(order.createdAt).toLocaleString()%></td>
-                                                                <td><%=order.orderStatus%></td>
-                                                                <td><%=order.paymentStatus%></td>
-                                                                <td><%=order.total%></td>
-
-                                                                <td><a href="/orderDetails/<%= order._id%>" class="btn-small d-block">View</a></td>
-                                                            <%if(order.paymentStatus === "Failed"){%>    
-                                                                <td>
-                                                                 <%if(userAddress){%>   
-                                                                    <button class="repay-btn" id="RePay" onclick="RepayFailedOrder('<%=order._id%>',
-                                                                    '<%=order.total%>',
-                                                                    '<%=order.paymentMethod%>',
-                                                                    <%= JSON.stringify(order.address) %>,
-                                                                    '<%=order.couponCode%>',
-                                                                    '<%=order.deliveryMethod%>')">RePay</button>
-                                                                 <%}%>   
-                                                                </td>
-                                                                
-                                                            <%}%>    
-                                                            </tr>
-                                                            <%})%>
-                                                                                                                        
-                                                        <%}else{%> 
-                                                            <div>Empty... Please purchase anything...</div>
-                                                        <%}%>    
+                                                                        <td><a href="/orderDetails/<%= order._id %>" class="btn-small d-block">View</a></td>
+                                                        
+                                                                        <!-- RePay Button for Failed Payment -->
+                                                                        <% if (order.paymentStatus === "Failed" && order.orderStatus !== "Cancelled") { %>    
+                                                                            <td>
+                                                                                <% if (userAddress) { %>   
+                                                                                    <button class="repay-btn" id="RePay" onclick="RepayFailedOrder('<%= order._id %>', '<%= order.total %>', '<%= order.paymentMethod %>', <%= JSON.stringify(order.address) %>, '<%= order.couponCode %>', '<%= order.deliveryMethod %>')">RePay</button>
+                                                                                <% } %>   
+                                                                            </td>
+                                                                        <% } %>    
+                                                        
+                                                                        <!-- Red Button for Cancelled Orders -->
+                                                                        <% if (order.paymentStatus === "Failed" && order.orderStatus === "Cancelled") { %>
+                                                                            <td>
+                                                                                <button class="repay-btn faded-btn" disabled>Repay</button>
+                                                                            </td>
+                                                                            
+                                                                        <% } %>  
+                                                                    </tr>
+                                                                <% }) %>
+                                                            <% } else { %> 
+                                                                <div>Empty... Please purchase anything...</div>
+                                                            <% } %>    
                                                         </tbody>
+                                                        
                                                     </table>
                                                 </div>
                                             </div>
@@ -289,7 +304,7 @@
                                                         <div class="form-group col-md-12">
                                                             <label>Email Address <span class="required">*</span></label>
                                                             <input required="" class="form-control square" name="email"
-                                                                type="email" value="<%=user.email%>">
+                                                                type="email" value="<%=user.email%>" readonly>
                                                         </div>
 
                                                         <div class="form-group col-md-12">

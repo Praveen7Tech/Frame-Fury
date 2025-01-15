@@ -358,6 +358,7 @@ const verifyRazorPayOrder = async (req, res) => {
         discount,
       });
     } else {
+      await Cart.findOneAndUpdate({ userId }, { items: [] });
       res.json({
         success: false,
         message: "Payment failed. Your order has been placed with a Failed status.",

@@ -10,6 +10,7 @@ const orderDetails = async(req,res)=>{
         const orderId = req.params.orderId;
         const order = await Order.findById(orderId)
         .populate("items.productId","productName productImage").exec();
+        console.log("orrrd",order)
 
 
         res.render("order-details",{user,order})
@@ -38,6 +39,7 @@ const orderCancel = async(req,res)=>{
                     await product.save()
                 }
             })
+
 
             await Promise.all(promiseAll);
 

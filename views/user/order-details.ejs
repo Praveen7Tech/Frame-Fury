@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -61,11 +62,11 @@
                 </div>
                 <div class="row mt-3">
                     <div class="col-12">
-                    <%if(order.orderStatus !== "Cancelled" && order.orderStatus !== "Delivered" && order.orderStatus !== "Returned"){%>    
+                    <%if(order.orderStatus !== "Cancelled" && order.orderStatus !== "Deliverd" && order.orderStatus !== "Returned" && order.paymentStatus !== "Failed"){%>    
                         <button type="button" id="cancelOrderButton" class="btn btn-danger">
                             Cancel Order
                         </button>
-                    <%}else if(order.orderStatus === "Delivered"){%>    
+                    <%}else if(order.orderStatus === "Deliverd"){%>    
                         <button id="returnOrderButton" type="button" class="btn btn-warning">
                             Return Order
                         </button>

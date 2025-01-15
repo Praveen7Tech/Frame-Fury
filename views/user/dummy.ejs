@@ -1,261 +1,320 @@
-<%- include("../../views/partials/admin/header") %>
+<%-include("../../views/partials/user/header")%>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Arial', sans-serif;
-        }
-        .dashboard-title {
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 32px;
-            font-weight: bold;
-        }
-        .card {
-            border-radius: 10px;
-            border: none;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        .chart-container {
-            position: relative;
-            height: 400px;
-            margin-bottom: 30px;
-        }
-        .select-filter {
-            width: 25%;
-        }
-    </style>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+<style>
+    .order-status {
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+    .product-image {
+        max-width: 100px;
+        height: auto;
+    }
+    .card {
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+    }
+    .table th {
+        background-color: #f8f9fa;
+    }
+</style>
 </head>
+
 <body>
-
 <div class="container mt-5">
-    <!-- Dashboard Title -->
-    <h1 class="dashboard-title text-center">Admin Dashboard</h1>
-
-    <!-- Chart Section -->
     <div class="row mb-4">
-        <!-- Sales Overview Chart -->
-        <div class="col-lg-6">
-            <div class="card p-4">
-                <h4>Product Sales Overview</h4>
-                <div class="chart-container">
-                    <canvas id="productChart"></canvas>
+        <div class="col-md-6">
+            <h1>Order Details</h1>
+        </div>
+        <div class="col-md-6 text-end">
+            <button class="btn btn-primary invcBtn" onclick="InvoiceDownload()">Invoice</button>
+        </div>
+    </div>    
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2 class="card-title h5 mb-0">Order Summary</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Order Number:</strong> <%=order._id%></p>
+                    <p><strong>Order Date:</strong> <%=new Date(order.createdAt).toLocaleString()%></p>
+                    <p><strong>Customer Name:</strong> <%=user.name%></p>
+                    <p class="order-status">Order Status: <span class="badge bg-<%= order.orderStatus === 'Cancelled' ? 'danger' : 'success' %> orderStatus"><%=order.orderStatus%></span></p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Total Amount:</strong> ₹ <%=order.total.toFixed(2)%></p>
+                    <p><strong>Payment Method:</strong> <%=order.paymentMethod%></p>
+                    <p class="order-status"><strong>Payment Status:</strong>
+                        <span class="badge bg-danger"><%=order.paymentStatus%></span>
+                    </p>
                 </div>
             </div>
-        </div>
-
-        <!-- Category Sales Flow Chart -->
-        <div class="col-lg-6">
-            <div class="card p-4">
-                <h4>Category Sales Overview</h4>
-                <div class="chart-container">
-                    <canvas id="categoryChart"></canvas>
+            <div class="row mt-3">
+                <div class="col-12">
+                <%if(order.orderStatus !== "Cancelled" && order.orderStatus !== "Delivered" && order.orderStatus !== "Returned" && order.paymentStatus !== "Failed"){%>    
+                    <button type="button" id="cancelOrderButton" class="btn btn-danger">
+                        Cancel Order
+                    </button>
+                <%}else if(order.orderStatus === "Delivered"){%>    
+                    <button id="returnOrderButton" type="button" class="btn btn-warning">
+                        Return Order
+                    </button>
+                <%}else{%>
+                    <p class="text-muted">No action possible</p>
+                <%}%>    
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Filter Dropdown -->
-    <div class="d-flex justify-content-end mb-4">
-        <select class="form-select select-filter" aria-label="Filter by" id="filter-data" onchange="filterData()">
-            <option value="default">Default</option>
-            <option value="daily">Daily</option>
-            <option value="weekly">Weekly</option>
-            <option value="monthly">Monthly</option>
-            <option value="yearly">Yearly</option>
-        </select>
-    </div>
-
-    <!-- Best Selling Products Section -->
-    <div class="row mb-4">
-        <div class="col-lg-6">
-            <div class="card p-4">
-                <h4>Top 10 Best Selling Products</h4>
-                <ul id="productList" class="list-group">
-                    <% if (product) { %> 
-                        <% product.forEach(item => { %>   
-                            <li class="list-group-item">
-                                <img src="/uploads/re-image/<%= item.productImage %>" alt="img" width="50" height="50">
-                                <div class="product-name"><%= item.productName %></div>
-                                <span class="badge bg-primary rounded-pill sold-count"><%= item.totalOrder %> Items SOLD</span>
-                            </li>
-                        <% }) %> 
-                    <% } %>    
-                </ul>
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2 class="card-title h5 mb-0">Product Details</h2>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% order.items.forEach(item => { %>
+                            <tr>
+                                <td>
+                                    <img src="/uploads/re-image/<%=item.productId.productImage[0]%>"
+                                        alt="<%=item.productId.productName%>" class="product-image">
+                                </td>
+                                <td><%=item.productId.productName%></td>
+                                <td>₹ <%=item.price.toFixed(2)%></td>
+                                <td><%=item.quantity%></td>
+                                <td>₹ <%=(item.price * item.quantity).toFixed(2)%></td>
+                            </tr>
+                        <%})%>
+                    </tbody>
+                </table>
             </div>
         </div>
+    </div>
 
-        <!-- Best Selling Categories Section -->
-        <div class="col-lg-6">
-            <div class="card p-4">
-                <h4>Top 10 Best Selling Categories</h4>
-                <ul id="categoryList" class="list-group">
-                    <% if (category) { %>
-                        <% category.forEach(cat => { %>   
-                            <li class="list-group-item">
-                                <div class="product-name"><%= cat.categoryName %></div>
-                                <span class="badge bg-success rounded-pill sold-count"><%= cat.totalOrder %> Items SOLD</span>
-                            </li>
-                        <% }) %> 
-                    <% } %>    
-                </ul>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h2 class="card-title h5 mb-0">Shipping Information</h2>
+                </div>
+                <div class="card-body">
+                    <p><strong>Name:</strong> <%=order.address.name%></p>
+                    <p><strong>Address:</strong> <%=order.address.landMark%></p>
+                    <p><strong>City:</strong> <%=order.address.city%></p>
+                    <p><strong>State:</strong> <%=order.address.state%></p>
+                    <p><strong>Zip Code:</strong> <%=order.address.pincode%></p>
+                    <p><strong>Country:</strong> India</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h2 class="card-title h5 mb-0">Payment Details</h2>
+                </div>
+                <div class="card-body">
+                    <p><strong>Payment Method:</strong> <%=order.paymentMethod%></p>
+                    <p><strong>Subtotal:</strong> ₹ <%=order.subTotal.toFixed(2)%></p>
+                    <p><strong>Shipping:</strong> ₹ <%=order.deliveryCharge.toFixed(2)%></p>
+                    <p><strong>Tax:</strong> ₹ 0.00</p>
+                    <hr>
+                    <p><strong>Total:</strong> ₹ <%=order.total.toFixed(2)%></p>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Bootstrap and Chart.js Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.js"></script>
+
+<!-- Invoice download libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 <script>
-    // Sample Chart.js Configuration
-    const productData = <%- JSON.stringify(productData) %>;
-    const categoryData = <%- JSON.stringify(categoryData)%>;
 
-// Select the canvas element
-    const ctx = document.getElementById('productChart').getContext('2d');
+    // cancel order function
+    document.getElementById("cancelOrderButton")?.addEventListener("click", function () {
+        Swal.fire({
+            icon: "warning",
+            title: "Are you sure?",
+            text: "You can't retrieve this order",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Cancel Order",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                cancelOrder();
+            }
+        });
+    });
 
-// Create a new Chart.js instance with real data
-    const productChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: productData.map(item => item.productName),  // Product names as labels
-            datasets: [{
-                label: 'Sales',
-                data: productData.map(item => item.totalOrder),  // Total orders as data
-                backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
+    function cancelOrder() {
+        const url = "/orderCancel/<%=order._id%>";
+
+        fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: data.message,
+                    text: `Order <%=order._id%> has been cancelled.`,
+                    confirmButtonText: 'OK'
+                })
+                .then(() => {
+                    const orderStatusElement = document.querySelector(".orderStatus");
+                    if (orderStatusElement) {
+                        orderStatusElement.textContent = "Cancelled";
+                        orderStatusElement.classList.remove("bg-success");
+                        orderStatusElement.classList.add("bg-danger");
+                    }
+                    const cancelOrderButton = document.querySelector("#cancelOrderButton");
+                    if (cancelOrderButton) {
+                        cancelOrderButton.disabled = true;
+                    }
+                });
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error!",
+                    text: data.message,
+                    confirmButtonText: "OK"
+                });
+            }
+        }).catch(error => {
+            Swal.fire({
+                title: 'Error!',
+                text: 'An error occurred while cancelling the order.',
+                icon: 'error',
+                confirmButtonText: 'Try Again'
+            });
+        });
+    }
+
+
+    // Return Order function
+    document.getElementById("returnOrderButton")?.addEventListener("click", function() {
+        Swal.fire({
+            title: "Return Order",
+            text: "Are you sure you want to return this order?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, proceed",
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6"
+        })
+        .then((result) => {
+            if (result.isConfirmed) {
+                returnOrder();
+            }
+        });
+    });
+
+    function returnOrder() {
+        fetch("/ReturnOrder/<%= order._id%>", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire("Return Request Success", "Order return has been successful. Our executive will collect the product.", "success");
+
+                const orderStatusPlace = document.querySelector(".orderStatus");
+                if (orderStatusPlace) {
+                    orderStatusPlace.textContent = "Returned";
+                    orderStatusPlace.classList.remove("bg-success");
+                    orderStatusPlace.classList.add("bg-warning");
                 }
-            }
-        }
-    });
 
-    
-    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
-    const categoryChart = new Chart(categoryCtx, {
-        type: 'doughnut', // You can change the chart type if needed
-        data: {
-            labels: categoryData.map(item=> item.categoryName), // Initially empty
-            datasets: [{
-                label: 'Category Sales',
-                data: categoryData.map(item => item.totalOrder),
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.6)',
-                    'rgba(54, 162, 235, 0.6)',
-                    'rgba(255, 206, 86, 0.6)',
-                    'rgba(75, 192, 192, 0.6)',
-                    'rgba(153, 102, 255, 0.6)',
-                    'rgba(255, 159, 64, 0.6)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false
-        }
-    });
+                const returnOrderButton = document.querySelector("#returnOrderButton");
+                if (returnOrderButton) {
+                    returnOrderButton.disabled = true;
+                }
+            } else {
+                Swal.fire({
+                    title: "Error!",
+                    text: data.message,
+                    icon: "error",
+                    confirmButtonText: "OK"
+                });
+            }
+        })
+        .catch(error => {
+            Swal.fire("Error!", "An error occurred in order cancellation!", "error");
+        });
+    }
+
+
+    // Invoice Download function
+
+    async function InvoiceDownload() {
+    // Select the portion
+    const invoiceElement = document.querySelector('.container');
+
+    //element to change
+    const title = document.querySelector('h1')
+
+    //store original title to restore after making pdf
+    const originalTitle = title.textContent;
+
+    //title to change 
+    title.textContent = "Order Invoice"
+
+    // Hide unecessary elemnts
+    const elementsToHide = document.querySelectorAll('.btn-primary, #cancelOrderButton, #returnOrderButton');
+    elementsToHide.forEach(el => el.style.display = 'none');
+
+    // Use html2canvas to capture the element 
+    const canvas = await html2canvas(invoiceElement);
+
+    // Convert canvas to image
+    const imgData = canvas.toDataURL('image/png');
+
+    // Create PDF using jsPDF
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p', 'mm', 'a4');
+
+    // Add image to PDF
+    pdf.addImage(imgData, 'PNG', 10, 10, 190, 280);
+
+    // Show the hidden elements again
+    elementsToHide.forEach(el => el.style.display = '');
+
+    //restore title
+    title.textContent = originalTitle
+
+    // Download the PDF
+    pdf.save('Invoice.pdf');
+}
 
 </script>
 
-<script>
 
-     async function filterData(){
-        const filterValue = document.getElementById("filter-data").value;
-        console.log("type:",filterValue)
-        try {
-            const response = await fetch(`/admin/filterData?filterValue=${filterValue}`)
-
-            const data = await response.json()
-            console.log("data:",data)
-
-            if(data.products){
-                const productList = document.querySelector("#productList")
-                productList.innerHTML="";
-
-                // update products data
-                data.products.forEach(pro=>{
-                    productList.insertAdjacentHTML(
-                        "beforeend",
-                    `   <li class="list-group-item">
-                            <img src="/uploads/re-image/${encodeURIComponent(pro.productImage)}" alt="img" width="50" height="50" />
-                                
-                            <div class="product-name">${pro.productName}</div>
-                                
-                            <span class="badge bg-primary rounded-pill sold-count">${pro.totalOrder}Items SOLD</span>
-                         </li>
-                    `);
-                });
-
-                // update category data
-                const categoryList = document.querySelector("#categoryList")
-                categoryList.innerHTML =""
-
-                data.categories.forEach(cat=>{
-                    categoryList.insertAdjacentHTML(
-                        "beforeend",
-                    `<li class="list-group-item">
-                        <div class="product-name">${cat.categoryName}</div>
-                                
-                        <span class="badge bg-success rounded-pill sold-count">${cat.totalOrder}Items SOLD</span>
-                    </li>
-                    `);
-                });
-
-                //update chart data
-                updateSalesChart(data.productData)
-                categoryChartData(data.categoryData)
-
-            }
-        } catch (error) {
-            console.error('Error in fetching filter data product and category',error);
-            
-        }
-     }
-
-
-     function updateSalesChart(salesData){
-
-        productChart.data.labels = salesData.map(item => item.productName);
-        productChart.data.datasets[0].data = salesData.map(item => item.totalOrder);
-
-        productChart.update()
-     }
-
-     function categoryChartData(catData){
-        
-        categoryChart.data.labels = catData.map(item => item.categoryName);
-        categoryChart.data.datasets[0].data = catData.map(item => item.totalOrder);
-
-        categoryChart.update()
-     }
-
-</script>
-
-</body>
-</html>
-
-<%- include("../../views/partials/admin/footer") %>
+<%-include("../../views/partials/user/footer")%>

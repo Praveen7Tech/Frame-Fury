@@ -1,7 +1,8 @@
 const User = require("../../models/userSchema");
 const Category = require("../../models/categorySchema");
 const Product = require("../../models/productSchema");
-const Wishlist = require("../../models/wishListSchema")
+const Wishlist = require("../../models/wishListSchema");
+const Wallet = require("../../models/walletSchema");
 const dotenv = require("dotenv")
 dotenv.config();
 const nodemailer = require("nodemailer");
@@ -31,13 +32,14 @@ const loadHomepage = async (req, res) => {
 
         // dynamically showing product is alraedy in wishlist
         let wishList=[];
+        let userWishList =0;
         if(user){
-            const userWishList = await Wishlist.findOne({userId:user._id}).populate("products")
+            userWishList = await Wishlist.findOne({userId:user._id}).populate("products")
             if(userWishList){
                 wishList = userWishList.products.map(item => item.productId._id.toString())
             }
         }
-        
+        //console.log("w",userWishList.wishListCount)
 
       res.render("home", { user, products: productData, category: categories, wishList:wishList});
     } catch (error) {
@@ -240,6 +242,19 @@ const login = async (req, res) => {
         }
 
         req.session.user = { _id: findUser._id, name: findUser.name ,email:findUser.email}
+    
+        // creating a wallet for user
+        let wallet =await Wallet.findOne({userId:req.session.user._id})
+        console.log("user wlt",wallet)
+        if(!wallet){
+            wallet = new Wallet({
+                userId:req.session.user._id,
+                balance:0,
+            })
+
+           await wallet.save()
+        }
+        
         res.redirect("/")
     } catch (error) {
         console.error("Login error", error);

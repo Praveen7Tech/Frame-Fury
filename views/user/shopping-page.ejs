@@ -133,12 +133,15 @@
                                             
                                               <span><%= finalPrice %></span>
                                             
+                                        <%if(bestOffer){%>  
                                               <% if (finalPrice < salePrice) { %>
                                                 <span class="old-price"><%= salePrice %></span>
                                               <% } %>  
+                                        <%}else{%>      
                                                 <span class="old-price">
                                                     <%=products[i].regularPrice%>
                                                 </span>
+                                        <%}%>        
                                             </div>
                                             <div class="product-action-1 show">
                                                 <a aria-label="Add To Cart" class="action-btn hover-up"

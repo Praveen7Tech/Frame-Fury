@@ -1,5 +1,6 @@
 const Order= require("../../models/orderSchema")
 const Wallet = require("../../models/walletSchema")
+const User = require("../../models/userSchema")
 const {v4: uuidv4} = require("uuid")
 
 const walletPage = async(req,res)=>{
@@ -15,7 +16,10 @@ const walletPage = async(req,res)=>{
             wallet.refundHistory.sort((a,b) => new Date(b.date) - new Date(a.date))
         }
 
-        res.render("wallet",{user,wallet})
+        const userData = await User.findById(userId) 
+        console.log("usr",userData)
+
+        res.render("wallet",{user,wallet,userData})
     } catch (error) {
         console.error("Error in loading wallet",error);
         res.redirect("/pageNotFound")
@@ -30,10 +34,6 @@ const AddMoneyToWallet = async(req,res)=>{
         const userId = req.session.user;
         let wallet = await Wallet.findOne({userId})
         const transactionId =uuidv4();
-
-        // console.log("bodyyy",req.body)
-        // console.log("user-",userId);
-        // console.log("uuid",transactionId)
 
         if(!wallet){
             wallet = new Wallet({

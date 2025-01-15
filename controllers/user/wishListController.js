@@ -53,6 +53,7 @@ const addToWishList = async (req, res) => {
                 stockStatus: product.status,
             });
 
+            wishlist.wishListCount +=1;
             await wishlist.save();
             return res
                 .status(200)
@@ -95,6 +96,7 @@ const removeFromWishList = async(req,res)=>{
         console.log("wishlist -",wishList);
 
         wishList.products = wishList.products.filter((item)=> item.productId.toString() !== productId);
+        wishList.wishListCount -=1;
         await wishList.save();
         
         return res.redirect("/wishList")

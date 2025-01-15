@@ -17,6 +17,10 @@
     background-color: #45a049; /* Darker green */
 }
 
+.error-message {
+            color: red;
+        }
+
     </style>
 
     <main class="main">
@@ -39,10 +43,12 @@
                         <div class="col-md-6">
                             <h4>Billing Details</h4>
                             <div class="form-group">
-                                <input type="text" name="fname" placeholder="First Name *" required>
+                                <input type="text" name="fname" id="fname" placeholder="First Name *">
+                                <div id="fname-error" class="error-message"></div>
                             </div>
                             <div class="form-group">
-                                <input type="text" name="lname" placeholder="Last Name *" required>
+                                <input type="text" name="lname" id="lname" placeholder="Last Name *">
+                                <div id="lname-error" class="error-message"></div>
                             </div>
 
                             <!-- address details -->
@@ -374,14 +380,31 @@
             if (event) {
                 event.preventDefault();
             }
+
+            // validate form
+            if (!formValidate()) {
+                return false; // Stop the process if validation fails
+            }
     
             try {
-                const selectedAddress = document.querySelector("input[name='selectedAddress']:checked").value;
+                //const selectedAddress = document.querySelector("input[name='selectedAddress']:checked").value;
                 const paymentMethod = document.querySelector("input[name='paymentMethod']:checked").value;
                 const deliveryMethod = document.querySelector("input[name='deliveryMethod']:checked").value;
-                const couponCode = document.getElementById("couponCode").value.trim();
+                const couponCode = discount > 0 ? document.getElementById("couponCode").value.trim() : "";
+
+                const selectedAddressElement = document.querySelector("input[name='selectedAddress']:checked");
+                if (!selectedAddressElement) {
+                    Swal.fire("Error", "Please add a shipping address", "info");
+                    return false;
+                }
+
+                const selectedAddress = selectedAddressElement.value;
+                const paymentMethodElement = document.querySelector("input[name='paymentMethod']:checked");
+                if (!paymentMethodElement) {
+                    Swal.fire("Error", "Please select a payment method", "error");
+                    return false;
+                }
     
-                console.log("Final Total Amount:", currentTotal);
 
                 // placing order using RazorPay
                 if(paymentMethod === "Online"){
@@ -450,7 +473,7 @@
                         },
                         modal: {
                             ondismiss: async function () {
-                                console.log("Payment Cancelled or Failed");
+                                console.log("Payment  Failed");
 
                                 // Log the failed order to the backend
                                 const cancelResponse = await fetch("/verifyRazorPayOrder", {
@@ -499,6 +522,13 @@
                 // placing order using COD
                 else if(paymentMethod === "COD"){
 
+                console.log("sel",selectedAddress)
+                console.log("sel",paymentMethod)
+                console.log("sel",deliveryMethod)
+                console.log("sel",couponCode)
+                console.log("sel",currentTotal)
+
+
                 const response = await fetch("/placeOrder", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -506,6 +536,7 @@
                 });
     
                 const data = await response.json();
+                console.log("data:cod",data)
     
                 if (data.success) {
                     Swal.fire({
@@ -627,6 +658,53 @@
             timer:1000
         })
     }
+</script>
+
+
+<script>
+
+function formValidate() {
+    clearErrorMessage();
+    const firstName = document.getElementById("fname").value;
+    const lastName = document.getElementById("lname").value;
+
+    const namePattern = /^[A-Za-z\s]+$/;
+    let isValid = true;
+
+    if (firstName === "") {
+        ErrorMessage("fname-error", "First name is required.");
+        isValid = false;
+    } else if (!namePattern.test(firstName)) {
+        ErrorMessage("fname-error", "First name can only contain alphabetic letters.");
+        isValid = false;
+    }
+
+    if (lastName === "") {
+        ErrorMessage("lname-error", "Last name is required.");
+        isValid = false;
+    } else if (!namePattern.test(lastName)) {
+        ErrorMessage("lname-error", "Last name can only contain alphabetic letters.");
+        isValid = false;
+    }
+
+    return isValid;
+}
+
+
+    function ErrorMessage(nameId,message){
+        let errorElement = document.getElementById(nameId)
+        errorElement.innerText = message;
+        errorElement.style.display = "block"
+    }
+
+    function clearErrorMessage(){
+        const errorElements = document.getElementsByClassName("error-message")
+        Array.from(errorElements).forEach((element)=>{
+            element.innerText ="";
+            element.style.display = "block"
+        })
+    }
+
 </script>
 
     
