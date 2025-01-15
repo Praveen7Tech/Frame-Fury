@@ -24,10 +24,11 @@ const orderDetails = async(req,res)=>{
 const orderCancel = async(req,res)=>{
     try {
         const orderId = req.params.orderId;
+        const {cancelReason} = req.body;
         const userId = req.session.user;
         const order = await Order.findById(orderId);
         const wallet = await Wallet.findOne({userId})
-        //console.log("order : ",order);
+        console.log("order : ",cancelReason);
         
 
         if(order.orderStatus === "Pending" || order.orderStatus === "Confirmed"){
@@ -44,6 +45,7 @@ const orderCancel = async(req,res)=>{
             await Promise.all(promiseAll);
 
             order.orderStatus = "Cancelled"
+            order.cancelReason =cancelReason;
             await order.save();
 
             console.log("order cancelled succussfully...");

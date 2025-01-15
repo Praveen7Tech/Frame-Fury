@@ -136,7 +136,7 @@
                                                             <% if (orders) { %>   
                                                                 <% orders.forEach(order => { %> 
                                                                     <tr>
-                                                                        <td><%= order._id %></td>
+                                                                        <td><%= order.orderId %></td>
                                                                         <td><%= new Date(order.createdAt).toLocaleString() %></td>
                                                                         <td><%= order.orderStatus %></td>
                                                                         <td><%= order.paymentStatus %></td>

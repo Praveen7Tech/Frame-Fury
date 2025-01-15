@@ -161,26 +161,35 @@
             Swal.fire({
                 icon: "warning",
                 title: "Are you sure?",
-                text: "You can't retrieve this order",
+                text: "Please Provide a Reason for this order Cancellation.",
+                input:"text",
+                inputPlaceholder:"Enter Your Reason",
                 showCancelButton: true,
                 confirmButtonColor: "#d33",
                 cancelButtonColor: "#3085d6",
                 confirmButtonText: "Cancel Order",
+                inputValidator:(value)=>{
+                    if(!value){
+                        return "You need to Provide A reason before cancelling."
+                    }
+                }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    cancelOrder();
+                    const cancelReason =result.value
+                    cancelOrder(cancelReason);
                 }
             });
         });
 
-        function cancelOrder() {
+        function cancelOrder(cancelReason) {
             const url = "/orderCancel/<%=order._id%>";
 
             fetch(url, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
-                }
+                },
+                body:JSON.stringify({cancelReason})
             })
             .then(response => response.json())
             .then(data => {

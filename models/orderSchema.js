@@ -4,7 +4,11 @@ const Product = require("./productSchema");
 const {Schema} = mongoose;
 
 const orderSchema = new Schema({
-
+    
+    orderId:{
+        type:String,
+        required:true
+    },
     userId :{
         type:Schema.Types.ObjectId,
         ref:"User",
@@ -91,6 +95,10 @@ const orderSchema = new Schema({
         type:String,
         enum:["Pending","Confirmed","Shipped",'Deliverd',"Cancelled","Returned"],
         default:"Pending"
+    },
+    cancelReason:{
+        type:String,
+        default:null
     },
     deleiverdDate:{
         type:Date,

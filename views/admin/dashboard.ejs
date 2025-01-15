@@ -165,44 +165,83 @@
   <script>
 
      // filter orders
-      async function filterOrder(){
+        async function filterOrder(page = 1) {
         const filterType = document.getElementById("filter-order").value;
-        console.log("filter type :",filterType);
-        
+        console.log("filter type:", filterType);
+
         try {
-            const response = await fetch(`/admin/filterOrder?filterType=${filterType}`)
+            const response = await fetch(`/admin/filterOrder?filterType=${filterType}&page=${page}`);
+            const data = await response.json();
 
-            const data = await response.json()
+            if (data.orders) {
+                console.log("data:", data);
 
-            if(data.orders){
-                console.log("data :",data)
-                console.log("data :",data.couponDiscountTotal)
-                const filterTable = document.querySelector("table tbody")
-                filterTable.textContent = ""
+                const filterTable = document.querySelector("table tbody");
+                filterTable.textContent = "";
 
-                data.orders.forEach(order=>{
-                    const row =`
-                    <tr>
-                        <td>${new Date(order.createdAt).toLocaleString()}</td>
-                        <td>${order.subTotal}</td>
-                        <td>${order.paymentMethod}</td>
-                        <td>${order.couponDiscount}</td>
-                        <td>${order.productOfferTotal}</td>
-                        <td>${order.total}</td>
-                    </tr>    
-                    `;
-                    filterTable.insertAdjacentHTML("beforeend",row)
-                })
+                data.orders.forEach(order => {
+                    const row = `
+                        <tr>
+                            <td>${new Date(order.createdAt).toLocaleString()}</td>
+                            <td>₹ ${order.subTotal}</td>
+                            <td>${order.paymentMethod}</td>
+                            <td>₹ ${order.couponDiscount}</td>
+                            <td>₹ ${order.productOfferTotal}</td>
+                            <td>₹ ${order.total}</td>
+                        </tr>`;
+                    filterTable.insertAdjacentHTML("beforeend", row);
+                });
 
-                document.querySelector(".text-primary").innerHTML= data.orderCount;
-                document.querySelector(".text-success").innerHTML=data.orderTotal;
-                document.querySelector(".text-warning").innerHTML=data.overalDiscount;
-                document.querySelector(".coupon1").innerHTML=data.couponDiscountTotal;
+                document.querySelector(".text-primary").innerHTML = data.orderCount;
+                document.querySelector(".text-success").innerHTML = data.orderTotal;
+                document.querySelector(".text-warning").innerHTML = data.overalDiscount;
+                document.querySelector(".coupon1").innerHTML = data.couponDiscountTotal;
+
+                updatePagination(data.currentPage, data.totalPages);
             }
         } catch (error) {
-            console.error("Error in Filtering Orders",error);           
+            console.error("Error in Filtering Orders", error);
         }
-      }
+    }
+
+    function updatePagination(currentPage, totalPages) {
+        const paginationContainer = document.querySelector(".pagination");
+        paginationContainer.textContent = "";
+
+        if (currentPage > 1) {
+            paginationContainer.insertAdjacentHTML(
+                "beforeend",
+                `<li class="page-item">
+                    <a class="page-link" href="#" onclick="filterOrder(1)">First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="#" onclick="filterOrder(${currentPage - 1})">Previous</a>
+                </li>`
+            );
+        }
+
+        for (let i = 1; i <= totalPages; i++) {
+            paginationContainer.insertAdjacentHTML(
+                "beforeend",
+                `<li class="page-item ${currentPage === i ? 'active' : ''}">
+                    <a class="page-link" href="#" onclick="filterOrder(${i})">${i}</a>
+                </li>`
+            );
+        }
+
+        if (currentPage < totalPages) {
+            paginationContainer.insertAdjacentHTML(
+                "beforeend",
+                `<li class="page-item">
+                    <a class="page-link" href="#" onclick="filterOrder(${currentPage + 1})">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="#" onclick="filterOrder(${totalPages})">Last</a>
+                </li>`
+            );
+        }
+    }
+
 
 
       // filter based on custon date

@@ -2,60 +2,55 @@ const ExcelJs = require("exceljs")
 const PDFdocucument = require("pdfkit")
 const Order = require("../../models/orderSchema")
 
-const saleFilter = async(req,res)=>{
+const saleFilter = async (req, res) => {
     try {
-        // const page =parseInt(req.query.page) || 1;
-        // const limit = 10;
-        // const skip = (page - 1)*limit
+        const { filterType, page = 1, limit = 10 } = req.query; // Default to page 1, limit 10
+        console.log("fill query -", filterType);
 
-        const {filterType} = req.query
-        console.log("fill quey-",filterType);
-
-        const today =new Date()
- 
-        //filtering based on query
-        let dayStart,dayEnd
+        const today = new Date();
+        let dayStart, dayEnd;
 
         switch (filterType) {
             case "daily":
-                dayStart=new Date(today.setHours(0,0,0,0));
-                dayEnd=new Date(today.setHours(23,59,59,999))
+                dayStart = new Date(today.setHours(0, 0, 0, 0));
+                dayEnd = new Date(today.setHours(23, 59, 59, 999));
                 break;
-
             case "weekly":
-                dayStart=new Date(today.setDate(today.getDate() - today.getDate()));
-                dayEnd=new Date(today.setDate(dayStart.getDate() + 6))  
+                dayStart = new Date(today.setDate(today.getDate() - today.getDay()));
+                dayEnd = new Date(dayStart);
+                dayEnd.setDate(dayStart.getDate() + 6);
                 break;
-
             case "monthly":
-                dayStart=new Date(today.getFullYear(),today.getMonth(),1);
-                dayEnd=new Date(today.getFullYear(),today.getMonth() +1,0)
+                dayStart = new Date(today.getFullYear(), today.getMonth(), 1);
+                dayEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
                 break;
-
-            case "Yearly":
-                dayStart=new Date(today.getFullYear(),0,1);
-                dayEnd=new Date(today.getFullYear,11,31)
+            case "yearly":
+                dayStart = new Date(today.getFullYear(), 0, 1);
+                dayEnd = new Date(today.getFullYear(), 11, 31);
                 break;
-
             default:
-                dayStart=new Date(0);
-                dayEnd=new Date()
+                dayStart = new Date(0);
+                dayEnd = new Date();
                 break;
         }
 
-        const orders = await Order.find({createdAt:{$gte:dayStart,$lte:dayEnd}}).sort({createdAt:-1})
+        // Fetch filtered orders with pagination
+        const skip = (page - 1) * limit;
+        
+        const orders = await Order.find({ createdAt: { $gte: dayStart, $lte: dayEnd } })
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(parseInt(limit));
 
-        // const totalOrder = await Order.countDocuments()
-        // const totalPages = totalOrder / limit
-        const saleCount = orders.length
+        const totalOrders = await Order.countDocuments({ createdAt: { $gte: dayStart, $lte: dayEnd } });
+        const totalPages = Math.ceil(totalOrders / limit);
 
-        // dynamically changing values
-        const orderCount = orders.length
-        const orderTotal = orders.reduce((sum, order) => sum + order.total ,0)
-        const overalDiscount = orders.reduce((sum, order)=> sum + order.productOfferTotal ,0)
-        const couponDiscountTotal = orders.reduce((sum, order) => sum + order.couponDiscount ,0)
-
-        console.log("ppp",orderCount)
+        const order = await Order.find({ createdAt: { $gte: dayStart, $lte: dayEnd } })
+            .sort({ createdAt: -1 })
+        const orderCount = order.length;
+        const orderTotal = order.reduce((sum, order) => sum + order.total, 0);
+        const overalDiscount = order.reduce((sum, order) => sum + order.productOfferTotal, 0);
+        const couponDiscountTotal = order.reduce((sum, order) => sum + order.couponDiscount, 0);
 
         res.status(200).json({
             orders,
@@ -63,16 +58,16 @@ const saleFilter = async(req,res)=>{
             orderTotal,
             overalDiscount,
             couponDiscountTotal,
-            // totalPages:totalPages,
-            // currentPage:page
-            saleCount
+            currentPage: parseInt(page),
+            totalPages,
         });
-        
+        //console.log("ord :",orders)
     } catch (error) {
-        console.error("Error in Sale order filtering",error);
-        res.status(500).json({message:'Internal Server Error.'})
+        console.error("Error in Sale order filtering", error);
+        res.status(500).json({ message: "Internal Server Error." });
     }
-}
+};
+
 
 
 const saleFilterByDate = async(req,res)=>{

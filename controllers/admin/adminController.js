@@ -142,11 +142,12 @@ const loadDashboard = async(req,res)=>{
     const limit = 10;
     const skip = (page - 1)*limit
 
+    const orders = await Order.find().sort({createdAt:-1})
     const order = await Order.find().sort({createdAt:-1}).skip(skip).limit(limit)
-    const totalSale = order.reduce((sum,order) =>sum + order.total,0)
+    const totalSale = orders.reduce((sum,order) =>sum + order.total,0)
     const saleCount = await Order.countDocuments()
-    const couponDiscount = order.reduce((sum,order) => sum+ order.couponDiscount ,0)
-    const overallDiscount = order.reduce((sum,order) => sum + order.productOfferTotal,0)
+    const couponDiscount = orders.reduce((sum,order) => sum+ order.couponDiscount ,0)
+    const overallDiscount = orders.reduce((sum,order) => sum + order.productOfferTotal,0)
 
     const totalOrder = await Order.countDocuments()
     const totalPages = totalOrder / limit

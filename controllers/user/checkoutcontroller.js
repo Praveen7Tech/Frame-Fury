@@ -19,6 +19,13 @@ const Razorpay = require("razorpay");
 const { default: mongoose } = require("mongoose");
 
 
+function generateOrderId(){
+  const time = Date.now().toString()
+  const randomNumber = Math.floor(Math.random() * 100000).toString();
+
+  return `ORD-${time}-${randomNumber}`
+}
+
 const checkOutPage = async(req,res)=>{
     try {
         const userId = req.session.user;
@@ -119,7 +126,10 @@ const placeOrder = async (req, res) => {
           return res.status(400).json({success:false,message:"Cash On Delivery Option Only Available, at Maximum Purchase of ₹ 15000, Please use another payment option..!"})
        }
 
+       const orderId = generateOrderId()
+
         const order = new Order({
+            orderId:orderId,
             userId,
             address: addressDetails, 
             deliveryCharge,
@@ -328,8 +338,10 @@ const verifyRazorPayOrder = async (req, res) => {
       paymentStatusValue = "Failed"; // no paymentId or signature mismatch
     }
 
+    const createdorderId = generateOrderId()
 
     const order = new Order({
+      orderId:createdorderId,
       userId,
       address: addressDetails,
       deliveryCharge,
@@ -341,7 +353,6 @@ const verifyRazorPayOrder = async (req, res) => {
       couponCode,
       items: findProduct,
       productOfferTotal,
-      orderId,
       paymentId: paymentId || "N/A",
       paymentStatus: paymentStatusValue,
     });
@@ -437,8 +448,10 @@ const placeOrderWallet = async (req, res) => {
         const deliveryCharge = deliveryMethod === "fast" ? 80 : 0;
         const total = subTotal - discount + deliveryCharge;
 
+        const orderId = generateOrderId()
         // Create new order
         const order = new Order({
+            orderId:orderId,
             userId,
             address: addressDetails,
             deliveryCharge,
