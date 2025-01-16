@@ -85,7 +85,7 @@ const placeOrder = async (req, res) => {
         const addressDetails = userAddress.address[0]; 
 
 
-        const cart = await Cart.findOne({ userId }).populate("items.productId");
+        const cart = await Cart.findOne({ userId }).populate("items.productId")
         const category = await Category.find({ isListed: true });
         const listedCategory = category.map(category => category._id.toString());
 
@@ -94,6 +94,7 @@ const placeOrder = async (req, res) => {
             return product.isBlocked === false && listedCategory.includes(product.category.toString());
         });
     
+        console.log("find pro ",findProduct)
 
         // if (!findProduct || findProduct.length === 0) {
         //     return res.status(400).json({ success: false, message: "Cart is empty" });
@@ -128,6 +129,16 @@ const placeOrder = async (req, res) => {
 
        const orderId = generateOrderId()
 
+       const orderItems = findProduct.map((item)=>({
+            productId:item.productId._id,
+            productName:item.productId.productName,
+            description:item.productId.description,
+            productImage:item.productId.productImage[0],
+            category:category.find(cat=> cat._id.toString() === item.productId.category.toString()).name,
+            quantity:item.quantity,
+            price:item.price
+       }))
+
         const order = new Order({
             orderId:orderId,
             userId,
@@ -139,7 +150,7 @@ const placeOrder = async (req, res) => {
             couponDiscount:discount,
             paymentMethod,
             couponCode,
-            items: findProduct,
+            items: orderItems,
             productOfferTotal
         });
 
@@ -340,6 +351,16 @@ const verifyRazorPayOrder = async (req, res) => {
 
     const createdorderId = generateOrderId()
 
+    const orderItems = findProduct.map((item)=>({
+      productId:item.productId._id,
+      productName:item.productId.productName,
+      description:item.productId.description,
+      productImage:item.productId.productImage[0],
+      category:category.find(cat=> cat._id.toString() === item.productId.category.toString()).name,
+      quantity:item.quantity,
+      price:item.price
+ }))
+
     const order = new Order({
       orderId:createdorderId,
       userId,
@@ -351,7 +372,7 @@ const verifyRazorPayOrder = async (req, res) => {
       couponDiscount: discount,
       paymentMethod,
       couponCode,
-      items: findProduct,
+      items: orderItems,
       productOfferTotal,
       paymentId: paymentId || "N/A",
       paymentStatus: paymentStatusValue,
@@ -449,7 +470,17 @@ const placeOrderWallet = async (req, res) => {
         const total = subTotal - discount + deliveryCharge;
 
         const orderId = generateOrderId()
-        // Create new order
+        
+        const orderItems = findProduct.map((item)=>({
+            productId:item.productId._id,
+            productName:item.productId.productName,
+            description:item.productId.description,
+            productImage:item.productId.productImage[0],
+            category:category.find(cat=> cat._id.toString() === item.productId.category.toString()).name,
+            quantity:item.quantity,
+            price:item.price
+       }))
+
         const order = new Order({
             orderId:orderId,
             userId,
@@ -461,7 +492,7 @@ const placeOrderWallet = async (req, res) => {
             couponDiscount: discount,
             paymentMethod,
             couponCode,
-            items: findProduct,
+            items: orderItems,
             productOfferTotal
         });
 

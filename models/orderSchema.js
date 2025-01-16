@@ -54,6 +54,22 @@ const orderSchema = new Schema({
             ref:"Product",
             required:true
         },
+        productName:{
+            type:String,
+            required:true
+        },
+        description:{
+            type:String,
+            required:true
+        },
+        productImage:{
+            type:String,
+            required:true
+        },
+        category:{
+            type:String,
+            required:true
+        },
         quantity:{
             type:Number,
             required:true
@@ -66,10 +82,6 @@ const orderSchema = new Schema({
     productOfferTotal:{
         type:Number,
         default:0
-    },
-    categoryId:{
-        type:Schema.Types.ObjectId,
-        ref:"Category"
     },
     paymentMethod:{
         type:String,

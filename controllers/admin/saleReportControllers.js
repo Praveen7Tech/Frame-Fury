@@ -38,6 +38,7 @@ const saleFilter = async (req, res) => {
         const skip = (page - 1) * limit;
         
         const orders = await Order.find({ createdAt: { $gte: dayStart, $lte: dayEnd } })
+            .populate("userId","name email")
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(parseInt(limit));
@@ -108,16 +109,20 @@ const downloadReport = async(req,res)=>{
         const workSheet = workBook.addWorksheet("Sales Report");
 
         // create header row
-        workSheet.addRow(["Date","Sub Total","Payment Method","Coupon Discount","Product Discount","Net total"]);
+        workSheet.addRow(["Date","Name","Email","Address","Product Details","Payment Method","Coupon Discount","Product Discount","Sub Total","Net total"]);
 
         // overall data report
         orders.forEach((order)=>{
             workSheet.addRow([
                 order.date,
-                order.subTotal,
+                order.name,
+                order.email,
+                order.address,
+                order.productDetails,
                 order.paymentMethod,
                 order.couponDiscount,
                 order.productDiscount,
+                order.subTotal,
                 order.netTotal
             ])
         })

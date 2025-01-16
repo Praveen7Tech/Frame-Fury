@@ -100,29 +100,54 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th>Date</th>
-                                    <th>Sub Total</th>
+                                    <th>Order Date</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Address</th>
+                                    <th>Product Details</th>
                                     <th>Payment Method</th>
                                     <th>Coupon Discount</th>
                                     <th>Product Discount</th>
+                                    <th>Delivery Charge</th>
+                                    <th>Sub Total</th>
                                     <th>Net Total</th>
                                 </tr>
                             </thead>
                             <tbody>
-                            <%if(order.length >0){%>
-                                 <% order.forEach(order=>{%> 
-                                <tr>                              
-                                    <td><%=new Date(order.createdAt).toLocaleString()%></td>
-                                    <td>₹ <%= order.subTotal%></td>
-                                    <td><%= order.paymentMethod%></td>
-                                    <td>₹ <%= order.couponDiscount%></td>
-                                    <td>₹ <%= order.productOfferTotal%></td>
-                                    <td>₹ <%= order.total%></td>
-                                </tr>
-                                <%})%>
-                            <%}%>   
-                                
+                                <% if (order.length > 0) { %>
+                                    <% order.forEach(order => { %>
+                                    <tr>
+                                        <td><%= new Date(order.createdAt).toLocaleString() %></td>
+                                        <td><%= order.userId.name %></td>
+                                        <td><%= order.userId.email %></td>
+                                        <td>
+                                            <%= order.address.addressType %>, <%= order.address.city %>,<br>
+                                            <%= order.address.landMark %>, <%= order.address.state %>,<br>
+                                            <%= order.address.pincode %>, <%= order.address.phone %>
+                                        </td>
+                                        <td>
+                                            <ul>
+                                                <% order.items.forEach(item => { %>
+                                                    <li>
+                                                        <strong>Product Name:</strong> <%= item.productName %>,<br>
+                                                        <strong>Category:</strong> <%= item.category %>,<br>
+                                                        <strong>Quantity:</strong> <%= item.quantity %>,<br>
+                                                        <strong>Price:</strong> ₹<%= item.price %><br>
+                                                    </li>
+                                                <% }) %>
+                                            </ul>
+                                        </td>
+                                        <td><%= order.paymentMethod %></td>
+                                        <td>₹ <%= order.couponDiscount %></td>
+                                        <td>₹ <%= order.productOfferTotal %></td>
+                                        <td>₹ <%= order.deliveryCharge %></td>
+                                        <td>₹ <%= order.subTotal %></td>
+                                        <td>₹ <%= order.total %></td>
+                                    </tr>
+                                    <% }) %>
+                                <% } %>
                             </tbody>
+                            
                         </table>
                     </div>
                 </div>
@@ -165,44 +190,71 @@
   <script>
 
      // filter orders
-        async function filterOrder(page = 1) {
-        const filterType = document.getElementById("filter-order").value;
-        console.log("filter type:", filterType);
+     async function filterOrder(page = 1) {
+    const filterType = document.getElementById("filter-order").value;
+    console.log("filter type:", filterType);
 
-        try {
-            const response = await fetch(`/admin/filterOrder?filterType=${filterType}&page=${page}`);
-            const data = await response.json();
+    try {
+        const response = await fetch(`/admin/filterOrder?filterType=${filterType}&page=${page}`);
+        const data = await response.json();
 
-            if (data.orders) {
-                console.log("data:", data);
+        if (data.orders) {
+            console.log("data:", data);
 
-                const filterTable = document.querySelector("table tbody");
-                filterTable.textContent = "";
+            const filterTable = document.querySelector("table tbody");
+            filterTable.textContent = "";
 
-                data.orders.forEach(order => {
-                    const row = `
-                        <tr>
-                            <td>${new Date(order.createdAt).toLocaleString()}</td>
-                            <td>₹ ${order.subTotal}</td>
-                            <td>${order.paymentMethod}</td>
-                            <td>₹ ${order.couponDiscount}</td>
-                            <td>₹ ${order.productOfferTotal}</td>
-                            <td>₹ ${order.total}</td>
-                        </tr>`;
-                    filterTable.insertAdjacentHTML("beforeend", row);
-                });
+            // Loop through the orders and add rows dynamically
+            data.orders.forEach(order => {
+                const addressDetails = `
+                    ${order.address.addressType}, ${order.address.city},<br>
+                    ${order.address.landMark}, ${order.address.state},<br>
+                    ${order.address.pincode}, ${order.address.phone}
+                `;
 
-                document.querySelector(".text-primary").innerHTML = data.orderCount;
-                document.querySelector(".text-success").innerHTML = data.orderTotal;
-                document.querySelector(".text-warning").innerHTML = data.overalDiscount;
-                document.querySelector(".coupon1").innerHTML = data.couponDiscountTotal;
+                const productDetails = order.items.map(item => `
+                    <li>
+                        <strong>Product Name:</strong> ${item.productName}<br>
+                        <strong>Category:</strong> ${item.category}<br>
+                        <strong>Quantity:</strong> ${item.quantity}<br>
+                        <strong>Price:</strong> ₹${item.price}<br>
+                    </li>
+                `).join("");
 
-                updatePagination(data.currentPage, data.totalPages);
-            }
-        } catch (error) {
-            console.error("Error in Filtering Orders", error);
+                const row = `
+                    <tr>
+                        <td>${new Date(order.createdAt).toLocaleString()}</td>
+                        <td>${order.userId.name}</td>
+                        <td>${order.userId.email}</td>
+                        <td>${addressDetails}</td>
+                        <td>
+                            <ul>${productDetails}</ul>
+                        </td>
+                        <td>${order.paymentMethod}</td>
+                        <td>₹ ${order.couponDiscount}</td>
+                        <td>₹ ${order.productOfferTotal}</td>
+                        <td>₹ ${order.deliveryCharge}</td>
+                        <td>₹ ${order.subTotal}</td>
+                        <td>₹ ${order.total}</td>
+                    </tr>
+                `;
+
+                filterTable.insertAdjacentHTML("beforeend", row);
+            });
+
+            // Update the summary data
+            document.querySelector(".text-primary").innerHTML = data.orderCount;
+            document.querySelector(".text-success").innerHTML = data.orderTotal;
+            document.querySelector(".text-warning").innerHTML = data.overalDiscount;
+            document.querySelector(".coupon1").innerHTML = data.couponDiscountTotal;
+
+            // Update pagination controls
+            updatePagination(data.currentPage, data.totalPages);
         }
+    } catch (error) {
+        console.error("Error in Filtering Orders", error);
     }
+}
 
     function updatePagination(currentPage, totalPages) {
         const paginationContainer = document.querySelector(".pagination");
@@ -298,13 +350,20 @@
         const rows =Array.from(document.querySelectorAll("table tbody tr"));
         const orders =rows.map((row)=>{
             const cells =row.querySelectorAll("td")
+            const productDetails = Array.from(
+                cells[4].querySelectorAll("ul li")
+            ).map((item)=> item.innerText).join("\n ")
             return{
                 date:cells[0].innerText,
-                subTotal:cells[1].innerText,
-                paymentMethod:cells[2].innerText,
-                couponDiscount:cells[3].innerHTML,
-                productDiscount:cells[4].innerText,
-                netTotal:cells[5].innerText
+                name:cells[1].innerText,
+                email:cells[2].innerText,
+                address:cells[3].innerText.replace(/\n/g, "\n"), //using line break with spaces
+                productDetails:productDetails.replace(/\n/g, "\n"),
+                paymentMethod:cells[5].innerText,
+                couponDiscount:cells[6].innerHTML,
+                productDiscount:cells[7].innerText,
+                subTotal:cells[8].innerText,
+                netTotal:cells[9].innerText
             }
         })
 
@@ -316,8 +375,11 @@
                 },
                 body:JSON.stringify({
                     saleCount,totalSale,overallDiscount,couponDiscount,orders
-                })
+                }),
+                
             })
+            console.log("orders:-",orders)
+
 
             console.log("response:",response)
 

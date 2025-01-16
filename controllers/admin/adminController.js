@@ -143,7 +143,8 @@ const loadDashboard = async(req,res)=>{
     const skip = (page - 1)*limit
 
     const orders = await Order.find().sort({createdAt:-1})
-    const order = await Order.find().sort({createdAt:-1}).skip(skip).limit(limit)
+    const order = await Order.find().sort({createdAt:-1}).populate("userId","name email").skip(skip).limit(limit).exec();
+    
     const totalSale = orders.reduce((sum,order) =>sum + order.total,0)
     const saleCount = await Order.countDocuments()
     const couponDiscount = orders.reduce((sum,order) => sum+ order.couponDiscount ,0)
@@ -152,7 +153,7 @@ const loadDashboard = async(req,res)=>{
     const totalOrder = await Order.countDocuments()
     const totalPages = totalOrder / limit
     
-    console.log("sale",totalSale,saleCount,couponDiscount,overallDiscount);
+    console.log("sale",order);
    
     res.render("dashboard",{
         order,
