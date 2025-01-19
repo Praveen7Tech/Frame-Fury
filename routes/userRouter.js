@@ -11,7 +11,7 @@ const whishListController = require("../controllers/user/wishListController")
 const couponController = require("../controllers/user/couponController")
 const walletController = require("../controllers/user/walletController")
 const referralController = require("../controllers/user/referralController")
-const {userAuth} = require("../middlewares/auth")
+const {userAuth, cartCount} = require("../middlewares/auth")
 
 router.get("/pageNotFound",userController.pageNotFound)
 // home page
@@ -106,6 +106,7 @@ router.post("/ReturnOrder/:orderId",userAuth,orderController.ReturnOrder)
 router.get("/Wishlist",userAuth, whishListController.wishListPage)
 router.post("/addToWishlist",userAuth,whishListController.addToWishList)
 router.get("/removeFromWishList",userAuth,whishListController.removeFromWishList)
+router.get("/wishlistCount",whishListController.wishlistCount)
 
 //coupon management
 router.post("/verifyCoupon",userAuth,couponController.verifyCoupon)

@@ -3,6 +3,7 @@ const Category = require("../../models/categorySchema");
 const Product = require("../../models/productSchema");
 const Wishlist = require("../../models/wishListSchema");
 const Wallet = require("../../models/walletSchema");
+const Cart = require("../../models/cartSchema")
 const dotenv = require("dotenv")
 dotenv.config();
 const nodemailer = require("nodemailer");
@@ -39,7 +40,8 @@ const loadHomepage = async (req, res) => {
                 wishList = userWishList.products.map(item => item.productId._id.toString())
             }
         }
-        //console.log("w",userWishList.wishListCount)
+        //console.log("user111",user)
+        
 
       res.render("home", { user, products: productData, category: categories, wishList:wishList});
     } catch (error) {
@@ -241,11 +243,20 @@ const login = async (req, res) => {
             return res.render("login", { message: "Incorrect password" });
         }
 
-        req.session.user = { _id: findUser._id, name: findUser.name ,email:findUser.email}
-    
+        const wishlist = await Wishlist.findOne({userId:findUser._id})
+        const wishListCount = wishlist ? wishlist.products.length : 0;
+        console.log("wishhh",wishListCount)
+
+        const cart = await Cart.findOne({userId:findUser._id})
+        const cartCount = cart ? cart.items.length : 0;
+        console.log("crrrt",cartCount)
+
+        req.session.user = { _id: findUser._id, name: findUser.name ,email:findUser.email, wishListCount:wishListCount, cartCount:cartCount}
+        console.log("kkknn",req.session.user)
+     
         // creating a wallet for user
         let wallet =await Wallet.findOne({userId:req.session.user._id})
-        console.log("user wlt",wallet)
+        //console.log("user wlt",wallet)
         if(!wallet){
             wallet = new Wallet({
                 userId:req.session.user._id,

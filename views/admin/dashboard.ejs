@@ -402,52 +402,73 @@
 
       //Sales report download PDF
 
-      async function downloadPdf(){
-        
-        const saleCount = document.querySelector(".text-primary").innerText
-        const totalSale = document.querySelector(".text-success").innerText
-        const productDiscount = document.querySelector(".text-warning").innerText
-        const couponDiscount = document.querySelector(".coupon1").innerText
+        async function downloadPdf() {
+            const saleCount = document.querySelector(".text-primary").innerText;
+            const totalSale = document.querySelector(".text-success").innerText;
+            const productDiscount = document.querySelector(".text-warning").innerText;
+            const couponDiscount = document.querySelector(".coupon1").innerText;
 
-        const rows =Array.from(document.querySelectorAll("table tbody tr"))
-        const orders = rows.map((row)=>{
-            const cells =row.querySelectorAll("td")
-            return{
-                date:cells[0].innerText,
-                subTotal:cells[1].innerText,
-                paymentMethod:cells[2].innerText,
-                couponDiscount:cells[3].innerText,
-                productDiscount:cells[4].innerText,
-                netTotal:cells[5].innerText
-            }
-        })
-        try {
-            const response = await fetch("/admin/saleReportDownloadPDF",{
-                method:"POST",
-                headers:{
-                    "Content-Type":"application/json"
-                },
-                body:JSON.stringify({
-                    saleCount,totalSale,productDiscount,couponDiscount,orders
-                })
-            })
+            const rows = Array.from(document.querySelectorAll("table tbody tr"));
+            const orders = rows.map((row) => {
+                const cells = row.querySelectorAll("td");
+                return {
+                    date: cells[0].innerText,
+                    userName: cells[1].innerText,
+                    userEmail: cells[2].innerText,
+                    addressType: cells[3].innerText.split(",")[0],
+                    city: cells[3].innerText.split(",")[1].trim(),
+                    landMark: cells[3].innerText.split(",")[2].trim(),
+                    state: cells[3].innerText.split(",")[3].trim(),
+                    pincode: cells[3].innerText.split(",")[4].trim(),
+                    phone: cells[3].innerText.split(",")[5].trim(),
+                    items: Array.from(cells[4].querySelectorAll("li")).map((li) => {
+                        const [product, category, quantity, price] = li.innerText.split(",");
+                        return {
+                            productName: product.split(":")[1].trim(),
+                            category: category.split(":")[1].trim(),
+                            quantity: quantity.split(":")[1].trim(),
+                            price: price.split(":")[1].trim(),
+                        };
+                    }),
+                    paymentMethod: cells[5].innerText,
+                    couponDiscount: cells[6].innerText.replace("₹", ""),
+                    productDiscount: cells[7].innerText.replace("₹", ""),
+                    deliveryCharge: cells[8].innerText.replace("₹", ""),
+                    subTotal: cells[9].innerText.replace("₹", ""),
+                    netTotal: cells[10].innerText.replace("₹", ""),
+                };
+            });
 
-            console.log("res",response)
-            if(response.ok){
-                const blob =await response.blob()
-                const url = window.URL.createObjectURL(blob)
-                const a = document.createElement("a")
-                a.href = url
-                a.download = "Sale_Report.pdf"
-                document.body.appendChild(a)
-                a.click()
-                a.remove()
+            try {
+                const response = await fetch("/admin/saleReportDownloadPDF", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        saleCount,
+                        totalSale,
+                        productDiscount,
+                        couponDiscount,
+                        orders,
+                    }),
+                });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = "Sale_Report.pdf";
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                } else {
+                    console.error("Failed to download the sale report in PDF format.");
+                }
+            } catch (error) {
+                console.error("Error downloading the sale report in PDF method.", error);
             }
-            else{
-                console.error("Failed to Download the Sale report in Pdf format.");
-            }
-        } catch (error) {
-            console.error("Error in dowloading the sale report in PDF method..",error)
         }
-      }
+
   </script>

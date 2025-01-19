@@ -10,6 +10,7 @@ const walletPage = async(req,res)=>{
         
         const wallet = await Wallet.findOne({userId}).lean()
 
+        console.log("wallet ",wallet)
         if(wallet ){
             wallet.transactions.sort((a,b) =>new Date(b.date) - new Date(a.date))
             wallet.onlinePurchase.sort((a,b) => new Date(b.date) -new Date(a.date))

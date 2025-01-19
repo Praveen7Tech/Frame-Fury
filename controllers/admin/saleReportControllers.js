@@ -148,45 +148,114 @@ const downloadReport = async(req,res)=>{
 }
 
 
-const downloadPdfFormat = async(req,res)=>{
+const downloadPdfFormat = async (req, res) => {
     try {
-        const {saleCount,totalSale,productDiscount,couponDiscount,orders} = req.body
-        console.log("body",req.body)
-        const doc = new PDFdocucument();
-        res.setHeader("Content-Type","application/json")
-        res.setHeader("Content-Disposition","attachment; filenmae='Sales_Report.pdf'")
+        const { saleCount, totalSale, productDiscount, couponDiscount, orders } = req.body;
 
-        // pipe the pdf to the response
+        const doc = new PDFdocucument({ size: 'A4', layout: 'landscape', margin: 50 }); // Portrait layout for better readability
+
+        res.setHeader("Content-Type", "application/pdf");
+        res.setHeader("Content-Disposition", "attachment; filename='Sales_Report.pdf'");
+
         doc.pipe(res);
 
-        //pdf Content
-        doc.fontSize(18).text("Sale-Report",{align:"center"})
-        doc.moveDown()
-        doc.fontSize(12).text(`Total Sales Count : ${saleCount}`)
-        doc.text(`Total Sale Amount : ${totalSale}`)
-        doc.text(`Overal Product Discount : ${productDiscount}`)
-        doc.text(`Overal Coupon Discount : ${couponDiscount}`)
-        doc.moveDown()
+        // Title and Summary
+        doc.fontSize(18).text("Sales Report", { align: "center" }).moveDown();
+        doc.fontSize(12)
+            .text(`Total Sales Count : ${saleCount}`)
+            .text(`Total Sale Amount : ${totalSale}`)
+            .text(`Overall Product Discount : ${productDiscount}`)
+            .text(`Overall Coupon Discount : ${couponDiscount}`)
+            .moveDown();
 
-        //table content
-        doc.text("Orders",{underline:true})
-        orders.forEach((order,index)=>{
-            doc.moveDown()
-            doc.text(`Order #${index +1}`)
-            doc.text(`Date ${order.date}`)
-            doc.text(`SubTotal ${order.subTotal}`)
-            doc.text(`Payment Method ${order.paymentMethod}`)
-            doc.text(`Coupon Discount ${order.couponDiscount}`)
-            doc.text(`Product Discount ${order.productDiscount}`)
-            doc.text(`Net Total ${order.netTotal}`)
-            doc.moveDown()
-        })
-        doc.end()
+        // Table Header Styling
+        doc.fontSize(14).text("Order Summary", { underline: true, align: "left" }).moveDown();
+        const tableTop = doc.y;
+        const tableLeft = 50;
+        const cellPadding = 5;
+        const columnWidths = [20, 70, 60, 100, 120, 160, 50, 35, 35, 45, 45];
+        const cellHeight = 25;
+
+        // Render Table Headers
+        const headers = [
+            "No", "Date", "Name", "Email", "Address",
+            "Product Details", "Payment Method", "Coupon",
+            "Discount", "Subtotal", "Net Total"
+        ];
+        headers.forEach((header, index) => {
+            doc.rect(
+                tableLeft + columnWidths.slice(0, index).reduce((a, b) => a + b, 0),
+                tableTop,
+                columnWidths[index],
+                cellHeight
+            )
+                .fillAndStroke("#f3f3f3", "#000")
+                .fontSize(10)
+                .fillColor("#000")
+                .text(header, tableLeft + columnWidths.slice(0, index).reduce((a, b) => a + b, 0) + cellPadding, tableTop + cellPadding, {
+                    width: columnWidths[index] - cellPadding * 2,
+                    align: "center"
+                });
+        });
+
+        // Table Rows
+        let yPosition = tableTop + cellHeight;
+        orders.forEach((order, index) => {
+            const productDetails = order.items
+                .map(item => `Product: ${item.productName}, Qty: ${item.quantity}, Price: ${item.price}`)
+                .join("\n");
+
+            const row = [
+                index + 1,
+                order.date,
+                order.userName,
+                order.userEmail,
+                `${order.addressType}, ${order.city}, ${order.state}, ${order.pincode}`,
+                productDetails,
+                order.paymentMethod,
+                order.couponDiscount,
+                order.productDiscount,
+                order.subTotal,
+                order.netTotal
+            ];
+
+            row.forEach((cell, cellIndex) => {
+                const cellHeightAdjusted = Math.max(
+                    cellHeight,
+                    doc.heightOfString(cell, { width: columnWidths[cellIndex] - cellPadding * 2 })
+                );
+
+                doc.rect(
+                    tableLeft + columnWidths.slice(0, cellIndex).reduce((a, b) => a + b, 0),
+                    yPosition,
+                    columnWidths[cellIndex],
+                    cellHeightAdjusted
+                )
+                    .stroke()
+                    .fontSize(9)
+                    .fillColor("#000")
+                    .text(cell, tableLeft + columnWidths.slice(0, cellIndex).reduce((a, b) => a + b, 0) + cellPadding, yPosition + cellPadding, {
+                        width: columnWidths[cellIndex] - cellPadding * 2,
+                        align: cellIndex === 4 ? "left" : "center" // Align Address to left for better readability
+                    });
+            });
+
+            yPosition += Math.max(cellHeight, doc.heightOfString(productDetails, { width: columnWidths[5] - cellPadding * 2 }) + cellPadding * 2);
+
+            // Check if page break is needed
+            if (yPosition + cellHeight > doc.page.height - 50) {
+                doc.addPage();
+                yPosition = 50; // Reset for new page
+            }
+        });
+
+        doc.end();
     } catch (error) {
-        console.error("Error in Creating PDF format sale report",error);
-        res.status(500).json({error:"Internal Server error  "})
+        console.error("Error in Creating PDF format sale report", error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
-}
+};
+
 
 module.exports = {
     saleFilter,

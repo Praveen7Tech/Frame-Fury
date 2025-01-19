@@ -22,28 +22,24 @@ const addToWishList = async (req, res) => {
     try {
         const { productId } = req.body;
         const userId = req.session.user._id;
-        console.log("Product ID:", productId);
-        console.log("User ID:", userId);
+        //console.log("Product ID:", productId);
+        //console.log("User ID:", userId);
 
         const wishlist = await Wishlist.findOne({ userId });
         console.log("Wishlist:", wishlist);
 
         const product = await Product.findById(productId);
         if (!product) {
-            return res
-                .status(404)
-                .json({ success: false, message: "Product not found." });
+            return res.status(404) .json({ success: false, message: "Product not found." });
         }
-        console.log("Product:", product);
+        //console.log("Product:", product);
 
         if (wishlist) {
             const existProduct = wishlist.products.find(
                 (item) => item.productId.toString() === productId
             );
             if (existProduct) {
-                return res
-                    .status(400)
-                    .json({ success: false, message: "Product is already in the wishlist!" });
+                return res .status(400).json({ success: false, message: "Product is already in the wishlist!" });
             }
 
             // Add the product to the existing wishlist
@@ -53,11 +49,11 @@ const addToWishList = async (req, res) => {
                 stockStatus: product.status,
             });
 
-            wishlist.wishListCount +=1;
+            const wishListCount = wishlist.products.length;
+            req.session.user.wishListCount = wishListCount;
+
             await wishlist.save();
-            return res
-                .status(200)
-                .json({ success: true, message: "Product added to the wishlist successfully." });
+            return res .status(200).json({ success: true,wishListCount, message: "Product added to the wishlist successfully." });
         }
 
         // Create a new wishlist if none exists
@@ -73,9 +69,7 @@ const addToWishList = async (req, res) => {
         });
 
         await newWishlist.save();
-        return res
-            .status(200)
-            .json({ success: true, message: "Product added to the wishlist successfully." });
+        return res .status(200) .json({ success: true, message: "Product added to the wishlist successfully." });
     } catch (error) {
         console.error("Error in adding product to wishlist:", error);
         return res
@@ -96,7 +90,6 @@ const removeFromWishList = async(req,res)=>{
         console.log("wishlist -",wishList);
 
         wishList.products = wishList.products.filter((item)=> item.productId.toString() !== productId);
-        wishList.wishListCount -=1;
         await wishList.save();
         
         return res.redirect("/wishList")
@@ -108,10 +101,28 @@ const removeFromWishList = async(req,res)=>{
 }
 
 
+const wishlistCount = async(req,res)=>{
+    try {
+        if (!req.session.user) {
+            return res.json({ success: false, message: "User not logged in" });
+        }
+
+        const userId = req.session.user._id;
+        const wishlist = await Wishlist.findOne({ userId });
+        const wishListCount = wishlist ? wishlist.products.length : 0;
+
+        return res.json({ success: true, wishListCount });
+    } catch (error) {
+        console.error("Error fetching wishlist count:", error);
+        return res.json({ success: false, message: "Failed to fetch wishlist count" });
+    }
+}
+
 
 
 module.exports = {
     wishListPage,
     addToWishList,
-    removeFromWishList
+    removeFromWishList,
+    wishlistCount
 }

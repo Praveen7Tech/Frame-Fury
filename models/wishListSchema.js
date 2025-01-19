@@ -29,10 +29,6 @@ const wishlistSchema = new Schema({
             },
         },
     ],
-    wishListCount:{
-        type:Number,
-        default:0
-    }
 });
 
 const Wishlist = mongoose.model("Wishlist", wishlistSchema);

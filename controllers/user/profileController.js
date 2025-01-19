@@ -26,7 +26,8 @@ const profile = async(req,res)=>{
 
         
         res.render("profile",{
-            user:userData,
+            user:userId,
+            userData,
             userAddress:addressData,
             orders:orderData,
             totalPages:totaLPages,

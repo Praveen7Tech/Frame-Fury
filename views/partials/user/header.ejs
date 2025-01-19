@@ -109,16 +109,22 @@
                                 <div class="header-action-icon-2">
                                     <a href="/wishList">
                                         <img class="svgInject" alt="Frame" src="assets/imgs/theme/icons/icon-heart.svg">
-                                        <span class=""></span>
+                                        <% if (user) { %>
+                                            <span class="pro-count blue"><%= user.wishListCount || 0 %></span>
+                                        <% } %>
                                     </a>
-                                </div>
+                                </div>  
+                                
                                 <div class="header-action-icon-2">
                                     <a class="mini-cart-icon" href="/cart">
                                         <img alt="Frame" src="assets/imgs/theme/icons/icon-cart.svg">
-                                        <span class=""></span>
+                                        <!-- Display the cart count dynamically -->
+                                    <%if(user){%>                                         
+                                        <span class="pro-count blue cart"><%= user.cartCount || 0 %></span>
+                                    <%}%>    
                                     </a>
-                                    
                                 </div>
+                                
                             </div>
                         </div>
                     </div>
@@ -224,8 +230,10 @@
                             </div>
                             <div class="header-action-icon-2">
                                 <a href="/wishList">
-                                    <img alt="Evara" src="assets/imgs/theme/icons/icon-heart.svg">
-                                    <span class="pro-count blue">4</span>
+                                    <img class="svgInject" alt="Frame" src="assets/imgs/theme/icons/icon-heart.svg">
+                                    <% if (user) { %>
+                                        <span class="pro-count blue"><%= user.wishListCount || 0 %></span>
+                                    <% } %>
                                 </a>
                             </div>
                             <div class="header-action-icon-2">

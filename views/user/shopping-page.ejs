@@ -315,6 +315,7 @@
                         timer:2000,
                         showConfrimButton:false
                     })
+                    updateWishlistCount(data.wishListCount)
                 }else{
                     Swal.fire({
                         icon:"Warning",
@@ -334,4 +335,11 @@
                 })
             })
         }
+
+        function updateWishlistCount(count) {
+                const wishlistCountElement = document.querySelector('.pro-count.blue');
+                if (wishlistCountElement) {
+                 wishlistCountElement.textContent = count;
+                }
+            }
     </script>

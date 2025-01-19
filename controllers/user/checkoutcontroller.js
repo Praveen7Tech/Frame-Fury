@@ -176,6 +176,8 @@ const razorpayInstance = new Razorpay({
 });
 
 const razorPayOrder = async (req, res) => {
+
+  
     try {
         const { totalAmount } = req.body;
         console.log("Total Amount: ", totalAmount);

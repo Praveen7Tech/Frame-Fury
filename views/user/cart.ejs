@@ -13,6 +13,52 @@
                 </div>
             </div>
         </div>
+
+        <style>
+            .detail-qty {
+                max-width: 113px;
+                display: inline-flex;
+                align-items: center;
+                border: 1px solid #e2e8f0;
+                border-radius: 9999px;
+                overflow: hidden;
+            }
+        
+            .qty-btn {
+                background-color: #f7fafc;
+                border: none;
+                color: #4a5568;
+                cursor: pointer;
+                font-size: 16px;
+                height: 30px;
+                width: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: background-color 0.2s;
+            }
+        
+            .qty-btn:hover {
+                background-color: #edf2f7;
+            }
+        
+            .qty-val {
+                font-size: 14px;
+                padding: 0 10px;
+                min-width: 30px;
+                text-align: center;
+            }
+        
+            .icon-minus-sign::before {
+                content: "\2212";  /* Unicode for minus sign */
+                font-style: normal;
+            }
+        
+            .icon-plus-sign::before {
+                content: "\002B";  /* Unicode for plus sign */
+                font-style: normal;
+            }
+        </style>
           
         <section class="mt-50 mb-50">
             <div class="container">
@@ -69,32 +115,36 @@
                                                     <span><%= finalPrice %></span>
                                                   </td>
                                                   
-                                                <td class="text-center" data-title="Stock">
-                                                    <div class="detail-qty border radius  m-auto">
-                                                        <a href="#" class="qty-down"
-                                                            onclick="updateCartQuantity('<%= item.productId._id %>', <%= item.quantity - 1 %>)">
-                                                            <i class="fi-rs-angle-small-down"></i>
-                                                        </a>
-                                                        <span class="qty-val">
+                                                  <td class="text-center" data-title="Stock">
+                                                    <div class="detail-qty border radius m-auto">
+                                                        <button class="qty-btn qty-down" 
+                                                                data-product-id="<%= item.productId._id %>"
+                                                                onclick="updateCartQuantity('<%= item.productId._id %>', parseInt(document.querySelector('#qty-<%= item.productId._id %>').textContent) - 1)">
+                                                            <i class="icon-minus-sign"></i>
+                                                        </button>
+                                                        <span class="qty-val" id="qty-<%= item.productId._id %>">
                                                             <%= item.quantity %>
                                                         </span>
-                                                        <a href="#" class="qty-up"
-                                                            onclick="updateCartQuantity('<%= item.productId._id %>', <%= item.quantity + 1 %>)">
-                                                            <i class="fi-rs-angle-small-up"></i>
-                                                        </a>
+                                                        <button class="qty-btn qty-up" 
+                                                                data-product-id="<%= item.productId._id %>"
+                                                                onclick="updateCartQuantity('<%= item.productId._id %>', parseInt(document.querySelector('#qty-<%= item.productId._id %>').textContent) + 1)">
+                                                            <i class="icon-plus-sign"></i>
+                                                        </button>
                                                     </div>
-
                                                 </td>
                                                 <td class="text-right" data-title="Cart">
-                                                    <span>
-                                                        <%= Math.floor(item.totalPrice)  %>
+                                                    <span id="totalPrice-<%= item.productId._id %>">
+                                                        <%= Math.floor(item.totalPrice.toFixed(2)) %>
                                                     </span>
                                                 </td>
+                                                
                                                 <td class="action" data-title="Remove">
-                                                    <a href="#" class="text-muted"
-                                                        onclick="RemoveFromCart('<%= item.productId._id %>')"><i
-                                                            class="fi-rs-trash"></i></a>
+                                                    <a href="#" class="text-muted" 
+                                                       onclick="RemoveFromCart('<%= item.productId._id %>')">
+                                                        <i class="fi-rs-trash"></i>
+                                                    </a>
                                                 </td>
+                                                
                                             </tr>
                                             <% } %>
                                                 <% } else { %>
@@ -151,32 +201,13 @@
                         window.location.href = `/removeFromCart/?productId=${productId}`
                     }
                 })
+                
             }
+ 
+            
 
 
             async function updateCartQuantity(productId, quantity) {
-
-                if (quantity > 5) {
-                    Swal.fire({
-                        icon: "warning",
-                        title: "Maximum Quantity Reached",
-                        text: "Maximum quantity for this product is 5.",
-                        confirmButtonText: "OK",
-                    }).then(()=>{
-                        location.reload();
-                    })
-                    return; 
-                }
-
-                if (quantity <= 0) {
-                    Swal.fire({
-                        icon: "warning",
-                        title: "Minimum Quantity Alert",
-                        text: "Minimum quantity is 1.",
-                        confirmButtonText: "OK",
-                    });
-                    return; 
-                }
 
                 try {
                     const response = await fetch("/updateCartQuantity", {
@@ -186,21 +217,57 @@
                     });
 
                     const data = await response.json();
+                    console.log("Response from server:", data);
 
                     if (data.status) {
-                        location.reload();
+                        // Update the specific quantity and price
+                        const qtySpan = document.querySelector(`#qty-${productId}`);
+                        const totalPriceSpan = document.querySelector(`#totalPrice-${productId}`);
+                        const qtyUpBtn = document.querySelector(`.qty-up[data-product-id="${productId}"]`);
+                        const qtyDownBtn = document.querySelector(`.qty-down[data-product-id="${productId}"]`);
+
+                        qtySpan.textContent = data.quantity;
+                        totalPriceSpan.textContent = Math.floor(data.totalPrice * data.quantity);
+
+                        // Enable/disable buttons based on the updated quantity
+                        if (data.quantity >= 5) {
+                            qtyUpBtn.classList.add("disabled");
+                            qtyUpBtn.style.pointerEvents = "none";
+                            Swal.fire({
+                                icon: "warning",
+                                title: "Maximum Quantity Reached",
+                                text: "You cannot add more than 5 units of this product.",
+                                confirmButtonText: "OK",
+                    });
+                        } else {
+                            qtyUpBtn.classList.remove("disabled");
+                            qtyUpBtn.style.pointerEvents = "auto";
+                        }
+
+                        if (data.quantity <= 1) {
+                            qtyDownBtn.classList.add("disabled");
+                            qtyDownBtn.style.pointerEvents = "none";
+                            Swal.fire({
+                                icon: "warning",
+                                title: "Minimum Quantity Reached",
+                                text: "You must have at least 1 unit of this product.",
+                                confirmButtonText: "OK",
+                    });
+                        } else {
+                            qtyDownBtn.classList.remove("disabled");
+                            qtyDownBtn.style.pointerEvents = "auto";
+                        }
                     } else {
                         Swal.fire({
                             icon: "error",
                             title: "Error",
                             text: data.message,
                             confirmButtonText: "OK",
-                        })
-                        .then(()=>location.reload())
+                        });
                     }
                 } catch (error) {
                     console.error("Error in updating cart quantity", error);
-                    Swal.fire({
+                    Swal.fire({ 
                         icon: "error",
                         title: "Error",
                         text: "Failed to update the cart. Please try again.",
@@ -208,6 +275,7 @@
                     });
                 }
             }
+
 
 
     

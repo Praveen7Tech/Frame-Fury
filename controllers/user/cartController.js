@@ -2,6 +2,8 @@ const User = require("../../models/userSchema");
 const Product = require("../../models/productSchema");
 const Cart = require("../../models/cartSchema");
 const Category = require("../../models/categorySchema");
+const Wishlist = require("../../models/wishListSchema");
+//const { cartCount } = require("../../middlewares/auth");
 
 
 const cartPage = async (req, res) => {
@@ -25,11 +27,9 @@ const cartPage = async (req, res) => {
           listedCategory.includes(product.category._id.toString())
         );
       });
-  
-      res.render("cart", {
-        user,
-        cart: findProduct,
-      });
+
+
+      res.render("cart", {user:userId, cart: findProduct});
     } catch (error) {
       console.error("Error in showing cart page", error);
       res.redirect("/pageNotFound");
@@ -96,9 +96,13 @@ const cartPage = async (req, res) => {
       // Save the updated product and cart
       await product.save();
       await cart.save();
+
+      const cartCount = cart.items.length;
+      req.session.cartCount = cartCount
+      //console.log("suii",cartCount)
   
       console.log("Product added to cart successfully");
-      return res.status(200).json({ status: true, message: "Product added to Cart Successfully." });
+      return res.status(200).json({ status: true, message: "Product added to Cart Successfully.",cartCount:cartCount });
   
     } catch (error) {
       console.error("Error in add to cart", error);
@@ -184,18 +188,36 @@ const updateCartQuantity = async(req,res)=>{
         } 
        
         findProduct.quantity = quantity;
+        console.log("zooo",findProduct.quantity);
+
+        
         findProduct.totalPrice = findProduct.price * quantity
 
         await product.save();
         await cart.save();
-        return res.status(200).json({status: true, message:"Cart updated succesfuly."})
+        return res.status(200).json({status: true,quantity:findProduct.quantity,totalPrice:findProduct.price ,message:"Cart updated succesfuly."})
     } catch (error) {
         console.error("Error in updating quantity",error);
         return res.status(500).json({status: false, message:"Server Error...!"})
     }
 }
 
+const cartCount = async(req,res)=>{
+  try {
+      if (!req.session.user) {
+          return res.json({ success: false, message: "User not logged in" });
+      }
 
+      const userId = req.session.user._id;
+      const cart = await Cart.findOne({ userId });
+      const cartCount = cart ? cart.items.length : 0;
+
+      return res.json({ success: true, cartCount });
+  } catch (error) {
+      console.error("Error fetching wishlist count:", error);
+      return res.json({ success: false, message: "Failed to fetch wishlist count" });
+  }
+}
 
 
 
@@ -203,5 +225,6 @@ module.exports = {
     cartPage,
     addToCart,
     removeProduct,
-    updateCartQuantity
+    updateCartQuantity,
+    cartCount
 }

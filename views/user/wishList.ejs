@@ -135,6 +135,16 @@
                     window.location.href=`/removeFromWishList/?productId=${productId}`
                 }
             })
+
+            updateWishlistCount(data.wishListCount)
+            
+        }
+
+        function updateWishlistCount(count) {
+             const wishlistCountElement = document.querySelector('.pro-count.blue');
+            if (wishlistCountElement) {
+             wishlistCountElement.textContent = count;
+            }
         }
 
     </script>

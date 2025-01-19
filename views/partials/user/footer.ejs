@@ -150,8 +150,26 @@
 <script src="assets/js/main.js"></script>
 <script src="assets/js/shop.js"></script>
 
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+    fetch("/wishlistCount", {
+        method: "GET"
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            updateWishlistCount(data.wishListCount);
+        }
+    })
+    .catch(error => {
+        console.error("Error fetching wishlist count:", error);
+    });
+});
+
+</script>
 
 </body>
+
 
 
 <!-- Mirrored from wp.alithemes.com/html/evara/evara-frontend/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:25:49 GMT -->

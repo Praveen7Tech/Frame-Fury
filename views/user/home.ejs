@@ -380,6 +380,10 @@
                     data: { productId: productId },
                     success: (response) => {
                         if (response.status) {
+                            const cartCountElement = document.querySelector(".cart");
+                                if (cartCountElement) {
+                                    cartCountElement.textContent = response.cartCount;
+                                }
                             Swal.fire({
                                 title: "Added To Cart",
                                 text: "The Product Has been Added to Your Cart",
@@ -429,6 +433,8 @@
                             timer:2000,
                             showConfrimButton:false
                         })
+
+                        updateWishlistCount(data.wishListCount)
                     }else{
                         Swal.fire({
                             icon:"Warning",
@@ -447,5 +453,12 @@
                         text: 'Something went wrong. Please try again later.'
                     })
                 })
+            }
+
+            function updateWishlistCount(count) {
+                const wishlistCountElement = document.querySelector('.pro-count.blue');
+                if (wishlistCountElement) {
+                 wishlistCountElement.textContent = count;
+                }
             }
         </script>
