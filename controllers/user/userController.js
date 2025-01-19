@@ -243,10 +243,11 @@ const login = async (req, res) => {
             return res.render("login", { message: "Incorrect password" });
         }
 
+        // dynamically showing wishlist count
         const wishlist = await Wishlist.findOne({userId:findUser._id})
-        const wishListCount = wishlist ? wishlist.products.length : 0;
-        console.log("wishhh",wishListCount)
+        const wishListCount = wishlist ? req.session.wishListCount = wishlist.products.length : 0;
 
+        // dynamically showing the cartcount
         const cart = await Cart.findOne({userId:findUser._id})
         if(cart){
             req.session.cartCount = cart.items.length;
@@ -255,12 +256,10 @@ const login = async (req, res) => {
             req.session.cartCount = 0;
         }
 
-        req.session.user = { _id: findUser._id, name: findUser.name ,email:findUser.email, wishListCount:wishListCount}
-        console.log("kkknn",req.session.user)
+        req.session.user = { _id: findUser._id, name: findUser.name ,email:findUser.email}
      
         // creating a wallet for user
         let wallet =await Wallet.findOne({userId:req.session.user._id})
-        //console.log("user wlt",wallet)
         if(!wallet){
             wallet = new Wallet({
                 userId:req.session.user._id,
@@ -269,7 +268,7 @@ const login = async (req, res) => {
 
            await wallet.save()
         }
-        
+        console.log("count",req.session.cartCount,req.session.wishListCount)
         res.redirect("/")
     } catch (error) {
         console.error("Login error", error);

@@ -49,11 +49,12 @@ const addToWishList = async (req, res) => {
                 stockStatus: product.status,
             });
 
+            //dynamically showing wishlist count
             const wishListCount = wishlist.products.length;
-            req.session.user.wishListCount = wishListCount;
+            req.session.wishListCount = wishListCount;
 
             await wishlist.save();
-            return res .status(200).json({ success: true,wishListCount, message: "Product added to the wishlist successfully." });
+            return res .status(200).json({ success: true,wishListCount, message: "Product added to the wishlist successfully.", wishListCount:wishListCount });
         }
 
         // Create a new wishlist if none exists
@@ -68,8 +69,14 @@ const addToWishList = async (req, res) => {
             ],
         });
 
+        //wishlist count dynamically
+        const newwishListCount = newWishlist.products.length;
+        req.session.wishListCount = newwishListCount
+
         await newWishlist.save();
-        return res .status(200) .json({ success: true, message: "Product added to the wishlist successfully." });
+        return res .status(200) .json({ success: true, message: "Product added to the wishlist successfully.",
+            wishListCount:newwishListCount
+         });
     } catch (error) {
         console.error("Error in adding product to wishlist:", error);
         return res
@@ -91,8 +98,11 @@ const removeFromWishList = async(req,res)=>{
 
         wishList.products = wishList.products.filter((item)=> item.productId.toString() !== productId);
         await wishList.save();
+
+        const wishListCount = wishList.products.length;
+        req.session.wishListCount = wishListCount
         
-        return res.redirect("/wishList")
+        res.status(200).json({success:true,wishListCount:wishListCount})
         
     } catch (error) {
        console.error("Error in remove product from wishList",error);
@@ -101,28 +111,10 @@ const removeFromWishList = async(req,res)=>{
 }
 
 
-const wishlistCount = async(req,res)=>{
-    try {
-        if (!req.session.user) {
-            return res.json({ success: false, message: "User not logged in" });
-        }
-
-        const userId = req.session.user._id;
-        const wishlist = await Wishlist.findOne({ userId });
-        const wishListCount = wishlist ? wishlist.products.length : 0;
-
-        return res.json({ success: true, wishListCount });
-    } catch (error) {
-        console.error("Error fetching wishlist count:", error);
-        return res.json({ success: false, message: "Failed to fetch wishlist count" });
-    }
-}
-
 
 
 module.exports = {
     wishListPage,
     addToWishList,
-    removeFromWishList,
-    wishlistCount
+    removeFromWishList
 }

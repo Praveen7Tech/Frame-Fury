@@ -27,10 +27,10 @@ app.use(session({
     }
 }))
 
-
+// cart & wishlist count is passing to all templates in header
 app.use((req, res, next) => {
-    // Ensure cartCount is available in all templates (header)
     res.locals.cartCount = req.session.cartCount || 0;
+    res.locals.wishListCount = req.session.wishListCount || 0;
     next();
   });
   

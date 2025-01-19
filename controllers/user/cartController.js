@@ -113,37 +113,6 @@ const cartPage = async (req, res) => {
   };
   
 
-
-
-// const removeProduct = async (req, res) => {
-//     try {
-//         const productId = req.query.productId;
-//         const userId = req.session.user;
-
-//         const cart = await Cart.findOne({ userId });
-
-//         if (!cart) {
-//             return res.redirect("/cart");
-//         }
-
-//         const findProduct = cart.items.find((item)=> item.productId.toString() === productId)
-//         console.log("findProduct", findProduct);
-        
-
-//         const removeQty = findProduct.quantity;
-
-//         cart.items = cart.items.filter((item) => item.productId.toString() !== productId);
-//         await cart.save();
-
-//         await Product.findByIdAndUpdate(productId,{$inc:{quantity:removeQty}})    
-
-//         return res.redirect("/cart");
-//     } catch (error) {
-//         console.error("Error in removing item from cart", error);
-//         return res.status(500).json({ status: false, message: "Server Error!" });
-//     }
-// };
-
 const removeProduct = async (req, res) => {
   try {
       const productId = req.query.productId;

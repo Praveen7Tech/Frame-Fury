@@ -110,9 +110,7 @@
                                 <div class="header-action-icon-2">
                                     <a href="/wishList">
                                         <img class="svgInject" alt="Frame" src="assets/imgs/theme/icons/icon-heart.svg">
-                                        <% if (user) { %>
-                                            <span class="pro-count blue"><%= user.wishListCount || 0 %></span>
-                                        <% } %>
+                                        <span class="pro-count blue wishList"><%= wishListCount %></span>
                                     </a>
                                 </div>  
                                 <!-- cart count -->

@@ -433,6 +433,11 @@
                 .then(response=> response.json())
                 .then(data=>{
                     if(data.success){
+                        //dynamically changing wishList count
+                        const wishlistCountElement = document.querySelector(".wishList")
+                        if(wishlistCountElement){
+                            wishlistCountElement.textContent = data.wishListCount;
+                        }
                         Swal.fire({
                             icon:"success",
                             title:"Added to WishList",
@@ -440,8 +445,6 @@
                             timer:2000,
                             showConfrimButton:false
                         })
-
-                        updateWishlistCount(data.wishListCount)
                     }else{
                         Swal.fire({
                             icon:"Warning",
@@ -462,10 +465,4 @@
                 })
             }
 
-            function updateWishlistCount(count) {
-                const wishlistCountElement = document.querySelector('.pro-count.blue');
-                if (wishlistCountElement) {
-                 wishlistCountElement.textContent = count;
-                }
-            }
         </script>

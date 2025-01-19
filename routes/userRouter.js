@@ -106,7 +106,6 @@ router.post("/ReturnOrder/:orderId",userAuth,orderController.ReturnOrder)
 router.get("/Wishlist",userAuth, whishListController.wishListPage)
 router.post("/addToWishlist",userAuth,whishListController.addToWishList)
 router.get("/removeFromWishList",userAuth,whishListController.removeFromWishList)
-router.get("/wishlistCount",whishListController.wishlistCount)
 
 //coupon management
 router.post("/verifyCoupon",userAuth,couponController.verifyCoupon)

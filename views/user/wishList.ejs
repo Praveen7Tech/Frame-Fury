@@ -132,19 +132,24 @@
             })
             .then((result)=>{
                 if(result.isConfirmed){
-                    window.location.href=`/removeFromWishList/?productId=${productId}`
+                    fetch(`/removeFromWishList/?productId=${productId}`)
+                    .then((response)=> response.json())
+                    .then((response)=>{
+                        if(response.success){
+                            const wishlistCountElement = document.querySelector(".wishList");
+                            if(wishlistCountElement){
+                                wishlistCountElement.textContent = response.wishListCount
+                            }
+                            location.reload()
+                        }
+                    })
+                    .catch((error)=>{
+                        console.error("Error in Remove from wishlist",error)
+                    })
                 }
             })
-
-            updateWishlistCount(data.wishListCount)
             
         }
-
-        function updateWishlistCount(count) {
-             const wishlistCountElement = document.querySelector('.pro-count.blue');
-            if (wishlistCountElement) {
-             wishlistCountElement.textContent = count;
-            }
-        }
+        
 
     </script>
