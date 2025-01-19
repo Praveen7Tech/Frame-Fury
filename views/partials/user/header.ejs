@@ -106,6 +106,7 @@
                                         
                                     </a>  
                                 </div>
+                                <!-- wishlist count -->
                                 <div class="header-action-icon-2">
                                     <a href="/wishList">
                                         <img class="svgInject" alt="Frame" src="assets/imgs/theme/icons/icon-heart.svg">
@@ -114,16 +115,14 @@
                                         <% } %>
                                     </a>
                                 </div>  
-                                
+                                <!-- cart count -->
                                 <div class="header-action-icon-2">
                                     <a class="mini-cart-icon" href="/cart">
-                                        <img alt="Frame" src="assets/imgs/theme/icons/icon-cart.svg">
-                                        <!-- Display the cart count dynamically -->
-                                    <%if(user){%>                                         
-                                        <span class="pro-count blue cart"><%= user.cartCount || 0 %></span>
-                                    <%}%>    
+                                        <img alt="Frame" src="assets/imgs/theme/icons/icon-cart.svg">                                 
+                                        <span class="pro-count blue cart"><%= cartCount %></span> 
                                     </a>
                                 </div>
+                                
                                 
                             </div>
                         </div>
@@ -135,7 +134,7 @@
             <div class="container">
                 <div class="header-wrap header-space-between position-relative">
                     <div class="logo logo-width-1 d-block d-lg-none">
-                        <a href="index.html"><img src="assets/imgs/theme/logo.png" alt="logo"></a>
+                        <a href="/"><img src="assets/imgs/theme/logo.png" alt="logo"></a>
                     </div>
                     <div class="header-nav d-none d-lg-flex">
                         <div class="main-categori-wrap d-none d-lg-block">
@@ -228,6 +227,7 @@
                                     
                                 </a>  
                             </div>
+                            <!-- wishlist count -->
                             <div class="header-action-icon-2">
                                 <a href="/wishList">
                                     <img class="svgInject" alt="Frame" src="assets/imgs/theme/icons/icon-heart.svg">
@@ -236,23 +236,14 @@
                                     <% } %>
                                 </a>
                             </div>
+                            <!-- cart count -->
                             <div class="header-action-icon-2">
                                 <a class="mini-cart-icon" href="/cart">
-                                    <img alt="Evara" src="assets/imgs/theme/icons/icon-cart.svg">
-                                   
+                                    <img alt="Frame" src="assets/imgs/theme/icons/icon-cart.svg">                                 
+                                    <span class="pro-count blue cart"><%= cartCount %></span> 
                                 </a>
-                                <div class="cart-dropdown-wrap cart-dropdown-hm2">
-                                   
-                                    <div class="shopping-cart-footer">
-                                        <div class="shopping-cart-total">
-                                          
-                                        </div>
-                                        <div class="shopping-cart-button">
-                                          
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
+                           
                             <div class="header-action-icon-2 d-block d-lg-none">
                                 <div class="burger-icon burger-icon-white">
                                     <span class="burger-icon-top"></span>

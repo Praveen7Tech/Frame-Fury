@@ -7,7 +7,7 @@
         <div class="page-header breadcrumb-wrap">
             <div class="container">
                 <div class="breadcrumb">
-                    <a href="index.html" rel="nofollow">Home</a>
+                    <a href="/" rel="nofollow">Home</a>
                     <span></span> Shop
                     <span></span> Your Cart
                 </div>
@@ -186,23 +186,35 @@
         <script>
 
             function RemoveFromCart(productId) {
-
                 Swal.fire({
                     title: "Are You Sure.",
-                    text: "You can't able to revert this item.",
+                    text: "You can't revert this item.",
                     icon: "warning",
                     showCancelButton: true,
                     confirmButtonColor: "#3085d6",
                     cancelButtonColor: "#d333",
                     confirmButtonText: "YES Remove it"
-
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        window.location.href = `/removeFromCart/?productId=${productId}`
+                        fetch(`/removeFromCart/?productId=${productId}`)
+                            .then((response) => response.json())
+                            .then((response) => {
+                                if (response.success) {
+                                    //dynamically showing cart count
+                                    const cartCountElement = document.querySelector(".cart");
+                                    if (cartCountElement) {
+                                        cartCountElement.textContent = response.cartCount;
+                                    }
+                                    location.reload()
+                                }
+                            })
+                            .catch((error) => {
+                                console.error("Error in remove cart", error);
+                            });
                     }
                 })
-                
             }
+
  
             
 

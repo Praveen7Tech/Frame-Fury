@@ -248,10 +248,14 @@ const login = async (req, res) => {
         console.log("wishhh",wishListCount)
 
         const cart = await Cart.findOne({userId:findUser._id})
-        const cartCount = cart ? cart.items.length : 0;
-        console.log("crrrt",cartCount)
+        if(cart){
+            req.session.cartCount = cart.items.length;
+        }
+        else{
+            req.session.cartCount = 0;
+        }
 
-        req.session.user = { _id: findUser._id, name: findUser.name ,email:findUser.email, wishListCount:wishListCount, cartCount:cartCount}
+        req.session.user = { _id: findUser._id, name: findUser.name ,email:findUser.email, wishListCount:wishListCount}
         console.log("kkknn",req.session.user)
      
         // creating a wallet for user

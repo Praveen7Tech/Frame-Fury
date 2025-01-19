@@ -17,6 +17,7 @@ dotenv.config()
 
 const Razorpay = require("razorpay");
 const { default: mongoose } = require("mongoose");
+const { cartCount } = require("./cartController");
 
 
 function generateOrderId(){
@@ -156,6 +157,8 @@ const placeOrder = async (req, res) => {
 
         await order.save();
         await Cart.findOneAndUpdate({ userId }, { items: [] });
+
+        req.session.cartCount = 0; // updating cart count in dynamically
 
         res.json({ success: true, orderId: order._id ,discount});
         console.log("Order placed successfully");
@@ -385,6 +388,7 @@ const verifyRazorPayOrder = async (req, res) => {
     // Handle the cart and response based on payment status
     if (paymentStatusValue === "Paid") {
       await Cart.findOneAndUpdate({ userId }, { items: [] });
+      req.session.cartCount = 0; // dynamically changing cart count
       res.json({
         success: true,
         message: "Payment successful! Your order has been placed.",
@@ -393,6 +397,7 @@ const verifyRazorPayOrder = async (req, res) => {
       });
     } else {
       await Cart.findOneAndUpdate({ userId }, { items: [] });
+      req.session.cartCount = 0; // dynamically changing cart count
       res.json({
         success: false,
         message: "Payment failed. Your order has been placed with a Failed status.",
@@ -495,11 +500,13 @@ const placeOrderWallet = async (req, res) => {
             paymentMethod,
             couponCode,
             items: orderItems,
-            productOfferTotal
+            productOfferTotal,
+            paymentStatus:"Paid"
         });
 
         await order.save();
         await Cart.findOneAndUpdate({ userId }, { items: [] });
+        req.session.cartCount = 0; // dynamically changing cart count
 
         // Update wallet
         const transactionId = uuidv4();

@@ -28,6 +28,13 @@ app.use(session({
 }))
 
 
+app.use((req, res, next) => {
+    // Ensure cartCount is available in all templates (header)
+    res.locals.cartCount = req.session.cartCount || 0;
+    next();
+  });
+  
+
 // accessing passport
 app.use(passport.initialize());
 app.use(passport.session())

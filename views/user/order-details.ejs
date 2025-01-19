@@ -235,12 +235,19 @@
         document.getElementById("returnOrderButton")?.addEventListener("click", function() {
             Swal.fire({
                 title: "Return Order",
-                text: "Are you sure you want to return this order?",
+                text: "Are You Sure.? Please provide a Reason for Returning this Order..!",
+                input:"text",
+                inputPlaceholder:"Enter Your Reason",
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonText: "Yes, proceed",
                 confirmButtonColor: "#d33",
-                cancelButtonColor: "#3085d6"
+                cancelButtonColor: "#3085d6",
+                inputValidator:(value)=>{
+                    if(!value){
+                        return "You Must need to provide a Reason for Return this order..!"
+                    }
+                }
             })
             .then((result) => {
                 if (result.isConfirmed) {

@@ -16,30 +16,30 @@ const loadLogin = async(req,res)=>{
     res.render("admin-login",{message:null})
 }
 
-const login = async(req,res)=>{
+const login = async (req, res) => {
     try {
-        const {email,password} = req.body;
-        
-        const admin =await User.findOne({email,isAdmin:true})
-        //console.log("admin-",admin)
-        if(admin){
-             const passwordMatch = await bcrypt.compare(password, admin.password);
-            // console.log("pass match-",passwordMatch);
-             
-             if(passwordMatch){
+        const { email, password } = req.body;
+
+        const admin = await User.findOne({ email, isAdmin: true });
+
+        if (admin) {
+            const passwordMatch = await bcrypt.compare(password, admin.password);
+
+            if (passwordMatch) {
                 req.session.admin = true;
-                return res.redirect("/admin")
-             }else{
-                return res.redirect("/admin/login")
-             }        
-        }else{
-            return res.redirect("/admin/login")
+                return res.status(200).json({ success: true, message: "Login successful!" });
+            } else {
+                return res.status(400).json({ success: false, message: "Incorrect password!" });
+            }
+        } else {
+            return res.status(400).json({ success: false, message: "Admin account not found!" });
         }
     } catch (error) {
-        console.log("Login error");
-        return res.redirect("/pageerror"); 
+        console.log("Login error", error);
+        return res.status(500).json({ success: false, message: "Server error, please try again later." });
     }
-}
+};
+
 
 const dashBoard = async(req,res)=>{
     try {
