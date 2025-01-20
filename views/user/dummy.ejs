@@ -1,849 +1,353 @@
-<%- include("../../views/partials/user/header") %>
 
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
     <style>
-        .ProductContainer {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            margin-top: 5%;
-        }
-
-        .product-detail {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-        }
-
-        .product-images {
-            flex: 1;
-            min-width: 300px;
-        }
-
-        .main-image-container {
-            position: relative;
-            overflow: hidden;
-            width: 100%;
-            padding-top: 100%;
-            /* 1:1 Aspect Ratio */
-        }
-
-        .main-image {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-
-        .thumbnail-strip {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-            overflow-x: auto;
-        }
-
-        .thumbnail {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 4px;
-            cursor: pointer;
-            border: 2px solid transparent;
-        }
-
-        .thumbnail.active {
-            border-color: #007bff;
-        }
-
-        .product-info {
-            flex: 1;
-            min-width: 300px;
-        }
-
-        h1 {
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-
-        .rating {
-            color: #ffc107;
-            font-size: 20px;
-        }
-
-        .price {
-            font-size: 24px;
+        .order-status {
+            font-size: 1.2rem;
             font-weight: bold;
-            color: #007bff;
-            margin: 10px 0;
         }
-
-        .old-price {
-            text-decoration: line-through;
-            color: #6c757d;
-            margin-left: 10px;
+        .product-image {
+            max-width: 100px;
+            height: auto;
         }
-
-        .quantity {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
+        .card {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
         }
-
-        .quantity button {
+        .card-header {
             background-color: #f8f9fa;
-            border: 1px solid #ced4da;
-            padding: 5px 10px;
-            font-size: 16px;
-            cursor: pointer;
+            border-bottom: 1px solid #dee2e6;
         }
-
-        .quantity span {
-            padding: 5px 15px;
-            border-top: 1px solid #ced4da;
-            border-bottom: 1px solid #ced4da;
-        }
-
-        .add-to-cart {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-
-        .add-to-cart:hover {
-            background-color: #0056b3;
-        }
-
-        .product-meta {
-            margin-top: 20px;
-            font-size: 14px;
-            color: #6c757d;
-        }
-
-        .material-filter li {
-            display: inline-block;
-            margin-right: 10px;
-        }
-
-        .material-filter li a {
-            color: #333;
-            text-decoration: none;
-        }
-
-        .material-filter li.active a {
-            color: #ff4500;
-            /* Highlight the selected material */
-            font-weight: bold;
-        }
-
-        /* already in wishlist  */
-        .wishlist-added {
-            color: red;
-        }
-
-       /* Common Styles */
-        .option-title {
-            display: block;
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: #333;
-        }
-
-        .required {
-            color: #e51f1f;
-            margin-left: 4px;
-        }
-
-        /* Material Options Styling */
-        .material-options {
-            display: grid;
-            gap: 12px;
-            margin-top: 10px;
-        }
-
-        .material-option {
-            display: flex;
-            align-items: center;
-            padding: 12px 15px;
-            border: 1px solid #e5e5e5;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: #fff;
-        }
-
-        .material-option:hover {
-            border-color: #3BB77E;
-            background: #f8f9fa;
-        }
-
-        .material-check {
-            position: relative;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #ddd;
-            border-radius: 50%;
-            margin-right: 12px;
-            transition: all 0.2s ease;
-        }
-
-        .material-option input[type="radio"] {
-            display: none;
-        }
-
-        .material-option input[type="radio"]:checked + .material-check {
-            border-color: #3BB77E;
-        }
-
-        .material-option input[type="radio"]:checked + .material-check:after {
-            content: '';
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: #3BB77E;
-            border-radius: 50%;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .material-name {
-            font-weight: 500;
-            margin-right: 10px;
-            color: #333;
-        }
-
-        .material-desc {
-            font-size: 13px;
-            color: #777;
-            margin-left: auto;
-        }
-
-        /* Custom Select Styling */
-        .custom-select {
-            position: relative;
-            width: 100%;
-        }
-
-        .style-select,
-        .size-select {
-            width: 100%;
-            padding: 14px 20px;
-            font-size: 15px;
-            border: 1px solid #e5e5e5;
-            border-radius: 8px;
-            appearance: none;
-            background: #fff;
-            cursor: pointer;
-            color: #333;
-            transition: all 0.3s ease;
-        }
-
-        .style-select:hover,
-        .size-select:hover {
-            border-color: #3BB77E;
-        }
-
-        .style-select:focus,
-        .size-select:focus {
-            border-color: #3BB77E;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(59, 183, 126, 0.1);
-        }
-
-        .select-arrow {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 10px;
-            height: 10px;
-            border-right: 2px solid #666;
-            border-bottom: 2px solid #666;
-            transform: translateY(-50%) rotate(45deg);
-            pointer-events: none;
-            transition: all 0.3s ease;
-        }
-
-        .custom-select:hover .select-arrow {
-            border-color: #3BB77E;
-        }
-
-        /* Disabled Option Styling */
-        select option[disabled] {
-            color: #999;
-        }
-
-        /* Spacing */
-        .attr-detail {
-            margin-bottom: 35px;
-        }
-
-        /* Mobile Responsiveness */
-        @media (max-width: 768px) {
-            .material-option {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .material-desc {
-                margin-left: 32px;
-                margin-top: 5px;
-            }
+        .table th {
+            background-color: #f8f9fa;
         }
     </style>
-    <main class="main">
-        <div class="page-header breadcrumb-wrap">
-            <div class="container">
-                <div class="breadcrumb">
-                    <a href="/" rel="nofollow">Home</a>
-                    <span></span>  <a href="/shoppingPage">shop</a>
-                    <span></span>
-                    <%=product.productName%>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <h1>Order Details</h1>
+            </div>
+            <div class="col-md-6 text-end">
+                <button class="btn btn-primary invcBtn" onclick="InvoiceDownload()">Invoice</button>
+            </div>
+        </div>    
+        <div class="card mb-4">
+            <div class="card-header">
+                <h2 class="card-title h5 mb-0">Order Summary</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Order Number:</strong> <%=order._id%></p>
+                        <p><strong>Order Date:</strong> <%=new Date(order.createdAt).toLocaleString()%></p>
+                        <p><strong>Customer Name:</strong> <%=user.name%></p>
+                        <p class="order-status">Order Status: <span class="badge bg-<%= order.orderStatus === 'Cancelled' ? 'danger' : 'success' %> orderStatus"><%=order.orderStatus%></span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Total Amount:</strong> ₹ <%=order.total.toFixed(2)%></p>
+                        <p><strong>Payment Method:</strong> <%=order.paymentMethod%></p>
+                        <p class="order-status"><strong>Payment Status:</strong>
+                            <span class="badge bg-danger"><%=order.paymentStatus%></span>
+                        </p>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                    <%if(order.orderStatus !== "Cancelled" && order.orderStatus !== "Deliverd" && order.orderStatus !== "Returned" && order.paymentStatus !== "Failed"){%>    
+                        <button type="button" id="cancelOrderButton" class="btn btn-danger">
+                            Cancel Order
+                        </button>
+                    <%}else if(order.orderStatus === "Deliverd"){%>    
+                        <button id="returnOrderButton" type="button" class="btn btn-warning">
+                            Return Order
+                        </button>
+                    <%}else{%>
+                        <p class="text-muted">No action possible</p>
+                    <%}%>    
+                    </div>
                 </div>
             </div>
         </div>
-        <section class="mt-50 mb-50">
-            <div class="container">
-                <div class="row">
-                    <div class="ProductContainer">
-                        <div class="product-detail">
-                            <div class="product-images">
-                                <div class="main-image-container" onmousemove="zoomImage(event)"
-                                    onmouseleave="resetZoom(event)">
-                                    <img id="mainImage" src="/uploads/re-image/<%=product.productImage[0]%>"
-                                        alt="Product Image" class="main-image" onmouseleave="resetZoom(event)">
-                                </div>
-                                <div class="thumbnail-strip">
 
-                                    <%for(let i=0;i<product.productImage.length;i++){%>
-                                        <div>
-                                            <img src="/uploads/re-image/<%=product.productImage[i]%>"
-                                                alt="Product Thumbnail 1" class="thumbnail active"
-                                                onclick="changeImage(this)">
-                                        </div>
-                                        <%}%>
-                                           
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-sm-12 col-xs-12">
-                                <div class="detail-info">
-                                    <h2 class="title-detail">
-                                        <%=product.productName%>
-                                    </h2>
-                                    <div class="product-detail-rating">
-                                        <div class="pro-details-brand">
-                                            <span> Category: <a href="shop-grid-right.html">
-                                                    <%=category.name%>
-                                                </a></span>
-                                        </div>
-                                        <div class="product-rate-cover text-end">
-                                            <div class="product-rate d-inline-block">
-                                                <div class="product-rating" style="width:90%">
-                                                </div>
-                                            </div>
-                                            <span class="font-small ml-5 text-muted"> (25 reviews)</span>
-                                        </div>
-                                    </div>
-                                    <div class="clearfix product-price-cover">
-                                        <div class="product-price primary-color float-left">
-                                        <%if(product.offer){%>    
-                                            <ins><span class="text-brand">
-                                                <%= Math.floor(product.salePrice-(product.salePrice * product.offer / 100))%>
-                                            </span></ins>
-                                        <%}else{%>    
-                                            <ins><span class="text-brand">
-                                                    <%=product.salePrice%>
-                                                </span></ins>
-                                        <%}%>        
-                                            <ins><span class="old-price font-md ml-15">
-                                                    <%=product.regularPrice%>
-                                                </span></ins>
-                                            <% if (product.salePrice < product.regularPrice) { %>
-                                                <span class="save-price font-md color3 ml-15">
-                                                    <% const discount=Math.round(((product.regularPrice -
-                                                        product.salePrice) / product.regularPrice) * 100); %>
-                                                        <%= discount %> % Off
-                                                </span>
-                                                <% } %>
-                                        </div>
-                                    </div>
-                                    <div class="bt-1 border-color-1 mt-15 mb-15"></div>
-                                    <div class="short-desc mb-30">
-                                        <p>
-                                            <%=product.description%>
-                                        </p>
-                                    </div>
-                                    <div class="product_sort_info font-xs mb-30">
-                                        <ul>
-                                            <li class="mb-10"><i class="fi-rs-crown mr-5"></i> 1 Year Manufacturing Warranty</li>
-                                            <li class="mb-10"><i class="fi-rs-refresh mr-5"></i> 30 Day Return
-                                                Policy</li>
-                                            <li><i class="fi-rs-credit-card mr-5"></i> Cash on Delivery available
-                                            </li>
-                                        </ul>
-                                    </div>
+        <div class="card mb-4">
+            <div class="card-header">
+                <h2 class="card-title h5 mb-0">Product Details</h2>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% order.items.forEach(item => { %>
+                                <tr>
+                                    <td>
+                                        <img src="/uploads/re-image/<%=item.productId.productImage[0]%>"
+                                            alt="<%=item.productId.productName%>" class="product-image">
+                                    </td>
+                                    <td><%=item.productId.productName%></td>
+                                    <td>₹ <%=item.price.toFixed(2)%></td>
+                                    <td><%=item.quantity%></td>
+                                    <td>₹ <%=(item.price * item.quantity).toFixed(2)%></td>
+                                </tr>
+                            <%})%>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
 
-                                    <!-- Material Selection -->
-                                    <div class="attr-detail attr-material mb-35">
-                                        <strong class="option-title">Material</strong>
-                                        <div class="material-options">
-                                            <label class="material-option">
-                                                <input type="radio" name="material" value="acrylic">
-                                                <span class="material-check"></span>
-                                                <span class="material-name">Acrylic Glass</span>
-                                                <span class="material-desc">Ultra-clear, modern finish</span>
-                                            </label>
-                                            <label class="material-option">
-                                                <input type="radio" name="material" value="canvas">
-                                                <span class="material-check"></span>
-                                                <span class="material-name">Premium Canvas</span>
-                                                <span class="material-desc">Classic, textured look</span>
-                                            </label>
-                                            <label class="material-option">
-                                                <input type="radio" name="material" value="aluminum">
-                                                <span class="material-check"></span>
-                                                <span class="material-name">Brushed Aluminum</span>
-                                                <span class="material-desc">Sleek, metallic finish</span>
-                                            </label>
-                                        </div>
-                                    </div>
-
-                                    <!-- Style Selection -->
-                                    <div class="attr-detail attr-style mb-35">
-                                        <strong class="option-title">Style <span class="required">*</span></strong>
-                                        <div class="custom-select">
-                                            <select required aria-label="Select style" class="style-select">
-                                                <option value="" disabled selected>Choose your style</option>
-                                                <option value="modern">Modern Minimalist</option>
-                                                <option value="classic">Classic Sport</option>
-                                                <option value="vintage">Vintage Racing</option>
-                                                <option value="dramatic">Dramatic Black</option>
-                                            </select>
-                                            <div class="select-arrow"></div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Size Selection -->
-                                    <div class="attr-detail attr-size mb-35">
-                                        <strong class="option-title">Size <span class="required">*</span></strong>
-                                        <div class="custom-select">
-                                            <select required aria-label="Select size" class="size-select">
-                                                <option value="" disabled selected>Select frame size</option>
-                                                <option value="small">Small (24" × 36") - Perfect for Studies</option>
-                                                <option value="medium">Medium (36" × 48") - Ideal for Living Spaces</option>
-                                                <option value="large">Large (48" × 72") - Statement Piece</option>
-                                                <option value="xlarge">Extra Large (60" × 90") - Gallery Size</option>
-                                            </select>
-                                            <div class="select-arrow"></div>
-                                        </div>
-                                    </div>
-
-
-                                    <div class="bt-1 border-color-1 mt-30 mb-30"></div>
-                                    <div class="detail-extralink">
-                                        <div class="detail-qty border radius">
-                                            <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
-                                            <span class="qty-val">1</span>
-                                            <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
-                                        </div>
-                                        <div class="product-extra-link2">
-                                            <button type="submit" class="button button-add-to-cart"
-                                                onclick="addToCart('<%=product._id%>')">
-                                                Add to cart
-                                            </button>
-                                            <a aria-label="Add To Wishlist" class="action-btn hover-up  
-                                                <%= wishList.includes(product._id.toString()) ? 'wishlist-added' : '' %>"
-                                                onclick="addToWishlist('<%=product._id %>')">
-                                                <i class="fi-rs-heart"></i>
-                                            </a>    
-                                        </div>
-                                    </div>
-                                    <ul class="product-meta font-xs color-grey mt-50">
-                                        <li class="mb-5">SKU: <a href="#">FWM15VKT</a></li>
-                                        <li class="mb-5">Tags: <a href="#" rel="tag">frame</a>, <a href="#"
-                                                rel="tag">Hyper cars</a>, <a href="#" rel="tag">Limited edition</a>
-                                        </li>
-                                        <li>Availability:<span class="in-stock text-success ml-5">
-                                                <%=quantity%> Items InStock
-                                            </span></li>
-                                    </ul>
-                                </div>
-                                <!-- Detail Info -->
-                            </div>
-
-                        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h2 class="card-title h5 mb-0">Shipping Information</h2>
                     </div>
-
-                        </div>
-                            <div class="row">
-                                <div class="col-lg-10 m-auto entry-main-content">
-                                    
-                                    <h3 class="section-title style-1 mb-30 mt-30">Reviews (3)</h3>
-                                    <!--Comments-->
-                                    <div class="comments-area style-2">
-                                        <div class="row">
-                                            <div class="col-lg-8">
-                                                <h4 class="mb-30">Customer questions & answers</h4>
-                                                <div class="comment-list">
-                                                    <div class="single-comment justify-content-between d-flex">
-                                                        <div class="user justify-content-between d-flex">
-                                                            <div class="thumb text-center">
-                                                                <img src="assets/imgs/page/avatar-6.jpg" alt="">
-                                                                <h6><a href="#">Jacky Chan</a></h6>
-                                                                <p class="font-xxs">Since 2012</p>
-                                                            </div>
-                                                            <div class="desc">
-                                                                <div class="product-rate d-inline-block">
-                                                                    <div class="product-rating" style="width:90%">
-                                                                    </div>
-                                                                </div>
-                                                                <p>Thank you very fast shipping from Poland only 3days.</p>
-                                                                <div class="d-flex justify-content-between">
-                                                                    <div class="d-flex align-items-center">
-                                                                        <p class="font-xs mr-30">December 4, 2020 at 3:12 pm </p>
-                                                                        <a href="#" class="text-brand btn-reply">Reply <i class="fi-rs-arrow-right"></i> </a>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <!--single-comment -->
-                                                    <div class="single-comment justify-content-between d-flex">
-                                                        <div class="user justify-content-between d-flex">
-                                                            <div class="thumb text-center">
-                                                                <img src="assets/imgs/page/avatar-7.jpg" alt="">
-                                                                <h6><a href="#">Ana Rosie</a></h6>
-                                                                <p class="font-xxs">Since 2008</p>
-                                                            </div>
-                                                            <div class="desc">
-                                                                <div class="product-rate d-inline-block">
-                                                                    <div class="product-rating" style="width:90%">
-                                                                    </div>
-                                                                </div>
-                                                                <p>Great low price and works well.</p>
-                                                                <div class="d-flex justify-content-between">
-                                                                    <div class="d-flex align-items-center">
-                                                                        <p class="font-xs mr-30">December 4, 2020 at 3:12 pm </p>
-                                                                        <a href="#" class="text-brand btn-reply">Reply <i class="fi-rs-arrow-right"></i> </a>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <!--single-comment -->
-                                                    <div class="single-comment justify-content-between d-flex">
-                                                        <div class="user justify-content-between d-flex">
-                                                            <div class="thumb text-center">
-                                                                <img src="assets/imgs/page/avatar-8.jpg" alt="">
-                                                                <h6><a href="#">Steven Keny</a></h6>
-                                                                <p class="font-xxs">Since 2010</p>
-                                                            </div>
-                                                            <div class="desc">
-                                                                <div class="product-rate d-inline-block">
-                                                                    <div class="product-rating" style="width:90%">
-                                                                    </div>
-                                                                </div>
-                                                                <p>Authentic and Beautiful, Love these way more than ever expected They are Great earphones</p>
-                                                                <div class="d-flex justify-content-between">
-                                                                    <div class="d-flex align-items-center">
-                                                                        <p class="font-xs mr-30">December 4, 2020 at 3:12 pm </p>
-                                                                        <a href="#" class="text-brand btn-reply">Reply <i class="fi-rs-arrow-right"></i> </a>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <!--single-comment -->
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-4">
-                                                <h4 class="mb-30">Customer reviews</h4>
-                                                <div class="d-flex mb-30">
-                                                    <div class="product-rate d-inline-block mr-15">
-                                                        <div class="product-rating" style="width:90%">
-                                                        </div>
-                                                    </div>
-                                                    <h6>4.8 out of 5</h6>
-                                                </div>
-                                                <div class="progress">
-                                                    <span>5 star</span>
-                                                    <div class="progress-bar" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">50%</div>
-                                                </div>
-                                                <div class="progress">
-                                                    <span>4 star</span>
-                                                    <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
-                                                </div>
-                                                <div class="progress">
-                                                    <span>3 star</span>
-                                                    <div class="progress-bar" role="progressbar" style="width: 45%;" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100">45%</div>
-                                                </div>
-                                                <div class="progress">
-                                                    <span>2 star</span>
-                                                    <div class="progress-bar" role="progressbar" style="width: 65%;" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100">65%</div>
-                                                </div>
-                                                <div class="progress mb-30">
-                                                    <span>1 star</span>
-                                                    <div class="progress-bar" role="progressbar" style="width: 85%;" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100">85%</div>
-                                                </div>
-                                                <a href="#" class="font-xs text-muted">How are ratings calculated?</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!--comment form-->
-                                    <div class="comment-form">
-                                        <h4 class="mb-15">Add a review</h4>
-                                        <div class="product-rate d-inline-block mb-30">
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-lg-8 col-md-12">
-                                                <form class="form-contact comment_form" action="#" id="commentForm">
-                                                    <div class="row">
-                                                        <div class="col-12">
-                                                            <div class="form-group">
-                                                                <textarea class="form-control w-100" name="comment" id="comment" cols="30" rows="9" placeholder="Write Comment"></textarea>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-6">
-                                                            <div class="form-group">
-                                                                <input class="form-control" name="name" id="name" type="text" placeholder="Name">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-6">
-                                                            <div class="form-group">
-                                                                <input class="form-control" name="email" id="email" type="email" placeholder="Email">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-12">
-                                                            <div class="form-group">
-                                                                <input class="form-control" name="website" id="website" type="text" placeholder="Website">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <button type="submit" class="button button-contactForm">Submit
-                                                            Review</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row mt-60">
-                                <div class="col-12">
-                                    <h3 class="section-title style-1 mb-30">Related products</h3>
-                                </div>
-                                <div class="col-12">
-                                    <div class="row related-products">
-
-                                    <% relatedProducts.forEach(related=> { %>
-
-                                        <div class="col-lg-3 col-md-4 col-12 col-sm-6">
-                                            <div class="product-cart-wrap small hover-up">
-                                                <div class="product-img-action-wrap">
-                                                    <div class="product-img product-img-zoom">
-                                                        <a href="/productDetails?id=<%= related._id %>" tabindex="0">
-                                                            <img class="default-img"
-                                                            src="/uploads/re-image/resized/<%= related.productImage[0] %>" 
-                                                            alt="<%= related.productName %>">
-                                                            <!-- <img class="hover-img" src="assets/imgs/shop/product-2-2.jpg" alt=""> -->
-                                                        </a>
-                                                    </div>
-                                                    <div class="product-action-1">
-                                                        <a aria-label="Quick view" class="action-btn small hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal
-"><i class="fi-rs-search"></i></a>
-                                                        <a aria-label="Add To Wishlist" class="action-btn small hover-up" href="/addToWishlist/?id=<%= related._id %>" tabindex="0"><i class="fi-rs-heart"></i></a>
-                                                       
-                                                    </div>
-                                                    <div class="product-badges product-badges-position product-badges-mrg">
-                                                        <span class="hot">Hot</span>
-                                                    </div>
-                                                </div>
-                                                <div class="product-content-wrap">
-                                                    <h2><a  href="/productDetails?id=<%= related._id %>" tabindex="0"><%= related.productName %></a></h2>
-                                                    <div class="rating-result" title="90%">
-                                                        <span>
-                                                        </span>
-                                                    </div>
-                                                    <div class="product-price">
-                                                        <span>$<%= related.salePrice %></span>
-                                                        <span class="old-price">$<%= related.regularPrice %></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <% }); %>
-                                       
-
-                                    
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="banner-img banner-big wow fadeIn f-none animated mt-50">
-                                <img class="border-radius-10" src="assets/imgs/banner/banner-4.webp" alt="">
-                                <div class="banner-text">
-                                    <!-- <h4 class="mb-15 mt-40">Repair Services</h4>
-                                    <h2 class="fw-600 mb-20">We're an Apple <br>Authorised Service Provider</h2> -->
-                                </div>
-                            </div>
-                        </div>
+                    <div class="card-body">
+                        <p><strong>Name:</strong> <%=order.address.name%></p>
+                        <p><strong>Address:</strong> <%=order.address.landMark%></p>
+                        <p><strong>City:</strong> <%=order.address.city%></p>
+                        <p><strong>State:</strong> <%=order.address.state%></p>
+                        <p><strong>Zip Code:</strong> <%=order.address.pincode%></p>
+                        <p><strong>Country:</strong> India</p>
                     </div>
                 </div>
             </div>
-        </section>
-    </main>
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h2 class="card-title h5 mb-0">Payment Details</h2>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Payment Method:</strong> <%=order.paymentMethod%></p>
+                        <p><strong>Subtotal:</strong> ₹ <%=order.subTotal.toFixed(2)%></p>
+                        <p><strong>Shipping:</strong> ₹ <%=order.deliveryCharge.toFixed(2)%></p>
+                        <p><strong>Tax:</strong> ₹ 0.00</p>
+                        <hr>
+                        <p><strong>Total:</strong> ₹ <%=order.total.toFixed(2)%></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <!-- add to cart -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.js"></script>
+
+    <!-- Invoice download libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
     <script>
-        function changeImage(thumbnail) {
-            const mainImage = document.getElementById('mainImage');
-            mainImage.src = thumbnail.src;
-            mainImage.alt = thumbnail.alt;
 
-            // Update active thumbnail
-            document.querySelectorAll('.thumbnail').forEach(thumb => {
-                thumb.classList.remove('active');
-            });
-            thumbnail.classList.add('active');
-        }
-
-        function changeQuantity(change) {
-            const quantityElement = document.getElementById('quantity');
-            let quantity = parseInt(quantityElement.textContent) + change;
-            quantity = Math.max(1, quantity); // Ensure quantity is at least 1
-            quantityElement.textContent = quantity;
-        }
-
-        function addToCart() {
-            const quantity = document.getElementById('quantity').textContent;
-            alert(`Added ${quantity} item(s) to cart!`);
-        }
-
-        function zoomImage(e) {
-            const image = e.target;
-            const zoomer = e.currentTarget;
-            const x = e.offsetX / zoomer.offsetWidth;
-            const y = e.offsetY / zoomer.offsetHeight;
-            const zoomLevel = 2;
-            image.style.transformOrigin = `${x * 100}% ${y * 100}%`;
-            image.style.transform = `scale(${zoomLevel})`;
-        }
-
-        function resetZoom(e) {
-            console.log("mouse leaved");
-
-            const image = e.target;
-            image.style.transformOrigin = 'center center';
-            image.style.transform = 'scale(1)';
-        }
-
-
-
-        // add to cart function
-        function addToCart(productId) {
-            fetch('/addToCart', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json', // Ensures that the request body is JSON
-                },
-                body: JSON.stringify({ productId: productId }), // Send productId as JSON
-            })
-            .then((response) => response.json()) // Parse JSON response
-            .then((response) => {
-                console.log("response :", response);
-                if (response.success) {
-                    const cartCountElement = document.querySelector(".cart");
-                    if (cartCountElement) {
-                        cartCountElement.textContent = response.cartCount;
+        // cancel order function
+        document.getElementById("cancelOrderButton")?.addEventListener("click", function () {
+            Swal.fire({
+                icon: "warning",
+                title: "Are you sure?",
+                text: "Please Provide a Reason for this order Cancellation.",
+                input:"text",
+                inputPlaceholder:"Enter Your Reason",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Cancel Order",
+                inputValidator:(value)=>{
+                    if(!value){
+                        return "You need to Provide A reason before cancelling."
                     }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const cancelReason =result.value
+                    cancelOrder(cancelReason);
+                }
+            });
+        });
+
+        function cancelOrder(cancelReason) {
+            const url = "/orderCancel/<%=order._id%>";
+
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body:JSON.stringify({cancelReason})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
                     Swal.fire({
-                        title: "Added To Cart",
-                        text: "The Product Has been Added to Your Cart",
-                        icon: "success",
-                        timer: 2000
+                        icon: 'success',
+                        title: data.message,
+                        text: `Order <%=order._id%> has been cancelled.`,
+                        confirmButtonText: 'OK'
+                    })
+                    .then(() => {
+                        const orderStatusElement = document.querySelector(".orderStatus");
+                        if (orderStatusElement) {
+                            orderStatusElement.textContent = "Cancelled";
+                            orderStatusElement.classList.remove("bg-success");
+                            orderStatusElement.classList.add("bg-danger");
+                        }
+                        const cancelOrderButton = document.querySelector("#cancelOrderButton");
+                        if (cancelOrderButton) {
+                            cancelOrderButton.disabled = true;
+                        }
                     });
                 } else {
                     Swal.fire({
-                        title: "Error",
-                        text: response.message,
                         icon: "error",
-                        timer: 2000
+                        title: "Error!",
+                        text: data.message,
+                        confirmButtonText: "OK"
                     });
                 }
-            })
-            .catch((error) => {
-                console.error("Error in add cart", error);
+            }).catch(error => {
                 Swal.fire({
-                    title: "Error",
-                    text: "Error Adding the Product to your Cart..!",
-                    icon: "error",
-                    timer: 2000
+                    title: 'Error!',
+                    text: 'An error occurred while cancelling the order.',
+                    icon: 'error',
+                    confirmButtonText: 'Try Again'
                 });
             });
         }
 
 
-    </script>
-
-    <!-- add to wishlist -->
-    <script>
-
-            function addToWishlist(productId){
-                fetch("/addToWishlist",{
-                    method:"POST",
-                    headers:{
-                        "Content-Type":"application/json"
-                    },
-                    body:JSON.stringify({productId})
-                })
-                .then(response=> response.json())
-                .then(data=>{
-                    if(data.success){
-                        //dynamically changing wishList count
-                        const wishlistCountElement = document.querySelector(".wishList")
-                        if(wishlistCountElement){
-                            wishlistCountElement.textContent = data.wishListCount;
-                        }
-                        Swal.fire({
-                            icon:"success",
-                            title:"Added to WishList",
-                            text:data.message,
-                            timer:2000,
-                            showConfrimButton:false
-                        })
-                    }else{
-                        Swal.fire({
-                            icon:"warning",
-                            titile:"Ooop..",
-                            text:data.message,
-                            timer:2000,
-                            showConfrimButton:false
-                        })
+        // Return Order function
+        document.getElementById("returnOrderButton")?.addEventListener("click", function() {
+            Swal.fire({
+                title: "Return Order",
+                text: "Are You Sure.? Please provide a Reason for Returning this Order..!",
+                input:"text",
+                inputPlaceholder:"Enter Your Reason",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, proceed",
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                inputValidator:(value)=>{
+                    if(!value){
+                        return "You Must need to provide a Reason for Return this order..!"
                     }
-                })
-                .catch(error=>{
-                    console.error("Error",error);  
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Something went wrong. Please try again later.'
-                    })
-                })
-            }
+                }
+            })
+            .then((result) => {
+                if (result.isConfirmed) {
+                    returnOrder();
+                }
+            });
+        });
 
+        function returnOrder() {
+            fetch("/ReturnOrder/<%= order._id%>", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire("Return Request Success", "Order return has been successful. Our executive will collect the product.", "success");
+
+                    const orderStatusPlace = document.querySelector(".orderStatus");
+                    if (orderStatusPlace) {
+                        orderStatusPlace.textContent = "Returned";
+                        orderStatusPlace.classList.remove("bg-success");
+                        orderStatusPlace.classList.add("bg-warning");
+                    }
+
+                    const returnOrderButton = document.querySelector("#returnOrderButton");
+                    if (returnOrderButton) {
+                        returnOrderButton.disabled = true;
+                    }
+                } else {
+                    Swal.fire({
+                        title: "Error!",
+                        text: data.message,
+                        icon: "error",
+                        confirmButtonText: "OK"
+                    });
+                }
+            })
+            .catch(error => {
+                Swal.fire("Error!", "An error occurred in order cancellation!", "error");
+            });
+        }
+
+
+        // Invoice Download function
+
+        async function InvoiceDownload() {
+        // Select the portion
+        const invoiceElement = document.querySelector('.container');
+
+        //element to change
+        const title = document.querySelector('h1')
+
+        //store original title to restore after making pdf
+        const originalTitle = title.textContent;
+
+        //title to change 
+        title.textContent = "Order Invoice"
+
+        // Hide unecessary elemnts
+        const elementsToHide = document.querySelectorAll('.btn-primary, #cancelOrderButton, #returnOrderButton');
+        elementsToHide.forEach(el => el.style.display = 'none');
+
+        // Use html2canvas to capture the element 
+        const canvas = await html2canvas(invoiceElement);
+
+        // Convert canvas to image
+        const imgData = canvas.toDataURL('image/png');
+
+        // Create PDF using jsPDF
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+
+        // Add image to PDF
+        pdf.addImage(imgData, 'PNG', 10, 10, 190, 280);
+
+        // Show the hidden elements again
+        elementsToHide.forEach(el => el.style.display = '');
+
+        //restore title
+        title.textContent = originalTitle
+
+        // Download the PDF
+        pdf.save('Invoice.pdf');
+    }
+    
     </script>
-    <%- include("../../views/partials/user/footer") %>
-   
+
+    /////////////
+
+
+    <div class="rating-result" title="90%">
+        <% if (products[i].salePrice < products[i].regularPrice) { %>
+            <span class="save-price font-md color3 ml-15">
+                <% const discount=Math.round(((products[i].regularPrice -
+                    products[i].salePrice) / products[i].regularPrice) * 100);
+                    %>
+                    <%= discount %> % Off
+            </span>
+        <% } %>
+    </div>

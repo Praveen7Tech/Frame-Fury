@@ -3,8 +3,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
-        .wishlist-added {
-    color: red;
+    .wishlist-added {
+       color: red;
 }
 
     </style>
@@ -184,41 +184,45 @@
                                             </div>
 
                                             <h2><a href="/productDetails?id=<%=products[i]._id%>">
-                                                    <%=products[i].productName%>
-                                                </a></h2>
+                                                <%=products[i].productName%>
+                                            </a></h2>
                                             <div class="rating-result" title="90%">
-                                                <% if (products[i].salePrice < products[i].regularPrice) { %>
-                                                    <span class="save-price font-md color3 ml-15">
-                                                        <% const discount=Math.round(((products[i].regularPrice -
-                                                            products[i].salePrice) / products[i].regularPrice) * 100);
-                                                            %>
-                                                            <%= discount %> % Off
-                                                    </span>
-                                                <% } %>
-                                            </div>
-
-                                            <!-- if the product have a product offer it will show otherwise show the saleprice -->
-                                             
-                                            <div class="product-price">
                                                 <% 
+                                                // Calculate the best offer and final price
                                                 const productOffer = products[i].offer || 0;
                                                 const categoryOffer = products[i].category.categoryOffer || 0;
                                                 const bestOffer = Math.max(productOffer, categoryOffer);
                                                 const salePrice = products[i].salePrice;
                                                 const finalPrice = bestOffer > 0 ? Math.floor(salePrice - (salePrice * bestOffer / 100)) : salePrice;
-                                              %>
                                             
-                                              <span><%= finalPrice %></span>
-                                           <%if(bestOffer){%> 
-                                              <% if (finalPrice < salePrice) { %>
-                                                <span class="old-price"><%= salePrice %></span>
-                                              <% } %>
-                                           <%}else{%>   
-                                                <span class="old-price">
-                                                    <%=products[i].regularPrice%>>
-                                                </span>
-                                           <%}%>     
+                                                // Calculate the discount percentage
+                                                const discountPercentage = finalPrice < salePrice 
+                                                    ? Math.round(((salePrice - finalPrice) / salePrice) * 100) 
+                                                    : Math.round(((products[i].regularPrice - salePrice) / products[i].regularPrice) * 100);
+                                                %>
+                                                <% if (finalPrice < salePrice) { %>
+                                                    <span class="save-price font-md color3 ml-15">
+                                                        <%= discountPercentage %> % Off
+                                                    </span>
+                                                <% }else{ %>
+                                                    <span class="save-price font-md color3 ml-15">
+                                                        <%= discountPercentage %> % Off
+                                                    </span>
+                                                    
+                                                <%}%>    
                                             </div>
+                                            
+                                            <div class="product-price">
+                                                <span><%= finalPrice %></span>
+                                                <% if (bestOffer > 0) { %>
+                                                    <% if (finalPrice < salePrice) { %>
+                                                        <span class="old-price"><%= salePrice %></span>
+                                                    <% } %>
+                                                <% } else { %>
+                                                    <span class="old-price"><%= products[i].regularPrice %></span>
+                                                <% } %>
+                                            </div>
+                                            
                                             <!-- <div class="product-action-1 show">
                                             <a aria-label="Add To Cart" class="action-btn hover-up" href="/addToCart/id=<%=products[i]._id%>"><i class="fi-rs-shopping-bag-add"></i></a>
                                         </div> -->

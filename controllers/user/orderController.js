@@ -129,10 +129,34 @@ const ReturnOrder = async(req,res)=>{
 }
 
 
+const orderSuccess = async(req,res)=>{
+    try {
+        const orderId = req.query.orderId
+        const user =req.session.user
+        console.log("user success",user,orderId)
+        res.render("order-success",{user,orderId})
+    } catch (error) {
+        console.log("Error in showing order success page",error)
+    }
+}
+
+
+const orderFailure = async(req,res)=>{
+    try {
+        const user = req.session.user;
+        const orderId = req.query.orderId
+        res.render("order-failure",{user,orderId})
+    } catch (error) {
+        console.error("Error in showing order failure page",error)
+    }
+}
+
 
 
 module.exports ={
     orderDetails,
     orderCancel,
-    ReturnOrder
+    ReturnOrder,
+    orderSuccess,
+    orderFailure
 }

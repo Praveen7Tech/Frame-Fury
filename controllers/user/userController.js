@@ -119,7 +119,7 @@ const signup = async (req, res) => {
             if(!existReferral){
                 return res.render("signup",{message:"Invalid Referral code...!"})
             }
-            req.session.referalCode = referalCode
+            req.session.referalCode = referalCode ? referalCode : null
             
         }
         
@@ -169,13 +169,26 @@ const verifyOtp = async (req, res) => {
 
             await saveUserData.save();
 
+            console.log("req sesio",req.session.referalCode)
             // adding referal point to the refered user
-            const referralUser = await User.findOne({referralCode:req.session.referalCode})
-            if(referralUser){
-                referralUser.referralPoint += 1000
-                await referralUser.save()
+            if(req.session.referalCode){
+                const referralUser = await User.findOne({referralCode:req.session.referalCode})
+                console.log("umbi",referralUser)
+                
+                if(referralUser){
+                    referralUser.referralPoint += 1000;
+                    await referralUser.save()
+    
+                    const refUserWallet = await Wallet.findOne({})
+                    if(refUserWallet){
+                        console.log("ref wallet",refUserWallet)
+                        refUserWallet.balance += 1000;
+                        await refUserWallet.save()
+                    }
+                }
             }
-            console.log("user ref ",referralUser)
+
+            //console.log("user ref ",referralUser)
 
             res.json({ success: true, redirectUrl: "/login" })
         }

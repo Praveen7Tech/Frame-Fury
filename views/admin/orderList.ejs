@@ -70,7 +70,7 @@
         <% if (order && order.length > 0) { %>
           <% order.forEach(order => { %>
             <tr>
-              <td><%= order._id %></td>
+              <td><%= order.orderId %></td>
               <td>
                 <strong><%= order.userId.name %></strong><br>
                 <small><%= order.userId.email %></small>

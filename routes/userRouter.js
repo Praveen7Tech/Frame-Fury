@@ -96,6 +96,8 @@ router.post("/placeOrder",userAuth,checkOutController.placeOrder)
 router.post("/placeOrderRazorPay",userAuth,checkOutController.razorPayOrder)
 router.post("/verifyRazorPayOrder",userAuth,checkOutController.verifyRazorPayOrder)
 router.post("/placeOrderWallet",userAuth,checkOutController.placeOrderWallet)
+router.get("/orderSuccess",userAuth,orderController.orderSuccess)
+router.get("/oderFailure",userAuth,orderController.orderFailure)
 
 // order management
 router.get("/orderDetails/:orderId",userAuth,orderController.orderDetails)

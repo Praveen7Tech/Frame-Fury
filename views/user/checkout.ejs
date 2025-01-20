@@ -614,7 +614,7 @@
                                     icon:"success",
                                     confirmButtonText:"OK"
                                 })
-                                .then(()=> window.location.href ="/cart")
+                                .then(()=> window.location.href =`/orderSuccess?orderId=${data.orderId}`)
                             }
                             else{
                                 Swal.fire({
@@ -655,7 +655,7 @@
                                     title: "Payment Failed",
                                     text: "Your payment was unsuccessful. Order has been placed with status 'Payment Failed'.",
                                     confirmButtonText: "OK"
-                                }).then(() => window.location.href = "/cart");
+                                }).then(() => window.location.href = `/oderFailure?orderId=${cancelData.orderId}`);
                             }
                         },                     
                         theme:{color:"#3399cc"},
@@ -699,7 +699,7 @@
                         text: `Your Order ID is: ${data.orderId}`,
                         confirmButtonText: "OK",
                     }).then(() => {
-                        window.location.href = "/cart"; // Redirect after success
+                        window.location.href = `/orderSuccess?orderId=${data.orderId}`; // Redirect after success
                     });
                 } else {
                     Swal.fire({
@@ -736,12 +736,7 @@
 
                 const data = await response.json()
                 if(data.success){
-                    Swal.fire({
-                        title:"Order Placed Successfully",
-                        text:`Your Order Id is : ${data.orderId}`,
-                        icon:"success",
-                        confirmButtonText:"OK"
-                    }).then(()=> window.location.href="/cart")
+                     window.location.href=`/orderSuccess?orderId=${data.orderId}`;
                 }else{
                     Swal.fire({
                         title:"Error.",

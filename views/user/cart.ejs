@@ -1,69 +1,149 @@
 <%-include("../../views/partials/user/header")%>
 
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
-    <main class="main">
-        <div class="page-header breadcrumb-wrap">
-            <div class="container">
-                <div class="breadcrumb">
-                    <a href="/" rel="nofollow">Home</a>
-                    <span></span> Shop
-                    <span></span> Your Cart
-                </div>
+<style>
+    .detail-qty {
+        max-width: 113px;
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid #e2e8f0;
+        border-radius: 9999px;
+        overflow: hidden;
+    }
+
+    .qty-btn {
+        background-color: #f7fafc;
+        border: none;
+        color: #4a5568;
+        cursor: pointer;
+        font-size: 16px;
+        height: 30px;
+        width: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s;
+    }
+
+    .qty-btn:hover {
+        background-color: #edf2f7;
+    }
+
+    .qty-val {
+        font-size: 14px;
+        padding: 0 10px;
+        min-width: 30px;
+        text-align: center;
+    }
+
+    .icon-minus-sign::before {
+        content: "\2212";
+        font-style: normal;
+    }
+
+    .icon-plus-sign::before {
+        content: "\002B";
+        font-style: normal;
+    }
+
+    /* Empty cart styles */
+    .empty-cart {
+        text-align: center;
+        background-color: #ffffff;
+        border-radius: 8px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        max-width: 90%;
+        width: 400px;
+        margin: 2rem auto;
+    }
+
+    .cart-icon {
+        font-size: 5rem;
+        color: #ccc;
+        margin-bottom: 1rem;
+        animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% {
+            transform: translateY(0);
+        }
+        40% {
+            transform: translateY(-20px);
+        }
+        60% {
+            transform: translateY(-10px);
+        }
+    }
+
+    .empty-cart h2 {
+        font-size: 1.5rem;
+        color: #333;
+        margin-bottom: 1rem;
+    }
+
+    .empty-cart p {
+        font-size: 1rem;
+        color: #666;
+        margin-bottom: 2rem;
+    }
+
+    .cta-button {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .cta-button:hover {
+        background-color: #45a049;
+    }
+
+    /* Responsive styles */
+    @media (max-width: 480px) {
+        .empty-cart {
+            padding: 1.5rem;
+        }
+        .cart-icon {
+            font-size: 4rem;
+        }
+        .empty-cart h2 {
+            font-size: 1.2rem;
+        }
+        .empty-cart p {
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+        .cta-button {
+            font-size: 0.9rem;
+            padding: 8px 16px;
+        }
+    }
+</style>
+
+<main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/" rel="nofollow">Home</a>
+                <span></span> Shop
+                <span></span> Your Cart
             </div>
         </div>
+    </div>
 
-        <style>
-            .detail-qty {
-                max-width: 113px;
-                display: inline-flex;
-                align-items: center;
-                border: 1px solid #e2e8f0;
-                border-radius: 9999px;
-                overflow: hidden;
-            }
-        
-            .qty-btn {
-                background-color: #f7fafc;
-                border: none;
-                color: #4a5568;
-                cursor: pointer;
-                font-size: 16px;
-                height: 30px;
-                width: 30px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: background-color 0.2s;
-            }
-        
-            .qty-btn:hover {
-                background-color: #edf2f7;
-            }
-        
-            .qty-val {
-                font-size: 14px;
-                padding: 0 10px;
-                min-width: 30px;
-                text-align: center;
-            }
-        
-            .icon-minus-sign::before {
-                content: "\2212";  /* Unicode for minus sign */
-                font-style: normal;
-            }
-        
-            .icon-plus-sign::before {
-                content: "\002B";  /* Unicode for plus sign */
-                font-style: normal;
-            }
-        </style>
-          
-        <section class="mt-50 mb-50">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12">
+    <section class="mt-50 mb-50">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <% if (cart && cart.length > 0) { %>
                         <div class="table-responsive">
                             <table class="table shopping-summery text-center clean">
                                 <thead>
@@ -77,110 +157,92 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    
-                                    <% if (cart.length> 0) { %>
-                                        <% for (let item of cart) { %>
-                                            <tr>
-                                                <td class="image product-thumbnail">
-                                                    <% if (item.productId.productImage &&
-                                                        item.productId.productImage.length> 0) { %>
-                                                        <img src="/uploads/re-image/<%= item.productId.productImage[0] %>"
-                                                            alt="#">
-                                                        <% } else { %>
-                                                            <img src="/path-to-placeholder-image/placeholder.jpg"
-                                                                alt="No Image">
-                                                            <% } %>
-                                                </td>
-                                                <td class="product-des product-name">
-                                                    <h5 class="product-name"><a href="#">
-                                                            <%= item.productId.productName %>
-                                                        </a></h5>
-                                                    <p class="font-xs">
-                                                        <%= item.productId.description || "No description available" %>
-                                                    </p>
-                                                </td>
-                                                <td class="price" data-title="Price">
-                                                    <%
-                                                      const salePrice = item.productId.salePrice;
-                                                      const productOffer = item.productId.offer || 0;
-                                                      const categoryOffer = item.productId.category.categoryOffer || 0;
-                                                  
-                                                      // Calculate the best offer
-                                                      const bestOffer = Math.max(productOffer, categoryOffer);
-                                                  
-                                                      // Calculate the final price after applying the best offer
-                                                      const finalPrice = bestOffer > 0 ? Math.floor(salePrice - (salePrice * bestOffer / 100)) : salePrice;
-                                                    %>
-                                                  
-                                                    <span><%= finalPrice %></span>
-                                                  </td>
-                                                  
-                                                  <td class="text-center" data-title="Stock">
-                                                    <div class="detail-qty border radius m-auto">
-                                                        <button class="qty-btn qty-down" 
-                                                                data-product-id="<%= item.productId._id %>"
-                                                                onclick="updateCartQuantity('<%= item.productId._id %>', parseInt(document.querySelector('#qty-<%= item.productId._id %>').textContent) - 1)">
-                                                            <i class="icon-minus-sign"></i>
-                                                        </button>
-                                                        <span class="qty-val" id="qty-<%= item.productId._id %>">
-                                                            <%= item.quantity %>
-                                                        </span>
-                                                        <button class="qty-btn qty-up" 
-                                                                data-product-id="<%= item.productId._id %>"
-                                                                onclick="updateCartQuantity('<%= item.productId._id %>', parseInt(document.querySelector('#qty-<%= item.productId._id %>').textContent) + 1)">
-                                                            <i class="icon-plus-sign"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                                <td class="text-right" data-title="Cart">
-                                                    <span id="totalPrice-<%= item.productId._id %>">
-                                                        <%= Math.floor(item.totalPrice.toFixed(2)) %>
-                                                    </span>
-                                                </td>
-                                                
-                                                <td class="action" data-title="Remove">
-                                                    <a href="#" class="text-muted" 
-                                                       onclick="RemoveFromCart('<%= item.productId._id %>')">
-                                                        <i class="fi-rs-trash"></i>
-                                                    </a>
-                                                </td>
-                                                
-                                            </tr>
-                                            <% } %>
+                                    <% for (let item of cart) { %>
+                                        <tr>
+                                            <td class="image product-thumbnail">
+                                                <% if (item.productId.productImage && item.productId.productImage.length > 0) { %>
+                                                    <img src="/uploads/re-image/<%= item.productId.productImage[0] %>" alt="#">
                                                 <% } else { %>
-                                                    <tr>
-                                                        <td colspan="6" class="text-end">
-                                                            Oops.. No items found in Your Cart..!
-                                                        </td>     
-                                                    </tr>
-                                                    <% } %>
+                                                    <img src="/path-to-placeholder-image/placeholder.jpg" alt="No Image">
+                                                <% } %>
+                                            </td>
+                                            <td class="product-des product-name">
+                                                <h5 class="product-name"><a href="#"><%= item.productId.productName %></a></h5>
+                                                <p class="font-xs"><%= item.productId.description || "No description available" %></p>
+                                            </td>
+                                            <td class="price" data-title="Price">
+                                                <%
+                                                    const salePrice = item.productId.salePrice;
+                                                    const productOffer = item.productId.offer || 0;
+                                                    const categoryOffer = item.productId.category.categoryOffer || 0;
+                                                    const bestOffer = Math.max(productOffer, categoryOffer);
+                                                    const finalPrice = bestOffer > 0 ? Math.floor(salePrice - (salePrice * bestOffer / 100)) : salePrice;
+                                                %>
+                                                <span><%= finalPrice %></span>
+                                            </td>
+                                            <td class="text-center" data-title="Stock">
+                                                <div class="detail-qty border radius m-auto">
+                                                    <button class="qty-btn qty-down" 
+                                                            data-product-id="<%= item.productId._id %>"
+                                                            onclick="updateCartQuantity('<%= item.productId._id %>', parseInt(document.querySelector('#qty-<%= item.productId._id %>').textContent) - 1)">
+                                                        <i class="icon-minus-sign"></i>
+                                                    </button>
+                                                    <span class="qty-val" id="qty-<%= item.productId._id %>">
+                                                        <%= item.quantity %>
+                                                    </span>
+                                                    <button class="qty-btn qty-up" 
+                                                            data-product-id="<%= item.productId._id %>"
+                                                            onclick="updateCartQuantity('<%= item.productId._id %>', parseInt(document.querySelector('#qty-<%= item.productId._id %>').textContent) + 1)">
+                                                        <i class="icon-plus-sign"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                            <td class="text-right" data-title="Cart">
+                                                <span id="totalPrice-<%= item.productId._id %>">
+                                                    <%= Math.floor(item.totalPrice.toFixed(2)) %>
+                                                </span>
+                                            </td>
+                                            <td class="action" data-title="Remove">
+                                                <a href="#" class="text-muted" 
+                                                   onclick="RemoveFromCart('<%= item.productId._id %>')">
+                                                    <i class="fi-rs-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    <% } %>
                                 </tbody>
-
-
                             </table>
                         </div>
                         <div class="cart-action text-end">
-                            <a href="/userProfile#orders" class="btn  mr-10 mb-sm-15"><i class="fi-rs-shuffle mr-10"></i>Order History</a>
-                            <a href="/shoppingPage" class="btn "><i class="fi-rs-shopping-bag mr-10"></i>Continue Shopping</a>
+                            <a href="/userProfile#orders" class="btn mr-10 mb-sm-15"><i class="fi-rs-shuffle mr-10"></i>Order History</a>
+                            <a href="/shoppingPage" class="btn"><i class="fi-rs-shopping-bag mr-10"></i>Continue Shopping</a>
                         </div>
                         <div class="divider center_icon mt-50 mb-50"><i class="fi-rs-fingerprint"></i></div>
                         <div class="row mb-50">
-                            <div class="col-lg-6 col-md-12">                                   
+                            <div class="col-lg-6 col-md-12">
                             </div>
                             <div class="col-lg-6 col-md-12">
-                                <div class="border p-md-4 p-30 border-radius cart-totals">                                  
-                                    <a href="/checkOut" class="btn "> <i class="fi-rs-box-alt mr-10"></i> Proceed To
-                                        CheckOut</a>
+                                <div class="border p-md-4 p-30 border-radius cart-totals">
+                                    <a href="/checkOut" class="btn"><i class="fi-rs-box-alt mr-10"></i> Proceed To CheckOut</a>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    <% } else { %>
+                        <div class="empty-cart">
+                            <div class="cart-icon">🛒</div>
+                            <h2>Your Cart is Empty</h2>
+                            <p>Looks like you haven't added any items to your cart yet.</p>
+                            <a href="/shoppingPage" class="cta-button">Continue Shopping</a>
+                        </div>
+                    <% } %>
                 </div>
             </div>
-        </section>
-    </main>
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        </div>
+    </section>
+</main>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <%-include("../../views/partials/user/footer")%>
 
         <script>
