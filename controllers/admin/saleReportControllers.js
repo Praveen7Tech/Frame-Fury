@@ -77,7 +77,7 @@ const saleFilterByDate = async(req,res)=>{
         console.log(" g g",startDate,endDate)
 
         if(!startDate || !endDate){
-            return res.status(400).json({message:"Both Dates RE required..!"})
+            return res.status(400).json({message:"Both Dates are required..!"})
         }
 
         const start = new Date(startDate)
@@ -174,7 +174,7 @@ const downloadPdfFormat = async (req, res) => {
         const tableLeft = 50;
         const cellPadding = 5;
         const columnWidths = [20, 70, 60, 100, 120, 160, 50, 35, 35, 45, 45];
-        const cellHeight = 25;
+        const cellHeight = 50;
 
         // Render Table Headers
         const headers = [

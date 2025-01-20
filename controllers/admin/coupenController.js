@@ -51,7 +51,7 @@ const deleteCoupon = async(req,res)=>{
 
 const editCoupon = async(req,res)=>{
     try {
-        const {couponId,amount,expiryDate,minPurchase} = req.body
+        const {couponId,amount,expiryDate,minPurchase,UsageLimit} = req.body
         console.log(" cop body :",req.body);
         
         const coupon = await Coupen.findById(couponId)
@@ -59,6 +59,7 @@ const editCoupon = async(req,res)=>{
         coupon.offerPrice = amount
         coupon.expireOn = expiryDate
         coupon.minimumPrice = minPurchase
+        coupon.UsageLimit = UsageLimit
         coupon.save()
 
         res.status(200).send("Coupon Updated Succesfully")

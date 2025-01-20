@@ -46,6 +46,7 @@
                                 <th>Code</th>
                                 <th>Min Purchase</th>
                                 <th>offer Price</th>
+                                <th>Usage Limit</th>
                                 <th>Expiry Date</th>
                                 <th>Status</th>
                                 <th>Actions</th>
@@ -58,6 +59,7 @@
                                 <td><%= coupon.name%></td>
                                 <td><%= coupon.minimumPrice%></td>
                                 <td><%= coupon.offerPrice%></td>
+                                <td><%= coupon.UsageLimit%></td>
                                 <td><%= coupon.expireOn.toISOString().split('T')[0] %></td>
                                 <td><%= coupon.isList ? 'active' : 'Inactive'%></td>
                                 <td>
@@ -65,8 +67,10 @@
                                         '<%= coupon._id %>', 
                                         <%= coupon.offerPrice %>, 
                                         '<%= coupon.expireOn.toISOString().split('T')[0] %>', 
-                                        <%= coupon.minimumPrice %>
-                                       )">Edit
+                                        <%= coupon.minimumPrice %>,
+                                        <%= coupon.UsageLimit%>
+                                       )">
+                                       Edit
                                     </button>
 
                                     <button class="btn btn-danger btn-sm" onclick="deleteCoupon('<%= coupon._id%>')">Delete</button>
@@ -156,13 +160,16 @@
          }
 
          // Edit Coupon function
-         function editOffer(couponId,offerPrice,expireOn,minimumPrice) {
+         function editOffer(couponId,offerPrice,expireOn,minimumPrice,usageLimit) {
             Swal.fire({
                 title: "Edit this Coupon",
                 html: `
                     <div>
                         <label>Discount Amount</label>
                         <input type="number" id="DiscountAmount" class="swal2-input" placeholder="Enter Discount Amount" value="${offerPrice}">
+                        <label >Usage Limit</label>
+                        <input type="number" class="swal2-input" id="UsageLimit" name="UsageLimit" value="${usageLimit}">
+                        <br>
                         <label>Expiry Date</label>
                         <input type="date" id="expiryDate" class="swal2-input" value="${expireOn}">
                         <label>Min Purchase Amount</label>
@@ -174,12 +181,13 @@
                 preConfirm: () => {
                     const popup = Swal.getPopup(); // Get the modal DOM node
                     const DiscountAmount = popup.querySelector("#DiscountAmount").value;
+                    const UsageLimit = popup.querySelector("#UsageLimit").value;
                     const expiryDate = popup.querySelector("#expiryDate").value;
                     const minPurchase = popup.querySelector("#minPurchaseAmount").value;
 
                     console.log("DiscountAmount:", DiscountAmount);
                     console.log("expiryDate:", expiryDate);
-                    console.log("minPurchase:", minPurchase);
+                    console.log("minPurchase:", usageLimit);
 
                     // Validation
                     if (!DiscountAmount || DiscountAmount <= 0) {
@@ -187,11 +195,11 @@
                         return false;
                     }
 
-                    return { couponId, DiscountAmount, expiryDate, minPurchase };
+                    return { couponId, DiscountAmount, expiryDate, minPurchase,UsageLimit };
                 },
             }).then((result) => {
                 if (result.isConfirmed) {
-                    const { couponId, DiscountAmount, expiryDate, minPurchase } = result.value;
+                    const { couponId, DiscountAmount, expiryDate, minPurchase,UsageLimit } = result.value;
 
                     fetch("/admin/editCoupon", {
                         method: "POST",
@@ -203,6 +211,7 @@
                             amount: DiscountAmount,
                             expiryDate,
                             minPurchase,
+                            UsageLimit
                         }),
                     })
                         .then((response) => {

@@ -38,6 +38,90 @@
     font-weight: bold;
 }
 
+   /* Modal Custom Styles */
+   .modal-content {
+            background: linear-gradient(145deg, #1e1e2f, #292945);
+            color: #f5f5f5;
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
+        }
+
+        .modal-header {
+            border-bottom: none;
+            padding: 20px;
+            background: #000000;
+            color: #ffcc00;
+            text-align: center;
+            font-family: 'Arial', sans-serif;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .modal-body {
+            padding: 30px;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .form-label {
+            font-size: 14px;
+            color: #ffcc00;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .form-control {
+            background: #2c2c3a;
+            border: 1px solid #444455;
+            color: #ffffff;
+            border-radius: 8px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #ffcc00;
+            box-shadow: 0 0 5px #ffcc00;
+        }
+
+        .modal-footer {
+            border-top: none;
+            padding: 20px;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background-color: #ffcc00;
+            color: #000000;
+            border: none;
+            padding: 10px 20px;
+            font-weight: bold;
+            border-radius: 8px;
+            text-transform: uppercase;
+        }
+
+        .btn-primary:hover {
+            background-color: #e6b800;
+            color: #000000;
+        }
+
+        .btn-secondary {
+            background-color: #444455;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            font-weight: bold;
+            border-radius: 8px;
+            text-transform: uppercase;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a5a6b;
+        }
+
+        .error-message {
+            font-size: 0.85em;
+            color: #ff6666;
+        }
 
 
 </style>
@@ -264,7 +348,7 @@
                                                     </div>
                                                     <div class="card-body">
                                                         <address>
-                                                            No Address..
+                                                            No Address Found, Add a new Address here...
                                                         </address>
                                                         <p></p>
                                                         <a href="#" class="btn-small"></a>
@@ -279,6 +363,77 @@
                                             </a>
                                             
                                         </div>
+
+                                        <!-- Button to Open Modal -->
+                                        <!-- <div class="form-group col-md-12">
+                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAddressModal">
+                                                Add New Address
+                                            </button>
+                                        </div> -->
+                                    
+                                        <!-- Modal -->
+                                        <!-- <div class="modal fade" id="addAddressModal" tabindex="-1" aria-labelledby="addAddressModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="addAddressModalLabel">Add Your Address</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form id="addAddressForm">
+                                                            <div class="mb-3">
+                                                                <label for="addressType" class="form-label">Address Type</label>
+                                                                <select id="addressType" name="addressType" class="form-control" required>
+                                                                    <option value="">Select Type</option>
+                                                                    <option value="home">Home</option>
+                                                                    <option value="office">Office</option>
+                                                                </select>
+                                                                <span class="error-message" id="addressTypeError"></span>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="name" class="form-label">Full Name</label>
+                                                                <input type="text" id="name" name="name" class="form-control" placeholder="Your Full Name" required>
+                                                                <span class="error-message" id="nameError"></span>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="city" class="form-label">City</label>
+                                                                <input type="text" id="city" name="city" class="form-control" placeholder="City Name" required>
+                                                                <span class="error-message" id="cityError"></span>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="landMark" class="form-label">Landmark</label>
+                                                                <input type="text" id="landMark" name="landMark" class="form-control" placeholder="Landmark (Optional)">
+                                                                <span class="error-message" id="landMarkError"></span>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="state" class="form-label">State</label>
+                                                                <input type="text" id="state" name="state" class="form-control" placeholder="State Name" required>
+                                                                <span class="error-message" id="stateError"></span>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="pincode" class="form-label">Pincode</label>
+                                                                <input type="text" id="pincode" name="pincode" class="form-control" placeholder="6-digit Pincode" required>
+                                                                <span class="error-message" id="pincodeError"></span>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="phone" class="form-label">Phone Number</label>
+                                                                <input type="text" id="phone" name="phone" class="form-control" placeholder="10-digit Phone Number" required>
+                                                                <span class="error-message" id="phoneError"></span>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="altPhone" class="form-label">Alternate Phone</label>
+                                                                <input type="text" id="altPhone" name="altPhone" class="form-control" placeholder="Alternate Phone Number">
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                        <button type="button" class="btn btn-primary" id="saveAddressBtn">Save Address</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div> -->
+
                                     </div>
                                     <div class="tab-pane fade" id="account-detail" role="tabpanel"
                                         aria-labelledby="account-detail-tab">
@@ -347,10 +502,10 @@
 
                                                     <%if(user.referralCode !== null){%>
                                                         <span>REFERRAL CODE : </span>
-                                                        <strong style="color: rgb(19, 18, 18);" ><%= user.referralCode %></strong>
+                                                        <strong style="color: rgb(19, 18, 18);" ><%= userData.referralCode %></strong>
                                                         <button 
                                                             class="btn " 
-                                                            onclick="copyReferralCode('<%= user.referralCode %>')">
+                                                            onclick="copyReferralCode('<%= userData.referralCode %>')">
                                                             Copy
                                                         </button>
                                                     <%}else{%>
@@ -373,6 +528,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    
 
     <%- include("../../views/partials/user/footer") %>
 
@@ -446,9 +602,6 @@
             timer:1000
         })
     }
-
-
-
 
 
     </script>
@@ -542,3 +695,103 @@
         }
 
     </script>
+
+
+   <!-- <script>
+    document.getElementById('saveAddressBtn').addEventListener('click', async function () {
+    let isValid = true;
+    document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+
+    const addressType = document.getElementById('addressType').value;
+    const name = document.getElementById('name').value;
+    const city = document.getElementById('city').value;
+    const landMark = document.getElementById('landMark').value;
+    const state = document.getElementById('state').value;
+    const pincode = document.getElementById('pincode').value;
+    const phone = document.getElementById('phone').value;
+    const altPhone = document.getElementById('altPhone').value;
+
+    // Validate form fields
+    if (!addressType) {
+        isValid = false;
+        document.getElementById('addressTypeError').textContent = 'Select address type.';
+    }
+    if (!name.trim()) {
+        isValid = false;
+        document.getElementById('nameError').textContent = 'Enter your name.';
+    }
+    if (!city.trim()) {
+        isValid = false;
+        document.getElementById('cityError').textContent = 'Enter your city.';
+    }
+    if (!state.trim()) {
+        isValid = false;
+        document.getElementById('stateError').textContent = 'Enter your state.';
+    }
+    if (!pincode.match(/^\d{6}$/)) {
+        isValid = false;
+        document.getElementById('pincodeError').textContent = 'Pincode must be 6 digits.';
+    }
+    if (!phone.match(/^\d{10}$/)) {
+        isValid = false;
+        document.getElementById('phoneError').textContent = 'Phone must be 10 digits.';
+    }
+
+    if (isValid) {
+        const data = {
+            addressType,
+            name,
+            city,
+            landMark,
+            state,
+            pincode,
+            phone,
+            altPhone
+        };
+
+        const redirectTo = 'userProfile'; // Or 'checkout', depending on where you want to redirect after success
+        try {
+            const response = await fetch('/addAddress?redirectTo=' + redirectTo, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                // Success - Show SweetAlert
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'Address added successfully!',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    // Reset the form and close the modal
+                    document.getElementById('addAddressForm').reset();
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addAddressModal'));
+                    modal.hide();
+                });
+            } else {
+                // Error - Show SweetAlert
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'An error occurred while adding the address.',
+                    confirmButtonText: 'OK'
+                });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            // Show SweetAlert for error
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'An error occurred while adding the address.',
+                confirmButtonText: 'OK'
+            });
+        }
+    }
+});
+
+   </script> -->

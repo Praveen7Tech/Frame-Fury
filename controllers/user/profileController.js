@@ -22,7 +22,7 @@ const profile = async(req,res)=>{
         const totalOrders =await Order.countDocuments({userId:userId})
         const totaLPages = Math.ceil(totalOrders / limit)
 
-        console.log("orders : ",totalOrders,"pages",totaLPages);
+        console.log("orders : ",userId);
 
         
         res.render("profile",{
@@ -294,6 +294,7 @@ const addAddress = async (req, res) => {
             redirectTo
         } = req.body;
 
+        console.log("add data",req.body)
         const userId = req.session.user;
         const userData = await User.findOne({ _id: userId });
         const userAddress = await Address.findOne({ userId: userData._id });

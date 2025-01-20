@@ -143,6 +143,163 @@
             /* Highlight the selected material */
             font-weight: bold;
         }
+
+        /* already in wishlist  */
+        .wishlist-added {
+            color: red;
+        }
+
+       /* Common Styles */
+        .option-title {
+            display: block;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .required {
+            color: #e51f1f;
+            margin-left: 4px;
+        }
+
+        /* Material Options Styling */
+        .material-options {
+            display: grid;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .material-option {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #fff;
+        }
+
+        .material-option:hover {
+            border-color: #3BB77E;
+            background: #f8f9fa;
+        }
+
+        .material-check {
+            position: relative;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            margin-right: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .material-option input[type="radio"] {
+            display: none;
+        }
+
+        .material-option input[type="radio"]:checked + .material-check {
+            border-color: #3BB77E;
+        }
+
+        .material-option input[type="radio"]:checked + .material-check:after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #3BB77E;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .material-name {
+            font-weight: 500;
+            margin-right: 10px;
+            color: #333;
+        }
+
+        .material-desc {
+            font-size: 13px;
+            color: #777;
+            margin-left: auto;
+        }
+
+        /* Custom Select Styling */
+        .custom-select {
+            position: relative;
+            width: 100%;
+        }
+
+        .style-select,
+        .size-select {
+            width: 100%;
+            padding: 14px 20px;
+            font-size: 15px;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            appearance: none;
+            background: #fff;
+            cursor: pointer;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        .style-select:hover,
+        .size-select:hover {
+            border-color: #3BB77E;
+        }
+
+        .style-select:focus,
+        .size-select:focus {
+            border-color: #3BB77E;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59, 183, 126, 0.1);
+        }
+
+        .select-arrow {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 10px;
+            border-right: 2px solid #666;
+            border-bottom: 2px solid #666;
+            transform: translateY(-50%) rotate(45deg);
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .custom-select:hover .select-arrow {
+            border-color: #3BB77E;
+        }
+
+        /* Disabled Option Styling */
+        select option[disabled] {
+            color: #999;
+        }
+
+        /* Spacing */
+        .attr-detail {
+            margin-bottom: 35px;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .material-option {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .material-desc {
+                margin-left: 32px;
+                margin-top: 5px;
+            }
+        }
     </style>
     <main class="main">
         <div class="page-header breadcrumb-wrap">
@@ -177,6 +334,15 @@
                                         <%}%>
                                            
                                 </div>
+                                <ul class="product-meta font-xs color-grey mt-50">
+                                    <li class="mb-5">SKU: <a href="#">FWM15VKT</a></li>
+                                    <li class="mb-5">Tags: <a href="#" rel="tag">frame</a>, <a href="#"
+                                            rel="tag">Hyper cars</a>, <a href="#" rel="tag">Limited edition</a>
+                                    </li>
+                                    <li>Availability:<span class="in-stock text-success ml-5">
+                                            <%=quantity%> Items InStock
+                                        </span></li>
+                                </ul>
                             </div>
                             <div class="col-md-6 col-sm-12 col-xs-12">
                                 <div class="detail-info">
@@ -236,33 +402,82 @@
                                         </ul>
                                     </div>
 
-                                    <div class="attr-detail attr-material">
-                                        <strong class="mr-10">Material</strong>
-                                        <ul class="list-filter material-filter font-small">
-                                            <li><a href="#">Acrylic</a></li>
-                                            <li><a href="#">Canvas</a></li>
-                                            <li><a href="#">Alluminium</a></li>
-                                        </ul>
+                                    <!-- Material Selection -->
+                                    <div class="attr-detail attr-material mb-35">
+                                        <strong class="option-title">Material</strong>
+                                        <div class="material-options">
+                                            <label class="material-option">
+                                                <input type="radio" name="material" value="acrylic">
+                                                <span class="material-check"></span>
+                                                <span class="material-name">Acrylic Glass</span>
+                                                <span class="material-desc">Ultra-clear, modern finish</span>
+                                            </label>
+                                            <label class="material-option">
+                                                <input type="radio" name="material" value="canvas">
+                                                <span class="material-check"></span>
+                                                <span class="material-name">Premium Canvas</span>
+                                                <span class="material-desc">Classic, textured look</span>
+                                            </label>
+                                            <label class="material-option">
+                                                <input type="radio" name="material" value="aluminum">
+                                                <span class="material-check"></span>
+                                                <span class="material-name">Brushed Aluminum</span>
+                                                <span class="material-desc">Sleek, metallic finish</span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <!-- Style Selection -->
+                                    <!-- <div class="attr-detail attr-style mb-35">
+                                        <strong class="option-title">Style <span class="required">*</span></strong>
+                                        <div class="custom-select">
+                                            <select required aria-label="Select style" class="style-select">
+                                                <option value="" disabled selected>Choose your style</option>
+                                                <option value="modern">Modern Minimalist</option>
+                                                <option value="classic">Classic Sport</option>
+                                                <option value="vintage">Vintage Racing</option>
+                                                <option value="dramatic">Dramatic Black</option>
+                                            </select>
+                                            <div class="select-arrow"></div>
+                                        </div>
+                                    </div> -->
+
+                                    <!-- Size Selection -->
+                                    <div class="attr-detail attr-size mb-35">
+                                        <strong class="option-title">Size <span class="required">*</span></strong>
+                                        <div class="custom-select">
+                                            <select required aria-label="Select size" class="size-select">
+                                                <option value="" disabled selected>Select frame size</option>
+                                                <option value="small">Small (24" × 36") - Perfect for Studies</option>
+                                                <option value="medium">Medium (36" × 48") - Ideal for Living Spaces</option>
+                                                <option value="large">Large (48" × 72") - Statement Piece</option>
+                                                <option value="xlarge">Extra Large (60" × 90") - Gallery Size</option>
+                                            </select>
+                                            <div class="select-arrow"></div>
+                                        </div>
                                     </div>
 
 
                                     <div class="bt-1 border-color-1 mt-30 mb-30"></div>
                                     <div class="detail-extralink">
-                                        <!-- <div class="detail-qty border radius">
+                                        <div class="detail-qty border radius">
                                             <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
                                             <span class="qty-val">1</span>
                                             <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
-                                        </div> -->
+                                        </div>
                                         <div class="product-extra-link2">
                                             <button type="submit" class="button button-add-to-cart"
-                                                onclick="addToCart('<%=product._id%>')">Add to
-                                                cart</button>
-                                            <a aria-label="Add To Wishlist" class="action-btn hover-up"
-                                                href="/whishList"><i class="fi-rs-heart"></i></a>
-                                           
+                                                onclick="addToCart('<%=product._id%>')">
+                                                Add to cart
+                                            </button>
+                                            <a aria-label="Add To Wishlist" class="action-btn hover-up  
+                                                <%= wishList.includes(product._id.toString()) ? 'wishlist-added' : '' %>"
+                                                onclick="addToWishlist('<%=product._id %>')">
+                                                <i class="fi-rs-heart"></i>
+                                            </a>    
                                         </div>
                                     </div>
-                                    <ul class="product-meta font-xs color-grey mt-50">
+                                    <!-- <ul class="product-meta font-xs color-grey mt-50">
                                         <li class="mb-5">SKU: <a href="#">FWM15VKT</a></li>
                                         <li class="mb-5">Tags: <a href="#" rel="tag">frame</a>, <a href="#"
                                                 rel="tag">Hyper cars</a>, <a href="#" rel="tag">Limited edition</a>
@@ -270,7 +485,7 @@
                                         <li>Availability:<span class="in-stock text-success ml-5">
                                                 <%=quantity%> Items InStock
                                             </span></li>
-                                    </ul>
+                                    </ul> -->
                                 </div>
                                 <!-- Detail Info -->
                             </div>
@@ -500,6 +715,7 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <!-- add to cart -->
     <script>
         function changeImage(thumbnail) {
             const mainImage = document.getElementById('mainImage');
@@ -588,6 +804,54 @@
             });
         }
 
+
+    </script>
+
+    <!-- add to wishlist -->
+    <script>
+
+            function addToWishlist(productId){
+                fetch("/addToWishlist",{
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({productId})
+                })
+                .then(response=> response.json())
+                .then(data=>{
+                    if(data.success){
+                        //dynamically changing wishList count
+                        const wishlistCountElement = document.querySelector(".wishList")
+                        if(wishlistCountElement){
+                            wishlistCountElement.textContent = data.wishListCount;
+                        }
+                        Swal.fire({
+                            icon:"success",
+                            title:"Added to WishList",
+                            text:data.message,
+                            timer:2000,
+                            showConfrimButton:false
+                        })
+                    }else{
+                        Swal.fire({
+                            icon:"warning",
+                            titile:"Ooop..",
+                            text:data.message,
+                            timer:2000,
+                            showConfrimButton:false
+                        })
+                    }
+                })
+                .catch(error=>{
+                    console.error("Error",error);  
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Something went wrong. Please try again later.'
+                    })
+                })
+            }
 
     </script>
     <%- include("../../views/partials/user/footer") %>

@@ -1,5 +1,9 @@
 <%- include("../../views/partials/user/header") %>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- Swiper CSS -->
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+
+
     <style>
     .copy-btn {
     background-color:transparent; /* Green */
@@ -35,13 +39,83 @@
         </div>
         <br>
 
+        
+
         <section class="mt-50 mb-50">
             <form method="POST" id="orderForm" action="/placeOrder" onsubmit="return placeOrder(event)">
                 <div class="container">
+
+                    <!-- coupon portion -->
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="toggle_info">
+                                <span><i class="fi-rs-label mr-10"></i><span class="text-muted">Available coupons.</span> <a href="#coupon" data-bs-toggle="collapse" class="collapsed" aria-expanded="false">Click here to choose your code</a></span>
+                            </div>
+                            <div class="panel-collapse collapse coupon_form " id="coupon">
+                                
+                                    <div class="col-12">
+                                        <div class=" mt-50 mb-50"></div>
+                                    </div>
+                                
+                                <section class="banners mb-15" id="">
+                                    <div class="container">
+                                        <div class="row">
+                                            <% 
+                                                // Predefined list of images
+                                                const imagess = [
+                                                    "assets/imgs/banner/coupon-4.webp",
+                                                    "assets/imgs/banner/coupon-2.webp",
+                                                    "assets/imgs/banner/coupon-3.webp",
+                                                    "assets/imgs/banner/frame-3.png"
+                                                ];
+                                            %>
+                                
+                                            <% for (let i = 0; i < coupon.length; i++) { %>
+                                                <div class="col-lg-4 col-md-6"> 
+                                                    <div class="banner-img wow fadeIn animated">
+                                                        <!-- Dynamically assign images using modulus operator -->
+                                                        <img src="<%= imagess[i % imagess.length] %>" alt="Coupon Image">
+                                                        <div class="banner-text">
+                                                            <span>Exclusive Coupon</span>
+                                                            <h4>
+                                                                <span style="color: rgb(136, 206, 244);">Save </span>
+                                                                <span style="color: rgb(70, 213, 14);"><%= coupon[i].offerPrice %></span> 
+                                                                <span style="color: aliceblue;">on every minimum Purchase at</span> 
+                                                                <span style="color: rgb(240, 41, 6);"><%= coupon[i].minimumPrice %></span>
+                                                            </h4>
+                                                            <span>COUPON CODE:</span>
+                                                            <strong style="color: white;" id="couponCode-<%= i %>"><%= coupon[i].name %></strong>
+                                                            <button 
+                                                                class="copy-btn" 
+                                                                onclick="copyCouponCode('<%= coupon[i].name %>')">
+                                                                Copy
+                                                            </button>
+                                                            <br>
+                                                            <span>Expires On:</span>
+                                                            <strong style="color: white;"><%= new Date(coupon[i].expireOn).toLocaleDateString() %></strong>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <% } %> 
+                                        </div>
+                                    </div>
+                                </section>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="divider mt-50 mb-50"></div>
+                        </div>
+                    </div>
+                    
                     <div class="row">
                         <!-- Billing Details -->
                         <div class="col-md-6">
-                            <h4>Billing Details</h4>
+                            <div class="mb-25">
+                                <h4>Billing Details</h4>
+                            </div>
                             <div class="form-group">
                                 <input type="text" name="fname" id="fname" placeholder="First Name *">
                                 <div id="fname-error" class="error-message"></div>
@@ -59,6 +133,83 @@
                                 </a>
 
                             </div>
+
+                            <!-- Add Address Button -->
+                            <!-- <div class="form-group col-md-12">
+                                <a href="#" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#addressModal" style="text-decoration: none;">
+                                    Add Address
+                                </a>
+                            </div> -->
+                            
+                            <!-- Modal for Adding Address -->
+                            <!-- <div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content" style="background-color: rgba(0, 128, 0, 0.7); color: white;">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="addressModalLabel">Add Address</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form id="addAddressForm" novalidate>
+                                                <div class="mb-3">
+                                                    <label for="addressType" class="form-label">Address Type</label>
+                                                    <select class="form-select" id="addressType" required>
+                                                        <option value="">Select Address Type</option>
+                                                        <option value="Home">Home</option>
+                                                        <option value="Office">Office</option>
+                                                    </select>
+                                                    <div class="error-message text-danger" id="addressTypeError"></div>
+                                                </div>
+                            
+                                                <div class="mb-3">
+                                                    <label for="name" class="form-label">Name</label>
+                                                    <input type="text" class="form-control" id="name" required>
+                                                    <div class="error-message text-danger" id="nameError"></div>
+                                                </div>
+                            
+                                                <div class="mb-3">
+                                                    <label for="city" class="form-label">City</label>
+                                                    <input type="text" class="form-control" id="city" required>
+                                                    <div class="error-message text-danger" id="cityError"></div>
+                                                </div>
+                            
+                                                <div class="mb-3">
+                                                    <label for="landMark" class="form-label">Landmark</label>
+                                                    <input type="text" class="form-control" id="landMark">
+                                                </div>
+                            
+                                                <div class="mb-3">
+                                                    <label for="state" class="form-label">State</label>
+                                                    <input type="text" class="form-control" id="state" required>
+                                                    <div class="error-message text-danger" id="stateError"></div>
+                                                </div>
+                            
+                                                <div class="mb-3">
+                                                    <label for="pincode" class="form-label">Pincode</label>
+                                                    <input type="text" class="form-control" id="pincode" pattern="^\d{6}$" required>
+                                                    <div class="error-message text-danger" id="pincodeError"></div>
+                                                </div>
+                            
+                                                <div class="mb-3">
+                                                    <label for="phone" class="form-label">Phone</label>
+                                                    <input type="tel" class="form-control" id="phone" pattern="^\d{10}$" required>
+                                                    <div class="error-message text-danger" id="phoneError"></div>
+                                                </div>
+                            
+                                                <div class="mb-3">
+                                                    <label for="altPhone" class="form-label">Alternate Phone</label>
+                                                    <input type="tel" class="form-control" id="altPhone" pattern="^\d{10}$">
+                                                    <div class="error-message text-danger" id="altPhoneError"></div>
+                                                </div>
+                            
+                                                <button type="button" class="btn btn-primary" id="saveAddressBtn">Save Address</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> -->
+                            
+
 
                             <% if (addresses && addresses.length> 0) { %>
                                 <h5>Select Shipping Address:</h5>
@@ -103,7 +254,9 @@
 
                         <!-- Order Summary -->
                         <div class="col-md-6">
-                            <h4>Your Orders</h4>
+                            <div class="mb-20">
+                                <h4>Your Orders</h4>
+                            </div>
                             <div class="table-responsive order_table">
                                 <table class="table">
                                     <thead>
@@ -238,7 +391,7 @@
         </section>
 
             <!-- coupon section -->
-            <section class="banners mb-15">
+            <!-- <section class="banners mb-15">
                 <div class="container">
                     <div class="row">
                         <% 
@@ -254,7 +407,6 @@
                         <% for (let i = 0; i < coupon.length; i++) { %>
                             <div class="col-lg-4 col-md-6"> 
                                 <div class="banner-img wow fadeIn animated">
-                                    <!-- Dynamically assign images using modulus operator -->
                                     <img src="<%= images[i % images.length] %>" alt="Coupon Image">
                                     <div class="banner-text">
                                         <span>Exclusive Coupon</span>
@@ -280,11 +432,13 @@
                         <% } %> 
                     </div>
                 </div>
-            </section>
+            </section> -->
             
     </main>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <!-- Swiper JS -->
+   <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script> 
 
     <%- include("../../views/partials/user/footer") %>
 
@@ -707,5 +861,105 @@ function formValidate() {
 
 </script>
 
-    
+<script>
+    document.getElementById('saveAddressBtn').addEventListener('click', async function () {
+        let isValid = true;
+
+        // Clear any existing error messages
+        document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+
+        // Get form values
+        const addressType = document.getElementById('addressType').value;
+        const name = document.getElementById('name').value;
+        const city = document.getElementById('city').value;
+        const landMark = document.getElementById('landMark').value;
+        const state = document.getElementById('state').value;
+        const pincode = document.getElementById('pincode').value;
+        const phone = document.getElementById('phone').value;
+        const altPhone = document.getElementById('altPhone').value;
+
+        // Validate form fields
+        if (!addressType) {
+            isValid = false;
+            document.getElementById('addressTypeError').textContent = 'Select address type.';
+        }
+        if (!name.trim()) {
+            isValid = false;
+            document.getElementById('nameError').textContent = 'Enter your name.';
+        }
+        if (!city.trim()) {
+            isValid = false;
+            document.getElementById('cityError').textContent = 'Enter your city.';
+        }
+        if (!state.trim()) {
+            isValid = false;
+            document.getElementById('stateError').textContent = 'Enter your state.';
+        }
+        if (!pincode.match(/^\d{6}$/)) {
+            isValid = false;
+            document.getElementById('pincodeError').textContent = 'Pincode must be 6 digits.';
+        }
+        if (!phone.match(/^\d{10}$/)) {
+            isValid = false;
+            document.getElementById('phoneError').textContent = 'Phone must be 10 digits.';
+        }
+
+        // If form is valid, send the data
+        if (isValid) {
+            const data = {
+                addressType,
+                name,
+                city,
+                landMark,
+                state,
+                pincode,
+                phone,
+                altPhone
+            };
+
+            const redirectTo = 'userProfile'; // Or 'checkout', depending on where you want to redirect after success
+            try {
+                const response = await fetch('/addAddress?redirectTo=' + redirectTo, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    // Success - Show SweetAlert
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Address added successfully!',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        // Reset the form and close the modal
+                        document.getElementById('addAddressForm').reset();
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('addressModal'));
+                        modal.hide();
+                    });
+                } else {
+                    // Error - Show SweetAlert
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'An error occurred while adding the address.',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                // Show SweetAlert for error
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'An error occurred while adding the address.',
+                    confirmButtonText: 'OK'
+                });
+            }
+        }
+    });
+</script>
 

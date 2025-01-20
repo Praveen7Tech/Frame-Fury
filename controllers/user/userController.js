@@ -173,7 +173,6 @@ const verifyOtp = async (req, res) => {
             const referralUser = await User.findOne({referralCode:req.session.referalCode})
             if(referralUser){
                 referralUser.referralPoint += 1000
-
                 await referralUser.save()
             }
             console.log("user ref ",referralUser)
