@@ -3,6 +3,7 @@ const Product = require("../../models/productSchema");
 const Cart = require("../../models/cartSchema");
 const Category = require("../../models/categorySchema");
 const Wishlist = require("../../models/wishListSchema");
+//const { default: items } = require("razorpay/dist/types/items");
 //const { cartCount } = require("../../middlewares/auth");
 
 
@@ -27,9 +28,13 @@ const cartPage = async (req, res) => {
           listedCategory.includes(product.category._id.toString())
         );
       });
+      console.log('find product:',findProduct)
+
+      const total = findProduct.reduce((sum, items) => sum + items.totalPrice ,0)
+      console.log("tot",total)
 
 
-      res.render("cart", {user:userId, cart: findProduct});
+      res.render("cart", {user:userId, cart: findProduct, total});
     } catch (error) {
       console.error("Error in showing cart page", error);
       res.redirect("/pageNotFound");

@@ -7,7 +7,15 @@ POPPINS FONT */
 }
 
 .wrapper {
-    background: #ececec;
+    background-image: url("/assets/imgs/wall-1.webp");
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 10%;
     padding: 0 20px 0 20px;
 }
 
@@ -156,7 +164,12 @@ span a:hover {
     text-align: center;
 }
 
+.forgot-link{
+    text-decoration: none;
+}
+
 .google-btn {
+    text-decoration: none;
     width: 100%;
     height: 40px;
     background-color: #db4437;
@@ -171,7 +184,8 @@ span a:hover {
 }
 
 .google-btn:hover {
-    background-color: #c1351d;
+    background-color: #f3edeb;
+    color: #dc3545;
 }
 
 .google-logo {

@@ -85,7 +85,7 @@ const saleFilterByDate = async(req,res)=>{
 
         end.setUTCHours(23,59,59,999)
 
-        const orders= await Order.find({createdAt:{$gte:start,$lte:end}})
+        const orders= await Order.find({createdAt:{$gte:start,$lte:end}}).populate("userId","name email").sort({createdAt: -1})
 
         const saleCount = orders.length
         const saleTotal = orders.reduce((sum,order)=> sum + order.total ,0)

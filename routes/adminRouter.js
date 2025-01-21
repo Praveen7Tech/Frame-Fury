@@ -13,7 +13,7 @@ const multer = require("multer")
 const storage = require("../helpers/multer")
 const uploads = multer({ storage: storage })
 
-router.get("/pageerror", adminController.pageerror)
+router.get("/pageError", adminController.pageError)
 
 //dashboard management
 router.get("/", adminAuth, adminController.dashBoard)

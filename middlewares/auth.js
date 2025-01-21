@@ -40,6 +40,9 @@ const adminAuth = (req,res,next)=>{
         console.error("Error in Login Admin panel",error)
         res.status(500).send("Internal Server Error..")
     })
+   }else{
+    console.log("Un Authorized access attempt")
+    res.redirect("/admin/login")
    }
 }
 

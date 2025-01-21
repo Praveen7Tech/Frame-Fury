@@ -311,7 +311,6 @@ const shoppingPage = async(req,res)=>{
         const userData = await User.findOne({_id:user});
         const categories = await Category.find({isListed:true});
         const categoryId = categories.map((category) => category._id.toString());
-        //console.log("categoryID-",categoryId);
         
         const page = parseInt(req.query.page) || 1;
         const limit =12;
@@ -338,7 +337,6 @@ const shoppingPage = async(req,res)=>{
         })
     } catch (error) {
         console.error("Error in shopping page",error);
-        
         res.redirect("/pageNotFound")
     }
 }

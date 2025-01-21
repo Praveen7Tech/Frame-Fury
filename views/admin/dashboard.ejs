@@ -1,218 +1,248 @@
 <%- include("../../views/partials/admin/header") %>
-<section class="content-main">
-    <div class="content-header">
-        <div>
-            <h2 class="content-title card-title">Sales Report</h2>
+    <section class="content-main">
+        <div class="content-header">
+            <div>
+                <h2 class="content-title card-title">Sales Report</h2>
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button id="downloadReport" class="btn btn-primary w-100" onclick="downloadReport()">Download Sale
+                    Report</button>
+                <!-- <button id="downloadPdf" class="btn btn-primary w-100">PDF format</button> -->
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button id="downloadPdf" class="btn btn-primary w-100" onclick="downloadPdf()">PDF format</button>
+            </div>
         </div>
-        <div class="col-md-3 d-flex align-items-end">
-            <button id="downloadReport" class="btn btn-primary w-100" onclick="downloadReport()">Download Sale Report</button>
-            <!-- <button id="downloadPdf" class="btn btn-primary w-100">PDF format</button> -->
-        </div>
-        <div class="col-md-3 d-flex align-items-end">
-            <button id="downloadPdf" class="btn btn-primary w-100" onclick="downloadPdf()">PDF format</button>
-        </div>
-    </div>
 
-    <!-- Main Dashboard Content -->
-    <div class="content-body">
-        <!-- Filters and Report Generation -->
-        <div class="row mb-4">
-            <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Sales Report Filters</h5>
-                        <div class="row">
-                            <div class="col-md-3">
-                                <label for="report-type" class="form-label">Report Type</label>
-                                <select id="filter-order" class="form-select" onchange="filterOrder()">
-                                    <option value="custom">Default</option>
-                                    <option value="daily">Daily</option>
-                                    <option value="weekly">Weekly</option>
-                                    <option value="monthly">Monthly</option>
-                                    <option value="yearly">Yearly</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label for="start-date" class="form-label">Start Date</label>
-                                <input type="date" id="start-date" class="form-control">
-                            </div>
-                            <div class="col-md-3">
-                                <label for="end-date" class="form-label">End Date</label>
-                                <input type="date" id="end-date" class="form-control">
-                            </div>
-                            <div class="col-md-3 d-flex align-items-end">
-                                <button class="btn btn-primary w-100" onclick="filterByDate()">Filter</button>
+        <!-- Main Dashboard Content -->
+        <div class="content-body">
+            <!-- Filters and Report Generation -->
+            <div class="row mb-4">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Sales Report Filters</h5>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label for="report-type" class="form-label">Report Type</label>
+                                    <select id="filter-order" class="form-select" onchange="filterOrder()">
+                                        <option value="custom">Default</option>
+                                        <option value="daily">Daily</option>
+                                        <option value="weekly">Weekly</option>
+                                        <option value="monthly">Monthly</option>
+                                        <option value="yearly">Yearly</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="start-date" class="form-label">Start Date</label>
+                                    <input type="date" id="start-date" class="form-control">
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="end-date" class="form-label">End Date</label>
+                                    <input type="date" id="end-date" class="form-control">
+                                </div>
+                                <div class="col-md-3 d-flex align-items-end">
+                                    <button class="btn btn-primary w-100" onclick="filterByDate()">Filter</button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Metrics Cards -->
-        <div class="row">
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Overall Sales Count</h5>
-                        <h3 class="text-primary"><%=saleCount%></h3>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Overall Order Amount</h5>
-                        <h3 class="text-success"> <%=Math.floor(totalSale)%></h3>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Product Discount</h5>
-                        <h3 class="text-warning"> <%=overallDiscount%></h3>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Coupons Deduction</h5>
-                        <h3 class="text-danger coupon1"> <%=couponDiscount%></h3>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Sales Report Table -->
-        <div class="row mt-4">
-            <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="card-title">Sales Report</h5>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="show-discount">
-                            <label class="form-check-label" for="show-discount">Show Discounts and Coupons</label>
+            <!-- Metrics Cards -->
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Overall Sales Count</h5>
+                            <h3 class="text-primary">
+                                <%=saleCount%>
+                            </h3>
                         </div>
                     </div>
-                    <div class="card-body">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Order Date</th>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Address</th>
-                                    <th>Product Details</th>
-                                    <th>Payment Method</th>
-                                    <th>Coupon Discount</th>
-                                    <th>Product Discount</th>
-                                    <th>Delivery Charge</th>
-                                    <th>Sub Total</th>
-                                    <th>Net Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% if (order.length > 0) { %>
-                                    <% order.forEach(order => { %>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Overall Order Amount</h5>
+                            <h3 class="text-success">
+                                <%=Math.floor(totalSale)%>
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Product Discount</h5>
+                            <h3 class="text-warning">
+                                <%=overallDiscount%>
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Coupons Deduction</h5>
+                            <h3 class="text-danger coupon1">
+                                <%=couponDiscount%>
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sales Report Table -->
+            <div class="row mt-4">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">Sales Report</h5>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="show-discount">
+                                <label class="form-check-label" for="show-discount">Show Discounts and Coupons</label>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-striped">
+                                <thead>
                                     <tr>
-                                        <td><%= new Date(order.createdAt).toLocaleString() %></td>
-                                        <td><%= order.userId.name %></td>
-                                        <td><%= order.userId.email %></td>
-                                        <td>
-                                            <%= order.address.addressType %>, <%= order.address.city %>,<br>
-                                            <%= order.address.landMark %>, <%= order.address.state %>,<br>
-                                            <%= order.address.pincode %>, <%= order.address.phone %>
-                                        </td>
-                                        <td>
-                                            <ul>
-                                                <% order.items.forEach(item => { %>
-                                                    <li>
-                                                        <strong>Product Name:</strong> <%= item.productName %>,<br>
-                                                        <strong>Category:</strong> <%= item.category %>,<br>
-                                                        <strong>Quantity:</strong> <%= item.quantity %>,<br>
-                                                        <strong>Price:</strong> ₹<%= item.price %><br>
-                                                    </li>
-                                                <% }) %>
-                                            </ul>
-                                        </td>
-                                        <td><%= order.paymentMethod %></td>
-                                        <td>₹ <%= order.couponDiscount %></td>
-                                        <td>₹ <%= order.productOfferTotal %></td>
-                                        <td>₹ <%= order.deliveryCharge %></td>
-                                        <td>₹ <%= order.subTotal %></td>
-                                        <td>₹ <%= order.total %></td>
+                                        <th>Order Date</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Address</th>
+                                        <th>Product Details</th>
+                                        <th>Payment Method</th>
+                                        <th>Coupon Discount</th>
+                                        <th>Product Discount</th>
+                                        <th>Delivery Charge</th>
+                                        <th>Sub Total</th>
+                                        <th>Net Total</th>
                                     </tr>
-                                    <% }) %>
-                                <% } %>
-                            </tbody>
-                            
-                        </table>
+                                </thead>
+                                <tbody>
+                                    <% if (order.length> 0) { %>
+                                        <% order.forEach(order=> { %>
+                                            <tr>
+                                                <td>
+                                                    <%= new Date(order.createdAt).toLocaleString() %>
+                                                </td>
+                                                <td>
+                                                    <%= order.userId.name %>
+                                                </td>
+                                                <td>
+                                                    <%= order.userId.email %>
+                                                </td>
+                                                <td>
+                                                    <%= order.address.addressType %>, <%= order.address.city %>,<br>
+                                                            <%= order.address.landMark %>, <%= order.address.state %>
+                                                                    ,<br>
+                                                                    <%= order.address.pincode %>, <%=
+                                                                            order.address.phone %>
+                                                </td>
+                                                <td>
+                                                    <ul>
+                                                        <% order.items.forEach(item=> { %>
+                                                            <li>
+                                                                <strong>Product Name:</strong>
+                                                                <%= item.productName %>,<br>
+                                                                    <strong>Category:</strong>
+                                                                    <%= item.category %>,<br>
+                                                                        <strong>Quantity:</strong>
+                                                                        <%= item.quantity %>,<br>
+                                                                            <strong>Price:</strong> ₹<%= item.price %>
+                                                                                <br>
+                                                            </li>
+                                                            <% }) %>
+                                                    </ul>
+                                                </td>
+                                                <td>
+                                                    <%= order.paymentMethod %>
+                                                </td>
+                                                <td>₹ <%= order.couponDiscount %>
+                                                </td>
+                                                <td>₹ <%= order.productOfferTotal %>
+                                                </td>
+                                                <td>₹ <%= order.deliveryCharge %>
+                                                </td>
+                                                <td>₹ <%= order.subTotal %>
+                                                </td>
+                                                <td>₹ <%= order.total %>
+                                                </td>
+                                            </tr>
+                                            <% }) %>
+                                                <% } %>
+                                </tbody>
+
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!--pagination-->
-    <div class="pagination-container">
-        <ul class="pagination">
-          <%if(currentPage > 1){%>
-                <li class="page-item">
-                    <a class="page-link" href="?page=1">First</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="?page=<%= currentPage - 1%>">Previous</a>
-                </li> 
-          <%}%> 
-          <%for(let i=1;i<=totalPages;i++){%>     
-                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                    <a class="page-link" href="?page=<%= i %>"><%= i%></a>
-                </li> 
-          <%}%> 
-          <%if(currentPage <= totalPages){%>     
-                <li class="page-item">
-                    <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="?page=<%= totalPages%>">Last</a>
-                </li>  
-          <%}%>       
-        </ul>   
-    </div>
+        <!--pagination-->
+        <div class="pagination-container">
+            <ul class="pagination">
+                <%if(currentPage> 1){%>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1">First</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=<%= currentPage - 1%>">Previous</a>
+                    </li>
+                    <%}%>
+                        <%for(let i=1;i<=totalPages;i++){%>
+                            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                <a class="page-link" href="?page=<%= i %>">
+                                    <%= i%>
+                                </a>
+                            </li>
+                            <%}%>
+                                <%if(currentPage <=totalPages){%>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<%= totalPages%>">Last</a>
+                                    </li>
+                                    <%}%>
+            </ul>
+        </div>
 
-</section>
+    </section>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<%- include("../../views/partials/admin/footer") %>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <%- include("../../views/partials/admin/footer") %>
 
-  <script>
+        <script>
 
-     // filter orders
-     async function filterOrder(page = 1) {
-    const filterType = document.getElementById("filter-order").value;
-    console.log("filter type:", filterType);
+            // filter orders
+            async function filterOrder(page = 1) {
+                const filterType = document.getElementById("filter-order").value;
+                console.log("filter type:", filterType);
 
-    try {
-        const response = await fetch(`/admin/filterOrder?filterType=${filterType}&page=${page}`);
-        const data = await response.json();
+                try {
+                    const response = await fetch(`/admin/filterOrder?filterType=${filterType}&page=${page}`);
+                    const data = await response.json();
 
-        if (data.orders) {
-            console.log("data:", data);
+                    if (data.orders) {
+                        console.log("data:", data);
 
-            const filterTable = document.querySelector("table tbody");
-            filterTable.textContent = "";
+                        const filterTable = document.querySelector("table tbody");
+                        filterTable.textContent = "";
 
-            // Loop through the orders and add rows dynamically
-            data.orders.forEach(order => {
-                const addressDetails = `
+                        // Loop through the orders and add rows dynamically
+                        data.orders.forEach(order => {
+                            const addressDetails = `
                     ${order.address.addressType}, ${order.address.city},<br>
                     ${order.address.landMark}, ${order.address.state},<br>
                     ${order.address.pincode}, ${order.address.phone}
                 `;
 
-                const productDetails = order.items.map(item => `
+                            const productDetails = order.items.map(item => `
                     <li>
                         <strong>Product Name:</strong> ${item.productName}<br>
                         <strong>Category:</strong> ${item.category}<br>
@@ -221,7 +251,7 @@
                     </li>
                 `).join("");
 
-                const row = `
+                            const row = `
                     <tr>
                         <td>${new Date(order.createdAt).toLocaleString()}</td>
                         <td>${order.userId.name}</td>
@@ -239,236 +269,259 @@
                     </tr>
                 `;
 
-                filterTable.insertAdjacentHTML("beforeend", row);
-            });
+                            filterTable.insertAdjacentHTML("beforeend", row);
+                        });
 
-            // Update the summary data
-            document.querySelector(".text-primary").innerHTML = data.orderCount;
-            document.querySelector(".text-success").innerHTML = data.orderTotal;
-            document.querySelector(".text-warning").innerHTML = data.overalDiscount;
-            document.querySelector(".coupon1").innerHTML = data.couponDiscountTotal;
+                        // Update the summary data
+                        document.querySelector(".text-primary").innerHTML = data.orderCount;
+                        document.querySelector(".text-success").innerHTML = data.orderTotal;
+                        document.querySelector(".text-warning").innerHTML = data.overalDiscount;
+                        document.querySelector(".coupon1").innerHTML = data.couponDiscountTotal;
 
-            // Update pagination controls
-            updatePagination(data.currentPage, data.totalPages);
-        }
-    } catch (error) {
-        console.error("Error in Filtering Orders", error);
-    }
-}
+                        // Update pagination controls
+                        updatePagination(data.currentPage, data.totalPages);
+                    }
+                } catch (error) {
+                    console.error("Error in Filtering Orders", error);
+                }
+            }
 
-    function updatePagination(currentPage, totalPages) {
-        const paginationContainer = document.querySelector(".pagination");
-        paginationContainer.textContent = "";
+            function updatePagination(currentPage, totalPages) {
+                const paginationContainer = document.querySelector(".pagination");
+                paginationContainer.textContent = "";
 
-        if (currentPage > 1) {
-            paginationContainer.insertAdjacentHTML(
-                "beforeend",
-                `<li class="page-item">
+                if (currentPage > 1) {
+                    paginationContainer.insertAdjacentHTML(
+                        "beforeend",
+                        `<li class="page-item">
                     <a class="page-link" href="#" onclick="filterOrder(1)">First</a>
                 </li>
                 <li class="page-item">
                     <a class="page-link" href="#" onclick="filterOrder(${currentPage - 1})">Previous</a>
                 </li>`
-            );
-        }
+                    );
+                }
 
-        for (let i = 1; i <= totalPages; i++) {
-            paginationContainer.insertAdjacentHTML(
-                "beforeend",
-                `<li class="page-item ${currentPage === i ? 'active' : ''}">
+                for (let i = 1; i <= totalPages; i++) {
+                    paginationContainer.insertAdjacentHTML(
+                        "beforeend",
+                        `<li class="page-item ${currentPage === i ? 'active' : ''}">
                     <a class="page-link" href="#" onclick="filterOrder(${i})">${i}</a>
                 </li>`
-            );
-        }
+                    );
+                }
 
-        if (currentPage < totalPages) {
-            paginationContainer.insertAdjacentHTML(
-                "beforeend",
-                `<li class="page-item">
+                if (currentPage < totalPages) {
+                    paginationContainer.insertAdjacentHTML(
+                        "beforeend",
+                        `<li class="page-item">
                     <a class="page-link" href="#" onclick="filterOrder(${currentPage + 1})">Next</a>
                 </li>
                 <li class="page-item">
                     <a class="page-link" href="#" onclick="filterOrder(${totalPages})">Last</a>
                 </li>`
-            );
-        }
-    }
+                    );
+                }
+            }
 
 
 
-      // filter based on custon date
+            // filter based on custon date
 
-      async function filterByDate(){
-        const startDate = document.getElementById("start-date").value;
-        const endDate = document.getElementById("end-date").value;
+            async function filterByDate() {
+                const startDate = document.getElementById("start-date").value;
+                const endDate = document.getElementById("end-date").value;
 
-        console.log("S T :",startDate,endDate)
+                console.log("S T :", startDate, endDate)
 
-        try {
-            const response = await fetch(`/admin/filterbyDate?startDate=${startDate}&endDate=${endDate}`);
+                try {
+                    const response = await fetch(`/admin/filterbyDate?startDate=${startDate}&endDate=${endDate}`);
 
-            const data = await response.json()
-            console.log(data)
-            if(data.orders){
-                const filterTable = document.querySelector("table tbody");
-                filterTable.textContent=""
+                    const data = await response.json()
+                    console.log(data)
+                    if (data.orders) {
+                        const filterTable = document.querySelector("table tbody");
+                        filterTable.textContent = ""
 
-                data.orders.forEach(order=>{
-                    const row =`
+                        data.orders.forEach(order => {
+                            const addressDetails = `
+                    ${order.address.addressType}, ${order.address.city},<br>
+                    ${order.address.landMark}, ${order.address.state},<br>
+                    ${order.address.pincode}, ${order.address.phone}
+                `;
+
+                            const productDetails = order.items.map(item => `
+                    <li>
+                        <strong>Product Name:</strong> ${item.productName}<br>
+                        <strong>Category:</strong> ${item.category}<br>
+                        <strong>Quantity:</strong> ${item.quantity}<br>
+                        <strong>Price:</strong> ₹${item.price}<br>
+                    </li>
+                `).join("");
+
+                            const row = `
                     <tr>
                         <td>${new Date(order.createdAt).toLocaleString()}</td>
-                        <td>${order.subTotal}</td>
+                        <td>${order.userId.name}</td>
+                        <td>${order.userId.email}</td>
+                        <td>${addressDetails}</td>
+                        <td>
+                            <ul>${productDetails}</ul>
+                        </td>
                         <td>${order.paymentMethod}</td>
-                        <td>${order.couponDiscount}</td>
-                        <td>${order.productOfferTotal}</td>
-                        <td>${order.total}</td>
-                    </tr>    
-                    `;
-                    filterTable.insertAdjacentHTML("beforeend",row)
+                        <td>₹ ${order.couponDiscount}</td>
+                        <td>₹ ${order.productOfferTotal}</td>
+                        <td>₹ ${order.deliveryCharge}</td>
+                        <td>₹ ${order.subTotal}</td>
+                        <td>₹ ${order.total}</td>
+                    </tr>
+                `;
+
+                            filterTable.insertAdjacentHTML("beforeend", row);
+                        });
+
+                        document.querySelector(".text-primary").innerHTML = data.saleCount;
+                        document.querySelector(".text-success").innerHTML = data.productDiscount;
+                        document.querySelector(".text-warning").innerHTML = data.saleTotal;
+                        document.querySelector(".coupon1").innerHTML = data.couponDiscount;
+                    }
+                } catch (error) {
+                    console.error("Error in filtering orders by date..", error)
+                }
+            }
+
+
+            // download sale report EXCEL
+
+            async function downloadReport() {
+                const saleCount = document.querySelector(".text-primary").innerText;
+                const totalSale = document.querySelector(".text-success").innerText;
+                const overallDiscount = document.querySelector(".text-warning").innerText;
+                const couponDiscount = document.querySelector(".coupon1").innerText;
+
+                // collect all table data 
+                const rows = Array.from(document.querySelectorAll("table tbody tr"));
+                const orders = rows.map((row) => {
+                    const cells = row.querySelectorAll("td")
+                    const productDetails = Array.from(
+                        cells[4].querySelectorAll("ul li")
+                    ).map((item) => item.innerText).join("\n ")
+                    return {
+                        date: cells[0].innerText,
+                        name: cells[1].innerText,
+                        email: cells[2].innerText,
+                        address: cells[3].innerText.replace(/\n/g, "\n"), //using line break with spaces
+                        productDetails: productDetails.replace(/\n/g, "\n"),
+                        paymentMethod: cells[5].innerText,
+                        couponDiscount: cells[6].innerHTML,
+                        productDiscount: cells[7].innerText,
+                        subTotal: cells[8].innerText,
+                        netTotal: cells[9].innerText
+                    }
                 })
 
-                document.querySelector(".text-primary").innerHTML= data.saleCount;
-                document.querySelector(".text-success").innerHTML=data.productDiscount;
-                document.querySelector(".text-warning").innerHTML=data.saleTotal;
-                document.querySelector(".coupon1").innerHTML=data.couponDiscount;
+                try {
+                    const response = await fetch("/admin/downloadReport", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            saleCount, totalSale, overallDiscount, couponDiscount, orders
+                        }),
+
+                    })
+                    console.log("orders:-", orders)
+
+
+                    console.log("response:", response)
+
+                    if (response.ok) {
+                        const blob = await response.blob()
+                        const url = window.URL.createObjectURL(blob)
+                        const a = document.createElement("a")
+                        a.href = url
+                        a.download = "Sales_Report.xlsx"
+                        document.body.appendChild(a)
+                        a.click()
+                        a.remove()
+                    } else {
+                        console.error("Failed to download the Report")
+                    }
+                } catch (error) {
+                    console.error("Error in Downloading the Sale Report..!", error);
+                }
             }
-        } catch (error) {
-            console.error("Error in filtering orders by date..",error)
-        }
-      }
 
+            //Sales report download PDF
 
-      // download sale report EXCEL
+            async function downloadPdf() {
+                const saleCount = document.querySelector(".text-primary").innerText;
+                const totalSale = document.querySelector(".text-success").innerText;
+                const productDiscount = document.querySelector(".text-warning").innerText;
+                const couponDiscount = document.querySelector(".coupon1").innerText;
 
-      async function downloadReport(){
-        const saleCount = document.querySelector(".text-primary").innerText;
-        const totalSale = document.querySelector(".text-success").innerText;
-        const overallDiscount = document.querySelector(".text-warning").innerText;
-        const couponDiscount = document.querySelector(".coupon1").innerText;
-
-        // collect all table data 
-        const rows =Array.from(document.querySelectorAll("table tbody tr"));
-        const orders =rows.map((row)=>{
-            const cells =row.querySelectorAll("td")
-            const productDetails = Array.from(
-                cells[4].querySelectorAll("ul li")
-            ).map((item)=> item.innerText).join("\n ")
-            return{
-                date:cells[0].innerText,
-                name:cells[1].innerText,
-                email:cells[2].innerText,
-                address:cells[3].innerText.replace(/\n/g, "\n"), //using line break with spaces
-                productDetails:productDetails.replace(/\n/g, "\n"),
-                paymentMethod:cells[5].innerText,
-                couponDiscount:cells[6].innerHTML,
-                productDiscount:cells[7].innerText,
-                subTotal:cells[8].innerText,
-                netTotal:cells[9].innerText
-            }
-        })
-
-        try {
-            const response = await fetch("/admin/downloadReport",{
-                method:"POST",
-                headers:{
-                    "Content-Type":"application/json"
-                },
-                body:JSON.stringify({
-                    saleCount,totalSale,overallDiscount,couponDiscount,orders
-                }),
-                
-            })
-            console.log("orders:-",orders)
-
-
-            console.log("response:",response)
-
-            if(response.ok){
-                const blob = await response.blob()
-                const url = window.URL.createObjectURL(blob)
-                const a = document.createElement("a")
-                a.href = url
-                a.download = "Sales_Report.xlsx"
-                document.body.appendChild(a)
-                a.click()
-                a.remove()
-            }else{
-                console.error("Failed to download the Report")
-            }
-        } catch (error) {
-            console.error("Error in Downloading the Sale Report..!",error);           
-        }
-      }
-
-      //Sales report download PDF
-
-        async function downloadPdf() {
-            const saleCount = document.querySelector(".text-primary").innerText;
-            const totalSale = document.querySelector(".text-success").innerText;
-            const productDiscount = document.querySelector(".text-warning").innerText;
-            const couponDiscount = document.querySelector(".coupon1").innerText;
-
-            const rows = Array.from(document.querySelectorAll("table tbody tr"));
-            const orders = rows.map((row) => {
-                const cells = row.querySelectorAll("td");
-                return {
-                    date: cells[0].innerText,
-                    userName: cells[1].innerText,
-                    userEmail: cells[2].innerText,
-                    addressType: cells[3].innerText.split(",")[0],
-                    city: cells[3].innerText.split(",")[1].trim(),
-                    landMark: cells[3].innerText.split(",")[2].trim(),
-                    state: cells[3].innerText.split(",")[3].trim(),
-                    pincode: cells[3].innerText.split(",")[4].trim(),
-                    phone: cells[3].innerText.split(",")[5].trim(),
-                    items: Array.from(cells[4].querySelectorAll("li")).map((li) => {
-                        const [product, category, quantity, price] = li.innerText.split(",");
-                        return {
-                            productName: product.split(":")[1].trim(),
-                            category: category.split(":")[1].trim(),
-                            quantity: quantity.split(":")[1].trim(),
-                            price: price.split(":")[1].trim(),
-                        };
-                    }),
-                    paymentMethod: cells[5].innerText,
-                    couponDiscount: cells[6].innerText.replace("₹", ""),
-                    productDiscount: cells[7].innerText.replace("₹", ""),
-                    deliveryCharge: cells[8].innerText.replace("₹", ""),
-                    subTotal: cells[9].innerText.replace("₹", ""),
-                    netTotal: cells[10].innerText.replace("₹", ""),
-                };
-            });
-
-            try {
-                const response = await fetch("/admin/saleReportDownloadPDF", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        saleCount,
-                        totalSale,
-                        productDiscount,
-                        couponDiscount,
-                        orders,
-                    }),
+                const rows = Array.from(document.querySelectorAll("table tbody tr"));
+                const orders = rows.map((row) => {
+                    const cells = row.querySelectorAll("td");
+                    return {
+                        date: cells[0].innerText,
+                        userName: cells[1].innerText,
+                        userEmail: cells[2].innerText,
+                        addressType: cells[3].innerText.split(",")[0],
+                        city: cells[3].innerText.split(",")[1].trim(),
+                        landMark: cells[3].innerText.split(",")[2].trim(),
+                        state: cells[3].innerText.split(",")[3].trim(),
+                        pincode: cells[3].innerText.split(",")[4].trim(),
+                        phone: cells[3].innerText.split(",")[5].trim(),
+                        items: Array.from(cells[4].querySelectorAll("li")).map((li) => {
+                            const [product, category, quantity, price] = li.innerText.split(",");
+                            return {
+                                productName: product.split(":")[1].trim(),
+                                category: category.split(":")[1].trim(),
+                                quantity: quantity.split(":")[1].trim(),
+                                price: price.split(":")[1].trim(),
+                            };
+                        }),
+                        paymentMethod: cells[5].innerText,
+                        couponDiscount: cells[6].innerText.replace("₹", ""),
+                        productDiscount: cells[7].innerText.replace("₹", ""),
+                        deliveryCharge: cells[8].innerText.replace("₹", ""),
+                        subTotal: cells[9].innerText.replace("₹", ""),
+                        netTotal: cells[10].innerText.replace("₹", ""),
+                    };
                 });
 
-                if (response.ok) {
-                    const blob = await response.blob();
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = "Sale_Report.pdf";
-                    document.body.appendChild(a);
-                    a.click();
-                    a.remove();
-                } else {
-                    console.error("Failed to download the sale report in PDF format.");
-                }
-            } catch (error) {
-                console.error("Error downloading the sale report in PDF method.", error);
-            }
-        }
+                try {
+                    const response = await fetch("/admin/saleReportDownloadPDF", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            saleCount,
+                            totalSale,
+                            productDiscount,
+                            couponDiscount,
+                            orders,
+                        }),
+                    });
 
-  </script>
+                    if (response.ok) {
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = url;
+                        a.download = "Sale_Report.pdf";
+                        document.body.appendChild(a);
+                        a.click();
+                        a.remove();
+                    } else {
+                        console.error("Failed to download the sale report in PDF format.");
+                    }
+                } catch (error) {
+                    console.error("Error downloading the sale report in PDF method.", error);
+                }
+            }
+
+        </script>

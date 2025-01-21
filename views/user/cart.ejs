@@ -223,7 +223,20 @@
                             </div>
                             <div class="col-lg-6 col-md-12">
                                 <div class="border p-md-4 p-30 border-radius cart-totals">
-                                    <a href="/checkOut" class="btn"><i class="fi-rs-box-alt mr-10"></i> Proceed To CheckOut</a>
+                                    <div class="heading_s1 mb-3">
+                                        <h4>Cart Totals</h4>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <tbody>
+                                                <tr>
+                                                    <td class="cart_total_label">Total</td>
+                                                    <td class="cart_total_amount" id="cartTotal"><strong><span class="font-xl fw-900 text-brand">₹ <%= total%></span></strong></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <a href="/checkOut" class="btn "> <i class="fi-rs-box-alt mr-10"></i> Proceed To CheckOut</a>
                                 </div>
                             </div>
                         </div>
@@ -299,9 +312,12 @@
                         const totalPriceSpan = document.querySelector(`#totalPrice-${productId}`);
                         const qtyUpBtn = document.querySelector(`.qty-up[data-product-id="${productId}"]`);
                         const qtyDownBtn = document.querySelector(`.qty-down[data-product-id="${productId}"]`);
+                        const cartTotal = document.querySelector(`#cartTotal`)
 
                         qtySpan.textContent = data.quantity;
                         totalPriceSpan.textContent = Math.floor(data.totalPrice * data.quantity);
+
+                        calculateCartTotal()
 
                         // Enable/disable buttons based on the updated quantity
                         if (data.quantity >= 5) {
@@ -350,6 +366,18 @@
                 }
             }
 
+
+            function calculateCartTotal(){
+                const TotalElement = document.querySelectorAll('[id^="totalPrice-"]')
+                let Total =0;
+
+                TotalElement.forEach((amount)=>{
+                    Total += parseFloat(amount.textContent)
+                })
+
+                const cartTotal = document.querySelector("#cartTotal span")
+                cartTotal.textContent = `₹ ${Total}`
+            }
 
 
     

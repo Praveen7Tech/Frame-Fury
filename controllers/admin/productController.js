@@ -152,7 +152,7 @@ const editProduct = async(req,res)=>{
         })
     } catch (error) {
         console.error("Error in editProduct:", error);
-        res.redirect("/pageerror")
+        return res.redirect("/admin/pageError")
     }
 }
 

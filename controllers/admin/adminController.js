@@ -5,8 +5,13 @@ const bcrypt = require("bcrypt");
 //const { default: items } = require("razorpay/dist/types/items");
 
 
-const pageerror = async(req,res)=>{
-    res.render("admin-error")
+const pageError = async(req,res)=>{
+    try {
+        res.render("admin-error")
+    } catch (error) {
+        console.error("Error in loading 404");
+        
+    }
 }
 
 const loadLogin = async(req,res)=>{
@@ -166,7 +171,7 @@ const loadDashboard = async(req,res)=>{
     })
    } catch (error) {
     console.error("Error in loading dashboard",error);
-    
+    res.redirect("/admin/pageError")
    }
 }
 
@@ -335,7 +340,7 @@ module.exports = {
     loadLogin,
     login,
     loadDashboard,
-    pageerror,
+    pageError,
     logout,
     dashBoard,
     filterData
