@@ -160,6 +160,7 @@ const updateProduct = async(req,res)=>{
     try {
         const id = req.params.id;
         const data = req.body;
+        console.log("dta",data)
         const product =await Product.findOne({_id:id});
         
         const existingProduct = await Product.findOne({
@@ -186,6 +187,7 @@ const updateProduct = async(req,res)=>{
             regularPrice:data.regularPrice,
             salePrice:data.salePrice,
             quantity:data.quantity,
+            status:data.quantity = '0' ? "Out of Stock" : "Available"
 
         }
         if(req.files.length>0){

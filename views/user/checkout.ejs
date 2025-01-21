@@ -39,71 +39,74 @@
         </div>
         <br>
 
-        
-
         <section class="mt-50 mb-50">
+            
+         <!-- coupon portion -->
+         <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="toggle_info">
+                        <span><i class="fi-rs-label mr-10"></i><span class="text-muted">Available coupons.</span> <a href="#coupon" data-bs-toggle="collapse" class="collapsed" aria-expanded="false">Click here to choose your code</a></span>
+                    </div>
+                    <div class="panel-collapse collapse coupon_form " id="coupon">
+                        
+                            <div class="col-12">
+                                <div class=" mt-50 mb-50"></div>
+                            </div>
+                        
+                        <section class="banners mb-15" id="">
+                            <div class="container">
+                                <div class="row">
+                                    <% 
+                                        // Predefined list of images
+                                        const imagess = [
+                                            "assets/imgs/banner/coupon-4.webp",
+                                            "assets/imgs/banner/coupon-2.webp",
+                                            "assets/imgs/banner/coupon-3.webp",
+                                            "assets/imgs/banner/frame-3.png"
+                                        ];
+                                    %>
+                        
+                                    <% for (let i = 0; i < coupon.length; i++) { %>
+                                        <div class="col-lg-4 col-md-6"> 
+                                            <div class="banner-img wow fadeIn animated">
+                                                <!-- Dynamically assign images using modulus operator -->
+                                                <img src="<%= imagess[i % imagess.length] %>" alt="Coupon Image">
+                                                <div class="banner-text">
+                                                    <span>Exclusive Coupon</span>
+                                                    <h4>
+                                                        <span style="color: rgb(136, 206, 244);">Save </span>
+                                                        <span style="color: rgb(70, 213, 14);"><%= coupon[i].offerPrice %></span> 
+                                                        <span style="color: aliceblue;">on every minimum Purchase at</span> 
+                                                        <span style="color: rgb(240, 41, 6);"><%= coupon[i].minimumPrice %></span>
+                                                    </h4>
+                                                    <span>COUPON CODE:</span>
+                                                    <strong style="color: white;" id="couponCode-<%= i %>"><%= coupon[i].name %></strong>
+                                                    <button 
+                                                        class="copy-btn" 
+                                                        onclick="copyCouponCode('<%= coupon[i].name %>')">
+                                                        Copy
+                                                    </button>
+                                                    <br>
+                                                    <span>Expires On:</span>
+                                                    <strong style="color: white;"><%= new Date(coupon[i].expireOn).toLocaleDateString() %></strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <% } %> 
+                                </div>
+                            </div>
+                        </section>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>   
+            
             <form method="POST" id="orderForm" action="/placeOrder" onsubmit="return placeOrder(event)">
                 <div class="container">
 
-                    <!-- coupon portion -->
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="toggle_info">
-                                <span><i class="fi-rs-label mr-10"></i><span class="text-muted">Available coupons.</span> <a href="#coupon" data-bs-toggle="collapse" class="collapsed" aria-expanded="false">Click here to choose your code</a></span>
-                            </div>
-                            <div class="panel-collapse collapse coupon_form " id="coupon">
-                                
-                                    <div class="col-12">
-                                        <div class=" mt-50 mb-50"></div>
-                                    </div>
-                                
-                                <section class="banners mb-15" id="">
-                                    <div class="container">
-                                        <div class="row">
-                                            <% 
-                                                // Predefined list of images
-                                                const imagess = [
-                                                    "assets/imgs/banner/coupon-4.webp",
-                                                    "assets/imgs/banner/coupon-2.webp",
-                                                    "assets/imgs/banner/coupon-3.webp",
-                                                    "assets/imgs/banner/frame-3.png"
-                                                ];
-                                            %>
-                                
-                                            <% for (let i = 0; i < coupon.length; i++) { %>
-                                                <div class="col-lg-4 col-md-6"> 
-                                                    <div class="banner-img wow fadeIn animated">
-                                                        <!-- Dynamically assign images using modulus operator -->
-                                                        <img src="<%= imagess[i % imagess.length] %>" alt="Coupon Image">
-                                                        <div class="banner-text">
-                                                            <span>Exclusive Coupon</span>
-                                                            <h4>
-                                                                <span style="color: rgb(136, 206, 244);">Save </span>
-                                                                <span style="color: rgb(70, 213, 14);"><%= coupon[i].offerPrice %></span> 
-                                                                <span style="color: aliceblue;">on every minimum Purchase at</span> 
-                                                                <span style="color: rgb(240, 41, 6);"><%= coupon[i].minimumPrice %></span>
-                                                            </h4>
-                                                            <span>COUPON CODE:</span>
-                                                            <strong style="color: white;" id="couponCode-<%= i %>"><%= coupon[i].name %></strong>
-                                                            <button 
-                                                                class="copy-btn" 
-                                                                onclick="copyCouponCode('<%= coupon[i].name %>')">
-                                                                Copy
-                                                            </button>
-                                                            <br>
-                                                            <span>Expires On:</span>
-                                                            <strong style="color: white;"><%= new Date(coupon[i].expireOn).toLocaleDateString() %></strong>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            <% } %> 
-                                        </div>
-                                    </div>
-                                </section>
-                                
-                            </div>
-                        </div>
-                    </div>
+                    
                     <div class="row">
                         <div class="col-12">
                             <div class="divider mt-50 mb-50"></div>
@@ -608,13 +611,8 @@
                             const verifyData = await verifyResponse.json()
                             console.log("verify:",verifyData)
                             if(verifyData.success){
-                                Swal.fire({
-                                    title:"Payment Success",
-                                    text:`Order Placed Successfully. Your OrderId is : ${verifyData.orderId}`,
-                                    icon:"success",
-                                    confirmButtonText:"OK"
-                                })
-                                .then(()=> window.location.href =`/orderSuccess?orderId=${data.orderId}`)
+                             
+                                 window.location.href =`/orderSuccess?orderId=${data.orderId}`;
                             }
                             else{
                                 Swal.fire({
@@ -693,14 +691,7 @@
                 console.log("data:cod",data)
     
                 if (data.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: "Order Placed Successfully",
-                        text: `Your Order ID is: ${data.orderId}`,
-                        confirmButtonText: "OK",
-                    }).then(() => {
-                        window.location.href = `/orderSuccess?orderId=${data.orderId}`; // Redirect after success
-                    });
+                        window.location.href = `/orderSuccess?orderId=${data.orderId}`; 
                 } else {
                     Swal.fire({
                         icon: "error",

@@ -334,7 +334,7 @@
                                         <%}%>
                                            
                                 </div>
-                                <ul class="product-meta font-xs color-grey mt-50">
+                                <!-- <ul class="product-meta font-xs color-grey mt-50">
                                     <li class="mb-5">SKU: <a href="#">FWM15VKT</a></li>
                                     <li class="mb-5">Tags: <a href="#" rel="tag">frame</a>, <a href="#"
                                             rel="tag">Hyper cars</a>, <a href="#" rel="tag">Limited edition</a>
@@ -342,7 +342,7 @@
                                     <li>Availability:<span class="in-stock text-success ml-5">
                                             <%=quantity%> Items InStock
                                         </span></li>
-                                </ul>
+                                </ul> -->
                             </div>
                             <div class="col-md-6 col-sm-12 col-xs-12">
                                 <div class="detail-info">
@@ -365,25 +365,41 @@
                                     </div>
                                     <div class="clearfix product-price-cover">
                                         <div class="product-price primary-color float-left">
-                                        <%if(product.offer){%>    
+                                        <% 
+                                        const productOffer = product.offer;
+                                        const categoryOffer = product.category.categoryOffer;
+                                        const bestOffer = Math.max(productOffer, categoryOffer);
+                                        const salePrice = product.salePrice;
+                                        const finalPrice = bestOffer > 0 ? Math.floor(salePrice-(salePrice * bestOffer / 100)) : salePrice;
+
+
+                                        const discountPercentage = finalPrice < salePrice ? Math.round(((salePrice - finalPrice) / salePrice)* 100)
+                                        : Math.round(((product.regularPrice - salePrice) / regularPrice) * 100 )
+                                        %>    
+                                           
                                             <ins><span class="text-brand">
-                                                <%= Math.floor(product.salePrice-(product.salePrice * product.offer / 100))%>
+                                                <%= finalPrice%>
                                             </span></ins>
-                                        <%}else{%>    
-                                            <ins><span class="text-brand">
+                                        <%if(bestOffer > 0){%>    
+                                            <ins><span class="old-price font-md ml-15">
                                                     <%=product.salePrice%>
                                                 </span></ins>
-                                        <%}%>        
+                                        <%}else{%>       
                                             <ins><span class="old-price font-md ml-15">
                                                     <%=product.regularPrice%>
                                                 </span></ins>
-                                            <% if (product.salePrice < product.regularPrice) { %>
+                                        <%}%>        
+                                            <% if (finalPrice < salePrice) { %>
                                                 <span class="save-price font-md color3 ml-15">
-                                                    <% const discount=Math.round(((product.regularPrice -
-                                                        product.salePrice) / product.regularPrice) * 100); %>
-                                                        <%= discount %> % Off
+
+                                                    <%= discountPercentage %> % Off
                                                 </span>
-                                                <% } %>
+                                        <% } else{ %>
+                                            <span class="save-price font-md color3 ml-15">
+
+                                                <%= discountPercentage %> % Off
+                                            </span>
+                                        <%}%>        
                                         </div>
                                     </div>
                                     <div class="bt-1 border-color-1 mt-15 mb-15"></div>
@@ -443,7 +459,7 @@
                                     </div> -->
 
                                     <!-- Size Selection -->
-                                    <div class="attr-detail attr-size mb-35">
+                                    <!-- <div class="attr-detail attr-size mb-35">
                                         <strong class="option-title">Size <span class="required">*</span></strong>
                                         <div class="custom-select">
                                             <select required aria-label="Select size" class="size-select">
@@ -455,16 +471,16 @@
                                             </select>
                                             <div class="select-arrow"></div>
                                         </div>
-                                    </div>
+                                    </div> -->
 
 
                                     <div class="bt-1 border-color-1 mt-30 mb-30"></div>
                                     <div class="detail-extralink">
-                                        <div class="detail-qty border radius">
+                                        <!-- <div class="detail-qty border radius">
                                             <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
                                             <span class="qty-val">1</span>
                                             <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
-                                        </div>
+                                        </div> -->
                                         <div class="product-extra-link2">
                                             <button type="submit" class="button button-add-to-cart"
                                                 onclick="addToCart('<%=product._id%>')">
@@ -477,7 +493,7 @@
                                             </a>    
                                         </div>
                                     </div>
-                                    <!-- <ul class="product-meta font-xs color-grey mt-50">
+                                    <ul class="product-meta font-xs color-grey mt-50">
                                         <li class="mb-5">SKU: <a href="#">FWM15VKT</a></li>
                                         <li class="mb-5">Tags: <a href="#" rel="tag">frame</a>, <a href="#"
                                                 rel="tag">Hyper cars</a>, <a href="#" rel="tag">Limited edition</a>
@@ -485,7 +501,7 @@
                                         <li>Availability:<span class="in-stock text-success ml-5">
                                                 <%=quantity%> Items InStock
                                             </span></li>
-                                    </ul> -->
+                                    </ul>
                                 </div>
                                 <!-- Detail Info -->
                             </div>
@@ -685,8 +701,8 @@
                                                         </span>
                                                     </div>
                                                     <div class="product-price">
-                                                        <span>$<%= related.salePrice %></span>
-                                                        <span class="old-price">$<%= related.regularPrice %></span>
+                                                        <span><%= related.salePrice %></span>
+                                                        <span class="old-price"><%= related.regularPrice %></span>
                                                     </div>
                                                 </div>
                                             </div>

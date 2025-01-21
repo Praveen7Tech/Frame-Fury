@@ -47,7 +47,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
-                        <p><strong>Order Number:</strong> <%=order._id%></p>
+                        <p><strong>Order Number:</strong> <%=order.orderId%></p>
                         <p><strong>Order Date:</strong> <%=new Date(order.createdAt).toLocaleString()%></p>
                         <p><strong>Customer Name:</strong> <%=user.name%></p>
                         <p class="order-status">Order Status: <span class="badge bg-<%= order.orderStatus === 'Cancelled' ? 'danger' : 'success' %> orderStatus"><%=order.orderStatus%></span></p>
@@ -138,7 +138,7 @@
                         <p><strong>Payment Method:</strong> <%=order.paymentMethod%></p>
                         <p><strong>Subtotal:</strong> ₹ <%=order.subTotal.toFixed(2)%></p>
                         <p><strong>Shipping:</strong> ₹ <%=order.deliveryCharge.toFixed(2)%></p>
-                        <p><strong>Tax:</strong> ₹ 0.00</p>
+                        <p><strong>Coupon:</strong> ₹ <%= order.couponDiscount%></p>
                         <hr>
                         <p><strong>Total:</strong> ₹ <%=order.total.toFixed(2)%></p>
                     </div>

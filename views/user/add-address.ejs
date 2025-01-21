@@ -66,6 +66,7 @@
                     <div class="mb-3">
                         <label for="landMark" class="form-label">Landmark</label>
                         <input type="text" class="form-control" id="landMark" name="landMark" placeholder="Enter landmark">
+                        <div id="landMarkError" class="error-message text-danger"></div>
                     </div>
                     <div class="mb-3">
                         <label for="state" class="form-label">State</label>
@@ -85,6 +86,7 @@
                     <div class="mb-3">
                         <label for="altPhone" class="form-label">Alternate Phone</label>
                         <input type="text" class="form-control" id="altPhone" name="altPhone" placeholder="Enter alternate phone number">
+                        <div id="altPhoneError" class="error-message text-danger"></div>
                     </div>
                     
 
@@ -138,6 +140,11 @@
             document.getElementById('cityError').textContent = 'City is required.';
         }
 
+        if(!landMark){
+            isValid = false;
+            document.getElementById('landMarkError').textContent = "LandMark is required"
+        }
+
         if (!state) {
             isValid = false;
             document.getElementById('stateError').textContent = 'State is required.';
@@ -152,6 +159,12 @@
             isValid = false;
             document.getElementById('phoneError').textContent = 'Phone number must be exactly 10 digits.';
         }
+
+        if (!/^\d{10}$/.test(altPhone)) {
+            isValid = false;
+            document.getElementById('altPhoneError').textContent = 'Alt Phone must be exactly 10 digits.';
+        }
+
 
         // If valid, submit the form, otherwise show errors
         if (isValid) {

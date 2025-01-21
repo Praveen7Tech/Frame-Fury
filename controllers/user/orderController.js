@@ -28,7 +28,7 @@ const orderCancel = async(req,res)=>{
         const userId = req.session.user;
         const order = await Order.findById(orderId);
         const wallet = await Wallet.findOne({userId})
-        console.log("order : ",cancelReason);
+        console.log("wallet : ",wallet);
         
 
         if(order.orderStatus === "Pending" || order.orderStatus === "Confirmed"){
@@ -104,7 +104,7 @@ const ReturnOrder = async(req,res)=>{
             console.log("Return Order Request Success.")
 
             // refund money to wallet
-            if(order.paymentMethod === "wallet" || order.paymentMethod ==="Online"){
+            if(order.paymentMethod === "wallet" || order.paymentMethod ==="Online" || order.paymentMethod === "COD"){
                 wallet.balance += order.total
                 wallet.refundHistory.push({
                     refundId:transactionId,
