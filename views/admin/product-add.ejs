@@ -102,7 +102,7 @@
                                     <div class="card-body align-items-center" style="margin-bottom: 20px;">
                                         <img src="" alt="" id="imgView1">
                                         <input class="form-control" type="file" name="images" id="input1"
-                                            accept="image/png, image/jpeg, image/jpg, image/webp"
+                                            accept="image/png, image/jpeg, image/jpg, image/webp, image/avif"
                                             onchange="viewImage1(event), viewImage(event, 1)">
                                         <div id="images-error" class="error-message"></div>
                                     </div>
@@ -119,7 +119,7 @@
 
 
                                         <input class="form-control" type="file" name="images" id="input2"
-                                            accept="image/png, image/jpeg, image/jpg ,image/webp"
+                                            accept="image/png, image/jpeg, image/jpg ,image/webp, image/avif"
                                             onchange="viewImage2(event),viewImage(event, 2)">
                                     </div>
                                     <div class="image-cropper d-flex align-items-center"
@@ -135,7 +135,7 @@
 
 
                                         <input class="form-control" type="file" name="images" id="input3"
-                                            accept="image/png, image/jpeg, image/jpg ,image/webp"
+                                            accept="image/png, image/jpeg, image/jpg ,image/webp, image/avif"
                                             onchange="viewImage3(event),viewImage(event, 3)">
                                     </div>
                                     <div class="image-cropper d-flex align-items-center"
@@ -152,7 +152,7 @@
 
 
                                         <input class="form-control" type="file" name="images" id="input4"
-                                            accept="image/png, image/jpeg, image/jpg, image/webp"
+                                            accept="image/png, image/jpeg, image/jpg, image/webp, image/avif"
                                             onchange="viewImage4(event),viewImage(event, 4)">
                                     </div>
                                     <div class="image-cropper d-flex align-items-center"
@@ -325,10 +325,7 @@
             if (description.trim() === "") {
                 displayErrorMessage('description-error', 'Please enter a product description.');
                 isValid = false;
-            } else if (!/^[a-zA-Z0-9\s]+$/.test(description.trim())) {
-                displayErrorMessage('description-error', 'Product description should contain only alphabetic characters and numbers.');
-                isValid = false;
-            }
+            } 
 
 
             if (parseInt(quantity) < 0) {

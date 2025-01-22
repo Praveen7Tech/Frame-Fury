@@ -1,5 +1,172 @@
 <%- include("../../views/partials/user/header") %>
 
+<style>
+    .sort-option.active {
+        font-weight: bold;
+        color: #007bff;
+        text-decoration: underline;
+    }
+
+    
+    .widget-category {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+        color: #333;
+        border-bottom: 2px solid #ff5722;
+        padding-bottom: 10px;
+    }
+
+    .categories {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .category-item {
+        margin-bottom: 10px;
+    }
+
+    .category-link {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 15px;
+        border-radius: 30px;
+        text-decoration: none;
+        color: #333;
+        transition: all 0.3s ease;
+        background-color: #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .category-link:hover {
+        background-color: #f0f0f0;
+        transform: translateY(-2px);
+    }
+
+    .category-name {
+        font-weight: 500;
+    }
+
+    .category-count {
+        background-color: #e0e0e0;
+        color: #333;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+    }
+
+    .active-category {
+        background-color: #088178;
+        color: #fff;
+    }
+
+    .active-category .category-count {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: #fff;
+    }
+
+    .active-category:hover {
+        background-color: #e64a19;
+    }
+
+    @media (max-width: 768px) {
+        .widget-category {
+            padding: 15px;
+        }
+
+        .category-link {
+            padding: 8px 12px;
+        }
+    }
+
+    .price-range-filter {
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+
+    .widget-header {
+        margin-bottom: 20px;
+    }
+
+    .widget-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #333;
+        text-transform: uppercase;
+        margin: 0;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e0e0e0;
+    }
+
+    .price-options {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .price-option {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 16px;
+        background-color: #f5f5f5;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #333;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .price-option:hover {
+        background-color: #e0e0e0;
+        transform: translateY(-2px);
+    }
+
+    .price-range {
+        font-size: 14px;
+    }
+
+    .icon-filter {
+        width: 20px;
+        height: 20px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z' /%3E%3C/svg%3E");
+        background-size: contain;
+        background-repeat: no-repeat;
+        opacity: 0.6;
+    }
+
+    @media (max-width: 768px) {
+        .price-range-filter {
+            padding: 15px;
+        }
+
+        .widget-title {
+            font-size: 16px;
+        }
+
+        .price-option {
+            padding: 10px 12px;
+        }
+
+        .price-range {
+            font-size: 13px;
+        }
+    }
+
+
+</style>
+
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <main class="main">
@@ -50,16 +217,16 @@
                                             <span><i class="fi-rs-apps-sort"></i>Sort by:</span>
                                         </div>
                                         <div class="sort-by-dropdown-wrap">
-                                            <span> Featured <i class="fi-rs-angle-small-down"></i></span>
+                                            <span id="selected-sort">Featured <i class="fi-rs-angle-small-down"></i></span>
                                         </div>
                                     </div>
                                     <div class="sort-by-dropdown">
                                         <ul>
-                                            <li><a class="active" href="/filterPrice?sort=featured">Featured</a></li>
-                                            <li><a href="/filterPrice?sort=lowToHigh">Price: Low to High</a></li>
-                                            <li><a href="/filterPrice?sort=highToLow">Price: High to Low</a></li>
-                                            <li><a href="/filterByName?sort=aA-zZ">Alphabetical: aA-zZ</a></li>
-                                            <li><a href="/filterByName?sort=zZ-aA">Alphabetical: zZ-aA</a></li>
+                                            <li><a class="sort-option" href="/filterPrice?sort=featured" data-label="Featured">Featured</a></li>
+                                            <li><a class="sort-option" href="/filterPrice?sort=lowToHigh" data-label="Price: Low to High">Price: Low to High</a></li>
+                                            <li><a class="sort-option" href="/filterPrice?sort=highToLow" data-label="Price: High to Low">Price: High to Low</a></li>
+                                            <li><a class="sort-option" href="/filterByName?sort=aA-zZ" data-label="Alphabetical: aA-zZ">Alphabetical: aA-zZ</a></li>
+                                            <li><a class="sort-option" href="/filterByName?sort=zZ-aA" data-label="Alphabetical: zZ-aA">Alphabetical: zZ-aA</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -78,7 +245,7 @@
                                                 <a href="/productDetails?id=<%=products[i]._id%>">
                                                     <img class="default-img"
                                                         src="/uploads/re-image/<%=products[i].productImage[0]%>" alt="">
-                                                    <!-- <img class="hover-img" src="assets/imgs/shop/product-2-2.jpg" alt=""> -->
+                                                    <img class="hover-img" src="/uploads/re-image/<%=products[i].productImage[1]%>" alt="">
                                                 </a>
                                             </div>
                                             <div class="product-action-1">
@@ -177,44 +344,45 @@
                         <div class="widget-category mb-30">
                             <h5 class="section-title style-1 mb-30 wow fadeIn animated">Category</h5>
                             <ul class="categories">
-                                <%for(let i=0;i<category.length;i++){%>
-                                    <li><a href="/filter?category=<%=category[i]._id%>">
-                                            <%=category[i].name%>
-                                        </a></li>
-                                 <%}%>
+                                <% for (let i = 0; i < category.length; i++) { 
+                                    const isActive = selectedCategory === category[i]._id.toString(); 
+                                %>
+                                    <li class="category-item">
+                                        <a href="/filter?category=<%=category[i]._id%>" 
+                                           class="category-link <%= isActive ? 'active-category' : '' %>">
+                                            <span class="category-name"><%=category[i].name%></span>
+                                            <!-- <span class="category-count">0</span> -->
+                                        </a>
+                                    </li>
+                                <% } %>
                             </ul>
                         </div>
+                        
                         <!-- Fillter By Price -->
-                        <div class="sidebar-widget price_range range mb-30"
-                            style="padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 5px;">
-                            <div class="widget-header position-relative mb-20 pb-10"
-                                style="border-bottom: 1px solid #ddd; padding-bottom: 10px;">
-                                <h5 class="widget-title mb-10"
-                                    style="font-size: 18px; font-weight: bold; color: #333; text-transform: uppercase;">
-                                    Filter by Price</h5>
+                        <div class="sidebar-widget price-range-filter">
+                            <div class="widget-header">
+                                <h5 class="widget-title">Filter by Price</h5>
                             </div>
                             <div class="price-filter">
-                                <div class="price-filter-inner">
-                                    <div class="price-option" style="display: flex; flex-direction: column; gap: 8px;">
-                                        <a href="/filterPrice?gt=0&lt=20000" class="btn btn-sm btn-default"
-                                            style="display: block; margin-top: 15px; padding: 10px; font-size: 14px; text-align: center; color: #fff; background-color: #8d9b9a; border-radius: 5px; text-transform: uppercase; font-weight: bold; text-decoration: none;">
-                                            <i class="fi-rs-filter mr-5"></i>below 20,000 
-                                        </a>
-                                        <a href="/filterPrice?gt=20000&lt=25000" class="btn btn-sm btn-default"
-                                            style="display: block; margin-top: 15px; padding: 10px; font-size: 14px; text-align: center; color: #fff; background-color: #088178; border-radius: 5px; text-transform: uppercase; font-weight: bold; text-decoration: none;">
-                                            <i class="fi-rs-filter mr-5"></i> 20,000 - 25,000
-                                        </a>
-                                        <a href="/filterPrice?gt=25000&lt=30000" class="btn btn-sm btn-default"
-                                            style="display: block; margin-top: 15px; padding: 10px; font-size: 14px; text-align: center; color: #fff; background-color: #8d9b9a; border-radius: 5px; text-transform: uppercase; font-weight: bold; text-decoration: none;">
-                                            <i class="fi-rs-filter mr-5"></i> 25,000 - 30,000
-                                            <a href="/filterPrice?gt=30000&lt=50000" class="btn btn-sm btn-default"
-                                                style="display: block; margin-top: 15px; padding: 10px; font-size: 14px; text-align: center; color: #fff; background-color: #088178; border-radius: 5px; text-transform: uppercase; font-weight: bold; text-decoration: none;">
-                                                <i class="fi-rs-filter mr-5"></i> Above 30,000
-                                            </a>
-                                    </div>
+                                <div class="price-options">
+                                    <a href="/filterPrice?gt=0&lt=20000" class="price-option">
+                                        <span class="price-range">Below ₹20,000</span>
+                                        <span class="icon-filter"></span>
+                                    </a>
+                                    <a href="/filterPrice?gt=20000&lt=25000" class="price-option">
+                                        <span class="price-range">₹20,000 - ₹25,000</span>
+                                        <span class="icon-filter"></span>
+                                    </a>
+                                    <a href="/filterPrice?gt=25000&lt=30000" class="price-option">
+                                        <span class="price-range">₹25,000 - ₹30,000</span>
+                                        <span class="icon-filter"></span>
+                                    </a>
+                                    <a href="/filterPrice?gt=30000&lt=50000" class="price-option">
+                                        <span class="price-range">Above ₹30,000</span>
+                                        <span class="icon-filter"></span>
+                                    </a>
                                 </div>
                             </div>
-
                         </div>
 
                         <!-- Product sidebar Widget -->
@@ -258,6 +426,31 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <!-- sort option cnaging dynamically -->
+    <script>
+        // Function to get query parameter value by name
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+    
+        // On page load, update the dropdown based on the current URL
+        window.addEventListener('DOMContentLoaded', () => {
+            const currentSort = getQueryParam('sort') || 'featured'; // Default to 'featured'
+    
+            // Update the displayed sort name
+            const currentLabel = document.querySelector(`.sort-option[href*="sort=${currentSort}"]`)?.getAttribute('data-label') || 'Featured';
+            document.getElementById('selected-sort').innerHTML = `${currentLabel} <i class="fi-rs-angle-small-down"></i>`;
+    
+            // Add active class to the selected option
+            document.querySelectorAll('.sort-option').forEach(item => item.classList.remove('active'));
+            const activeOption = document.querySelector(`.sort-option[href*="sort=${currentSort}"]`);
+            if (activeOption) {
+                activeOption.classList.add('active');
+            }
+        });
+    </script>
+    
     <!-- add to cart -->
     <script>
 

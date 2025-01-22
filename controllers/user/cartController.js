@@ -11,7 +11,7 @@ const cartPage = async (req, res) => {
     try {
       const userId = req.session.user;
   
-      const cart = await Cart.findOne({ userId }).populate({
+      let cart = await Cart.findOne({ userId }).populate({
         path: "items.productId",
         populate: { path: "category", select: "name categoryOffer" },
       });
@@ -20,7 +20,14 @@ const cartPage = async (req, res) => {
       const categories = await Category.find({ isListed: true });
   
       const listedCategory = categories.map(category => category._id.toString());
+      if(!cart){
+        cart = new Cart({
+          userId,
+          items:[]
+        })
+      }
   
+      console.log("cartu",cart)
       const findProduct = cart.items.filter(item => {
         const product = item.productId;
         return (

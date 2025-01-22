@@ -333,7 +333,8 @@ const shoppingPage = async(req,res)=>{
             category:categoryWithId,
             totalProducts:totalProducts,
             currentPage:page,
-            totalPages:totalPages
+            totalPages:totalPages,
+            selectedCategory: null
         })
     } catch (error) {
         console.error("Error in shopping page",error);
@@ -345,7 +346,11 @@ const filterProduct = async (req,res)=>{
     try {
         const user = req.session.user;
         const category = req.query.category;
+        const allCategories = await Category.find({isListed:true});
+        const categoryId = allCategories.map(category=> category._id.toString())
         console.log("cat :",category)
+        console.log("all :",categoryId)
+        console.log("all :",allCategories)
         // using ternary operator to filter
         const findCategory = category ? await Category.findOne({_id:category}) : null;
 
@@ -387,7 +392,7 @@ const filterProduct = async (req,res)=>{
             category:categories,
             totalPages,
             currentPage,
-            selectedCategory:category || null
+            selectedCategory :category || null
         })
     } catch (error) {
         res.redirect("/pageNotFound");
@@ -527,7 +532,8 @@ const filterByPrice = async (req, res) => {
             products: findProducts,
             category: categories,
             totalPages,
-            currentPage
+            currentPage,
+            selectedCategory:null
         });
     } catch (error) {
         console.error("Error in filterByPrice:", error);
@@ -587,7 +593,8 @@ const SearchProducts = async(req,res)=>{
             category:categories,
             totalPages,
             currentPage,
-            count : searchResult.length
+            count : searchResult.length,
+            selectedCategory:null
         })
     } catch (error) {
         console.error("Error in search product",error);
@@ -631,7 +638,8 @@ const filterByName = async (req, res) => {
             products,
             category: categories,
             currentPage:currentPages,
-            totalPages
+            totalPages,
+            selectedCategory: null
         });
 
     } catch (error) {

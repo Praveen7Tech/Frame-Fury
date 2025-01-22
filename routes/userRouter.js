@@ -119,8 +119,11 @@ router.post("/addMoneyToWallet",userAuth,walletController.AddMoneyToWallet)
 // Refferal code
 router.post("/GenerateReferral",userAuth,referralController.GenerateReferral)
 
+//contact page
+router.get("/contactPage",userAuth,profileController.contactPage)
 
-
+//about
+router.get("/about",userAuth,profileController.aboutUs)
 
 
 module.exports = router;

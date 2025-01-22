@@ -420,6 +420,28 @@ const profileUpdate = async(req,res)=>{
 }
 
 
+const contactPage = async(req,res)=>{
+    try {
+        const user = req.session.user
+        res.render("contact",{user})
+    } catch (error) {
+        console.error("Error in loading contact page",error)
+        res.redirect("/pageNotFound")
+    }
+}
+
+
+const aboutUs = async(req,res)=>{
+    try {
+        const user = req.session.user
+        res.render("about",{user})
+    } catch (error) {
+        console.error("Error in showing about page",error);
+        res.redirect("/pageNotFound")
+    }
+}
+
+
 module.exports ={
     profile,
     changePassword,
@@ -437,5 +459,7 @@ module.exports ={
     editAddress,
     updateAddress,
     deleteAddress,
-    profileUpdate
+    profileUpdate,
+    contactPage,
+    aboutUs
 }

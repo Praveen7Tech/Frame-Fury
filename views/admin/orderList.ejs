@@ -78,8 +78,8 @@
               <td>
                 <% order.items.forEach(item => { %>
                   <div class="product-details">
-                    <img src="/uploads/re-image/<%= item.productId.productImage[0] %>" alt="Product Image" class="order-image">
-                    <span><%= item.productId.productName %></span>
+                    <img src="/uploads/re-image/<%= item.productImage %>" alt="Product Image" class="order-image">
+                    <span><%= item.productName %></span>
                   </div>
                 <% }) %>
               </td>

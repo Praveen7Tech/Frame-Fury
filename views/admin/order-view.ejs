@@ -78,10 +78,13 @@
         font-size: 16px;
         font-weight: bold;
         transition: background-color 0.3s ease;
+        margin-left: 200px;
     }
+    
 
     .btn-back:hover {
         background-color: #0056b3;
+        color: #f4f4f4;
     }
 
     .highlight {
@@ -147,7 +150,11 @@
 </style>
 
 <body>
+    
     <h1>Order Details</h1>
+    <div class="buttons">
+        <a href="/admin/orderList" class="btn-back">Back to Orders</a>
+    </div>
     <div class="order-details">
         <h3>Order Information</h3>
         <p><strong>Order ID:</strong> <%= order._id %></p>
@@ -174,9 +181,9 @@
             <% order.items.forEach(item => { %>
                 <li>
                     <div class="item">
-                        <img src="/uploads/re-image/<%= item.productId.productImage[0] %>" alt="Product Image" width="100">
+                        <img src="/uploads/re-image/<%= item.productImage %>" alt="Product Image" width="100">
                         <div>
-                            <p><strong>Product Name:</strong> <%= item.productId.productName %></p>
+                            <p><strong>Product Name:</strong> <%= item.productName %></p>
                             <p><strong>Quantity:</strong> <%= item.quantity %></p>
                             <p><strong>Price:</strong> <%= item.price %> /-</p>
                         </div>
@@ -194,9 +201,7 @@
         <p><strong>Total:</strong> <%= order.total %> /-</p>
     </div>
 
-    <div class="buttons">
-        <a href="/admin/orderList" class="btn-back">Back to Orders</a>
-    </div>
+   
 </body>
 </html>
 

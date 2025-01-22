@@ -374,7 +374,7 @@
 
 
                                         const discountPercentage = finalPrice < salePrice ? Math.round(((salePrice - finalPrice) / salePrice)* 100)
-                                        : Math.round(((product.regularPrice - salePrice) / regularPrice) * 100 )
+                                        : Math.round(((product.regularPrice - salePrice) / product.regularPrice) * 100 )
                                         %>    
                                            
                                             <ins><span class="text-brand">

@@ -1,353 +1,476 @@
+<%- include("../../views/partials/user/header") %>
 
-<!DOCTYPE html>
-<html lang="en">
+<style>
+    .sort-option.active {
+        font-weight: bold;
+        color: #007bff;
+        text-decoration: underline;
+    }
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Details</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
-    <style>
-        .order-status {
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-        .product-image {
-            max-width: 100px;
-            height: auto;
-        }
-        .card {
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-        }
-        .card-header {
-            background-color: #f8f9fa;
-            border-bottom: 1px solid #dee2e6;
-        }
-        .table th {
-            background-color: #f8f9fa;
-        }
-    </style>
-</head>
+    
+    .widget-category {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
 
-<body>
-    <div class="container mt-5">
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <h1>Order Details</h1>
-            </div>
-            <div class="col-md-6 text-end">
-                <button class="btn btn-primary invcBtn" onclick="InvoiceDownload()">Invoice</button>
-            </div>
-        </div>    
-        <div class="card mb-4">
-            <div class="card-header">
-                <h2 class="card-title h5 mb-0">Order Summary</h2>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <p><strong>Order Number:</strong> <%=order._id%></p>
-                        <p><strong>Order Date:</strong> <%=new Date(order.createdAt).toLocaleString()%></p>
-                        <p><strong>Customer Name:</strong> <%=user.name%></p>
-                        <p class="order-status">Order Status: <span class="badge bg-<%= order.orderStatus === 'Cancelled' ? 'danger' : 'success' %> orderStatus"><%=order.orderStatus%></span></p>
-                    </div>
-                    <div class="col-md-6">
-                        <p><strong>Total Amount:</strong> ₹ <%=order.total.toFixed(2)%></p>
-                        <p><strong>Payment Method:</strong> <%=order.paymentMethod%></p>
-                        <p class="order-status"><strong>Payment Status:</strong>
-                            <span class="badge bg-danger"><%=order.paymentStatus%></span>
-                        </p>
-                    </div>
+    .section-title {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+        color: #333;
+        border-bottom: 2px solid #ff5722;
+        padding-bottom: 10px;
+    }
+
+    .categories {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .category-item {
+        margin-bottom: 10px;
+    }
+
+    .category-link {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 15px;
+        border-radius: 30px;
+        text-decoration: none;
+        color: #333;
+        transition: all 0.3s ease;
+        background-color: #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .category-link:hover {
+        background-color: #f0f0f0;
+        transform: translateY(-2px);
+    }
+
+    .category-name {
+        font-weight: 500;
+    }
+
+    .category-count {
+        background-color: #e0e0e0;
+        color: #333;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+    }
+
+    .active-category {
+        background-color: #088178;
+        color: #fff;
+    }
+
+    .active-category .category-count {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: #fff;
+    }
+
+    .active-category:hover {
+        background-color: #e64a19;
+    }
+
+    @media (max-width: 768px) {
+        .widget-category {
+            padding: 15px;
+        }
+
+        .category-link {
+            padding: 8px 12px;
+        }
+    }
+
+
+</style>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <main class="main">
+        <div class="page-header breadcrumb-wrap">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="index.html" rel="nofollow">Home</a>
+                    <span></span> <a href="/shoppingPage">shop</a>
                 </div>
-                <div class="row mt-3">
-                    <div class="col-12">
-                    <%if(order.orderStatus !== "Cancelled" && order.orderStatus !== "Deliverd" && order.orderStatus !== "Returned" && order.paymentStatus !== "Failed"){%>    
-                        <button type="button" id="cancelOrderButton" class="btn btn-danger">
-                            Cancel Order
-                        </button>
-                    <%}else if(order.orderStatus === "Deliverd"){%>    
-                        <button id="returnOrderButton" type="button" class="btn btn-warning">
-                            Return Order
-                        </button>
-                    <%}else{%>
-                        <p class="text-muted">No action possible</p>
-                    <%}%>    
+            </div>
+        </div>
+        <div class="header-middle header-middle-ptb-1 d-none d-lg-block">
+            <div class="container">
+                <div class="header-wrap">
+                    <div class="logo logo-width-1">
+                       
+                    </div>
+                    <div class="header-right">
+                        <div class="search-style-2">
+                            <form action="/search" method="POST">
+                                <input type="text" name="query" placeholder="Search for items...">
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+        <section class="mt-50 mb-50">
+            <div class="container">
+                <div class="row flex-row-reverse">
+                    <div class="col-lg-9">
+                        <div class="shop-product-fillter">
+                       
+                            <div class="totall-product">
+                                <p> We found <strong class="text-brand"><%=products.length%></strong> items for you!</p>
+                            </div>
+                          
+                            <div class="sort-by-product-area">
+                                <div class="sort-by-cover mr-10">
+                                   
+                                </div>
 
-        <div class="card mb-4">
-            <div class="card-header">
-                <h2 class="card-title h5 mb-0">Product Details</h2>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th>Product</th>
-                                <th>Name</th>
-                                <th>Price</th>
-                                <th>Quantity</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% order.items.forEach(item => { %>
-                                <tr>
-                                    <td>
-                                        <img src="/uploads/re-image/<%=item.productId.productImage[0]%>"
-                                            alt="<%=item.productId.productName%>" class="product-image">
-                                    </td>
-                                    <td><%=item.productId.productName%></td>
-                                    <td>₹ <%=item.price.toFixed(2)%></td>
-                                    <td><%=item.quantity%></td>
-                                    <td>₹ <%=(item.price * item.quantity).toFixed(2)%></td>
-                                </tr>
-                            <%})%>
-                        </tbody>
-                    </table>
+                                <!-- filter based on price low to high -->
+
+                                <div class="sort-by-cover">
+                                    <div class="sort-by-product-wrap">
+                                        <div class="sort-by">
+                                            <span><i class="fi-rs-apps-sort"></i>Sort by:</span>
+                                        </div>
+                                        <div class="sort-by-dropdown-wrap">
+                                            <span id="selected-sort">Featured <i class="fi-rs-angle-small-down"></i></span>
+                                        </div>
+                                    </div>
+                                    <div class="sort-by-dropdown">
+                                        <ul>
+                                            <li><a class="sort-option" href="/filterPrice?sort=featured" data-label="Featured">Featured</a></li>
+                                            <li><a class="sort-option" href="/filterPrice?sort=lowToHigh" data-label="Price: Low to High">Price: Low to High</a></li>
+                                            <li><a class="sort-option" href="/filterPrice?sort=highToLow" data-label="Price: High to Low">Price: High to Low</a></li>
+                                            <li><a class="sort-option" href="/filterByName?sort=aA-zZ" data-label="Alphabetical: aA-zZ">Alphabetical: aA-zZ</a></li>
+                                            <li><a class="sort-option" href="/filterByName?sort=zZ-aA" data-label="Alphabetical: zZ-aA">Alphabetical: zZ-aA</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row product-grid-3">
+
+                            <!-- product section -->
+
+                            <%for(let i=0;i<products.length;i++){%>
+
+                                <div class="col-lg-4 col-md-4 col-12 col-sm-6">
+                                    <div class="product-cart-wrap mb-30">
+                                        <div class="product-img-action-wrap">
+                                            <div class="product-img product-img-zoom">
+                                                <a href="/productDetails?id=<%=products[i]._id%>">
+                                                    <img class="default-img"
+                                                        src="/uploads/re-image/<%=products[i].productImage[0]%>" alt="">
+                                                    <img class="hover-img" src="/uploads/re-image/<%=products[i].productImage[1]%>" alt="">
+                                                </a>
+                                            </div>
+                                            <div class="product-action-1">
+                                                <a aria-label="Quick view" class="action-btn hover-up"
+                                                    data-bs-toggle="modal" data-bs-target="#quickViewModal">
+                                                    <i class="fi-rs-search"></i></a>
+                                                <a aria-label="Add To Wishlist" class="action-btn hover-up"
+                                                onclick="addToWishlist('<%=products[i]._id %>')"><i class="fi-rs-heart" ></i></a>      
+                                            </div>
+                                        <%if(products[i].offer || products[i].category.categoryOffer){%>     
+                                            <div class="product-badges product-badges-position product-badges-mrg">
+                                                <span class="hot">Special Offer</span>
+                                            </div>
+                                        <%}else{%>    
+                                            <div class="product-badges product-badges-position product-badges-mrg">
+                                                <span class="hot">Hot</span>
+                                            </div>
+                                        <%}%>    
+                                        </div>
+                                        <div class="product-content-wrap">
+                                            <div class="product-category">
+                                                <% if (products[i].category) { %>
+                                                    <a href="shop-grid-right.html"><%=products[i].category.name%></a>
+                                                <% } else { %>
+                                                    <span>Uncategorized</span>
+                                                <% } %>
+                                            </div>
+                                            <h2><a href="/productDetails?id=<%=products[i]._id%>">
+                                                    <%=products[i].productName%>
+                                                </a></h2>
+                                                <div class="rating-result" title="90%">
+                                                    <% 
+                                                    // Calculate the best offer and final price
+                                                    const productOffer = products[i].offer || 0;
+                                                    const categoryOffer = products[i].category.categoryOffer || 0;
+                                                    const bestOffer = Math.max(productOffer, categoryOffer);
+                                                    const salePrice = products[i].salePrice;
+                                                    const finalPrice = bestOffer > 0 ? Math.floor(salePrice - (salePrice * bestOffer / 100)) : salePrice;
+                                                
+                                                    // Calculate the discount percentage
+                                                    const discountPercentage = finalPrice < salePrice 
+                                                        ? Math.round(((salePrice - finalPrice) / salePrice) * 100) 
+                                                        : Math.round(((products[i].regularPrice - salePrice) / products[i].regularPrice) * 100);
+                                                    %>
+                                                    <% if (finalPrice < salePrice) { %>
+                                                        <span class="save-price font-md color3 ml-15">
+                                                            <%= discountPercentage %> % Off
+                                                        </span>
+                                                    <% }else{ %>
+                                                        <span class="save-price font-md color3 ml-15">
+                                                            <%= discountPercentage %> % Off
+                                                        </span>
+                                                        
+                                                    <%}%>    
+                                                </div>
+                                                
+                                                <div class="product-price">
+                                                    <span><%= finalPrice %></span>
+                                                    <% if (bestOffer > 0) { %>
+                                                        <% if (finalPrice < salePrice) { %>
+                                                            <span class="old-price"><%= salePrice %></span>
+                                                        <% } %>
+                                                    <% } else { %>
+                                                        <span class="old-price"><%= products[i].regularPrice %></span>
+                                                    <% } %>
+                                                </div>
+                                            <div class="product-action-1 show">
+                                                <a aria-label="Add To Cart" class="action-btn hover-up"
+                                                    ><i class="fi-rs-shopping-bag-add" onclick="addToCart('<%= products[i]._id %>')"></i>
+
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            <%}%>
+
+                        </div>
+                        <!--pagination-->
+                        <div class="pagination-area mt-15 mb-sm-5 mb-lg-0">
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination justify-content-start">
+                                    <%for(let i=0;i<=totalPages;i++){%>
+                                    <li class="page-item active ?page=<%= currentPage - 1 %>">
+                                        <a class="page-link" href="?page=<%= i %>"><%= i%></a>
+                                    </li>
+                                    <%}%>
+                                  
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                    <!-- filter by category -->
+                    <div class="col-lg-3 primary-sidebar sticky-sidebar">
+                        <div class="widget-category mb-30">
+                            <h5 class="section-title style-1 mb-30 wow fadeIn animated">Category</h5>
+                            <ul class="categories">
+                                <% for (let i = 0; i < category.length; i++) { 
+                                    const isActive = selectedCategory === category[i]._id.toString(); 
+                                %>
+                                    <li class="category-item">
+                                        <a href="/filter?category=<%=category[i]._id%>" 
+                                           class="category-link <%= isActive ? 'active-category' : '' %>">
+                                            <span class="category-name"><%=category[i].name%></span>
+                                            <!-- <span class="category-count">0</span> -->
+                                        </a>
+                                    </li>
+                                <% } %>
+                            </ul>
+                        </div>
+                        
+                        <!-- Fillter By Price -->
+                        <div class="sidebar-widget price_range range mb-30"
+                            style="padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 5px;">
+                            <div class="widget-header position-relative mb-20 pb-10"
+                                style="border-bottom: 1px solid #ddd; padding-bottom: 10px;">
+                                <h5 class="widget-title mb-10"
+                                    style="font-size: 18px; font-weight: bold; color: #333; text-transform: uppercase;">
+                                    Filter by Price</h5>
+                            </div>
+                            <div class="price-filter">
+                                <div class="price-filter-inner">
+                                    <div class="price-option" style="display: flex; flex-direction: column; gap: 8px;">
+                                        <a href="/filterPrice?gt=0&lt=20000" class="btn btn-sm btn-default"
+                                            style="display: block; margin-top: 15px; padding: 10px; font-size: 14px; text-align: center; color: #fff; background-color: #8d9b9a; border-radius: 5px; text-transform: uppercase; font-weight: bold; text-decoration: none;">
+                                            <i class="fi-rs-filter mr-5"></i>below 20,000 
+                                        </a>
+                                        <a href="/filterPrice?gt=20000&lt=25000" class="btn btn-sm btn-default"
+                                            style="display: block; margin-top: 15px; padding: 10px; font-size: 14px; text-align: center; color: #fff; background-color: #088178; border-radius: 5px; text-transform: uppercase; font-weight: bold; text-decoration: none;">
+                                            <i class="fi-rs-filter mr-5"></i> 20,000 - 25,000
+                                        </a>
+                                        <a href="/filterPrice?gt=25000&lt=30000" class="btn btn-sm btn-default"
+                                            style="display: block; margin-top: 15px; padding: 10px; font-size: 14px; text-align: center; color: #fff; background-color: #8d9b9a; border-radius: 5px; text-transform: uppercase; font-weight: bold; text-decoration: none;">
+                                            <i class="fi-rs-filter mr-5"></i> 25,000 - 30,000
+                                            <a href="/filterPrice?gt=30000&lt=50000" class="btn btn-sm btn-default"
+                                                style="display: block; margin-top: 15px; padding: 10px; font-size: 14px; text-align: center; color: #fff; background-color: #088178; border-radius: 5px; text-transform: uppercase; font-weight: bold; text-decoration: none;">
+                                                <i class="fi-rs-filter mr-5"></i> Above 30,000
+                                            </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Product sidebar Widget -->
+                        <div class="sidebar-widget product-sidebar  mb-30 p-30 bg-grey border-radius-10">
+                            <div class="widget-header position-relative mb-20 pb-10">
+                                <h5 class="widget-title mb-10">New products</h5>
+                                <div class="bt-1 border-color-1"></div>
+                            </div>
+                            <div class="single-post clearfix">
+                            <%for(let i=0;i<products.length-9;i++){%>    
+                                <div class="image">
+                                    <img src="/uploads/re-image/<%=products[i].productImage[0]%>" alt="">
+                                </div>
+                                <div class="content pt-10">
+                                    <h5><a href="/productDetails?id=<%=products[i]._id%>"> <%=products[i].productName%></a></h5>
+                                    <p class="price mb-0 mt-5"> <%=products[i].salePrice%></p>
+                                    <div class="product-rate">
+                                        <div class="product-rating" style="width:90%"></div>
+                                    </div>
+                                </div>
+                            <%}%>    
+                            </div>
+                         
+                        </div>
+                        <div class="banner-img wow fadeIn mb-45 animated d-lg-block d-none">
+                            <img src="assets/imgs/shop/classic.webp" alt="">
+                            <div class="banner-text">
+                                <span>Limited Edition</span>
+                                <h4>Limitted to <br>Total 10 Pcs</h4>
+                                <a href="#">Shop Now <i class="fi-rs-arrow-right"></i></a>
+                            </div>
+                        </div>
+                        
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
+    </main>
+    
+    <%- include("../../views/partials/user/footer") %>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-        <div class="row">
-            <div class="col-md-6">
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h2 class="card-title h5 mb-0">Shipping Information</h2>
-                    </div>
-                    <div class="card-body">
-                        <p><strong>Name:</strong> <%=order.address.name%></p>
-                        <p><strong>Address:</strong> <%=order.address.landMark%></p>
-                        <p><strong>City:</strong> <%=order.address.city%></p>
-                        <p><strong>State:</strong> <%=order.address.state%></p>
-                        <p><strong>Zip Code:</strong> <%=order.address.pincode%></p>
-                        <p><strong>Country:</strong> India</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h2 class="card-title h5 mb-0">Payment Details</h2>
-                    </div>
-                    <div class="card-body">
-                        <p><strong>Payment Method:</strong> <%=order.paymentMethod%></p>
-                        <p><strong>Subtotal:</strong> ₹ <%=order.subTotal.toFixed(2)%></p>
-                        <p><strong>Shipping:</strong> ₹ <%=order.deliveryCharge.toFixed(2)%></p>
-                        <p><strong>Tax:</strong> ₹ 0.00</p>
-                        <hr>
-                        <p><strong>Total:</strong> ₹ <%=order.total.toFixed(2)%></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.js"></script>
-
-    <!-- Invoice download libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
+    <!-- sort option cnaging dynamically -->
+    <script>
+        // Function to get query parameter value by name
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+    
+        // On page load, update the dropdown based on the current URL
+        window.addEventListener('DOMContentLoaded', () => {
+            const currentSort = getQueryParam('sort') || 'featured'; // Default to 'featured'
+    
+            // Update the displayed sort name
+            const currentLabel = document.querySelector(`.sort-option[href*="sort=${currentSort}"]`)?.getAttribute('data-label') || 'Featured';
+            document.getElementById('selected-sort').innerHTML = `${currentLabel} <i class="fi-rs-angle-small-down"></i>`;
+    
+            // Add active class to the selected option
+            document.querySelectorAll('.sort-option').forEach(item => item.classList.remove('active'));
+            const activeOption = document.querySelector(`.sort-option[href*="sort=${currentSort}"]`);
+            if (activeOption) {
+                activeOption.classList.add('active');
+            }
+        });
+    </script>
+    
+    <!-- add to cart -->
     <script>
 
-        // cancel order function
-        document.getElementById("cancelOrderButton")?.addEventListener("click", function () {
-            Swal.fire({
-                icon: "warning",
-                title: "Are you sure?",
-                text: "Please Provide a Reason for this order Cancellation.",
-                input:"text",
-                inputPlaceholder:"Enter Your Reason",
-                showCancelButton: true,
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#3085d6",
-                confirmButtonText: "Cancel Order",
-                inputValidator:(value)=>{
-                    if(!value){
-                        return "You need to Provide A reason before cancelling."
-                    }
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    const cancelReason =result.value
-                    cancelOrder(cancelReason);
-                }
-            });
-        });
-
-        function cancelOrder(cancelReason) {
-            const url = "/orderCancel/<%=order._id%>";
-
-            fetch(url, {
-                method: "POST",
+        function addToCart(productId) {
+            fetch('/addToCart', {
+                method: 'POST',
                 headers: {
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/json', 
                 },
-                body:JSON.stringify({cancelReason})
+                body: JSON.stringify({ productId: productId }), 
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
+            .then((response) => response.json()) 
+            .then((response) => {
+                console.log("response :", response);
+                if (response.success) {
+                    //dynamically showing cart count
+                    const cartCountElement = document.querySelector(".cart");
+                    if (cartCountElement) {
+                        cartCountElement.textContent = response.cartCount;
+                    }
                     Swal.fire({
-                        icon: 'success',
-                        title: data.message,
-                        text: `Order <%=order._id%> has been cancelled.`,
-                        confirmButtonText: 'OK'
-                    })
-                    .then(() => {
-                        const orderStatusElement = document.querySelector(".orderStatus");
-                        if (orderStatusElement) {
-                            orderStatusElement.textContent = "Cancelled";
-                            orderStatusElement.classList.remove("bg-success");
-                            orderStatusElement.classList.add("bg-danger");
-                        }
-                        const cancelOrderButton = document.querySelector("#cancelOrderButton");
-                        if (cancelOrderButton) {
-                            cancelOrderButton.disabled = true;
-                        }
+                        title: "Added To Cart",
+                        text: "The Product Has been Added to Your Cart",
+                        icon: "success",
+                        timer: 2000
                     });
                 } else {
                     Swal.fire({
+                        title: "Error",
+                        text: response.message,
                         icon: "error",
-                        title: "Error!",
-                        text: data.message,
-                        confirmButtonText: "OK"
+                        timer: 2000
                     });
                 }
-            }).catch(error => {
+            })
+            .catch((error) => {
+                console.error("Error in add cart", error);
                 Swal.fire({
-                    title: 'Error!',
-                    text: 'An error occurred while cancelling the order.',
-                    icon: 'error',
-                    confirmButtonText: 'Try Again'
+                    title: "Error",
+                    text: "Error Adding the Product to your Cart..!",
+                    icon: "error",
+                    timer: 2000
                 });
             });
         }
 
-
-        // Return Order function
-        document.getElementById("returnOrderButton")?.addEventListener("click", function() {
-            Swal.fire({
-                title: "Return Order",
-                text: "Are You Sure.? Please provide a Reason for Returning this Order..!",
-                input:"text",
-                inputPlaceholder:"Enter Your Reason",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonText: "Yes, proceed",
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#3085d6",
-                inputValidator:(value)=>{
-                    if(!value){
-                        return "You Must need to provide a Reason for Return this order..!"
-                    }
-                }
-            })
-            .then((result) => {
-                if (result.isConfirmed) {
-                    returnOrder();
-                }
-            });
-        });
-
-        function returnOrder() {
-            fetch("/ReturnOrder/<%= order._id%>", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    Swal.fire("Return Request Success", "Order return has been successful. Our executive will collect the product.", "success");
-
-                    const orderStatusPlace = document.querySelector(".orderStatus");
-                    if (orderStatusPlace) {
-                        orderStatusPlace.textContent = "Returned";
-                        orderStatusPlace.classList.remove("bg-success");
-                        orderStatusPlace.classList.add("bg-warning");
-                    }
-
-                    const returnOrderButton = document.querySelector("#returnOrderButton");
-                    if (returnOrderButton) {
-                        returnOrderButton.disabled = true;
-                    }
-                } else {
-                    Swal.fire({
-                        title: "Error!",
-                        text: data.message,
-                        icon: "error",
-                        confirmButtonText: "OK"
-                    });
-                }
-            })
-            .catch(error => {
-                Swal.fire("Error!", "An error occurred in order cancellation!", "error");
-            });
-        }
-
-
-        // Invoice Download function
-
-        async function InvoiceDownload() {
-        // Select the portion
-        const invoiceElement = document.querySelector('.container');
-
-        //element to change
-        const title = document.querySelector('h1')
-
-        //store original title to restore after making pdf
-        const originalTitle = title.textContent;
-
-        //title to change 
-        title.textContent = "Order Invoice"
-
-        // Hide unecessary elemnts
-        const elementsToHide = document.querySelectorAll('.btn-primary, #cancelOrderButton, #returnOrderButton');
-        elementsToHide.forEach(el => el.style.display = 'none');
-
-        // Use html2canvas to capture the element 
-        const canvas = await html2canvas(invoiceElement);
-
-        // Convert canvas to image
-        const imgData = canvas.toDataURL('image/png');
-
-        // Create PDF using jsPDF
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF('p', 'mm', 'a4');
-
-        // Add image to PDF
-        pdf.addImage(imgData, 'PNG', 10, 10, 190, 280);
-
-        // Show the hidden elements again
-        elementsToHide.forEach(el => el.style.display = '');
-
-        //restore title
-        title.textContent = originalTitle
-
-        // Download the PDF
-        pdf.save('Invoice.pdf');
-    }
-    
     </script>
 
-    /////////////
+    <!-- add to wishlist -->
+    <script>
 
+        function addToWishlist(productId){
+            fetch("/addToWishlist",{
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({productId})
+            })
+            .then(response=> response.json())
+            .then(data=>{
+                if(data.success){
+                    const wishlistCountElement = document.querySelector(".wishList");
+                    if(wishlistCountElement){
+                        wishlistCountElement.textContent = data.wishListCount
+                    }
+                    Swal.fire({
+                        icon:"success",
+                        title:"Added to WishList",
+                        text:data.message,
+                        timer:2000,
+                        showConfrimButton:false
+                    })
+                }else{
+                    Swal.fire({
+                        icon:"Warning",
+                        titile:"Ooop..",
+                        text:data.message,
+                        timer:2000,
+                        showConfrimButton:false
+                    })
+                }
+            })
+            .catch(error=>{
+                console.error("Error",error);  
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong. Please try again later.'
+                })
+            })
+        }
 
-    <div class="rating-result" title="90%">
-        <% if (products[i].salePrice < products[i].regularPrice) { %>
-            <span class="save-price font-md color3 ml-15">
-                <% const discount=Math.round(((products[i].regularPrice -
-                    products[i].salePrice) / products[i].regularPrice) * 100);
-                    %>
-                    <%= discount %> % Off
-            </span>
-        <% } %>
-    </div>
+    </script>
