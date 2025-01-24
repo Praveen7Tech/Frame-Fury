@@ -218,7 +218,7 @@
                                 <h5>Select Shipping Address:</h5>
                                 <% addresses.forEach((addr, index)=> { %>
                                     <div class="address-option">
-                                        <input style="height: 20px;" type="radio" name="selectedAddress" id="address-<%= index %>"
+                                        <input  style="height: 20px;" type="radio" name="selectedAddress" id="address-<%= index %>"
                                             value="<%= addr._id %>" <%=index===0 ? 'checked' : '' %>>
                                         <label for="address-<%= index %>">
                                             <p><strong>Address Type:</strong>

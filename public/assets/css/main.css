@@ -128,7 +128,7 @@ input:focus::-moz-placeholder {
 }
 
 a {
-  color: #088178;
+  color: #046963;
 }
 
 a:hover {
@@ -142,7 +142,7 @@ a:hover {
   color: #fff;
 }
 ::selection {
-  background: #088178;
+  background: #131414;
   /* WebKit/Blink Browsers */
   color: #fff;
 }
@@ -279,11 +279,11 @@ input[type=number]:focus,
 }
 
 .text-brand {
-  color: #088178 !important;
+  color: #198754 !important;
 }
 
 .text-primary {
-  color: #3f81eb !important;
+  color: #ef131a !important;
 }
 
 .text-warning {
@@ -645,7 +645,7 @@ h4,
 h5,
 h6 {
   font-family: "Spartan", sans-serif;
-  color: #222222;
+  color: #90908e;
   font-weight: 600;
   line-height: 1.2;
 }
@@ -731,7 +731,7 @@ strong,
 }
 
 .section-title span {
-  color: #088178;
+  color: #dc3545;
 }
 
 h3.section-title {
@@ -882,7 +882,7 @@ button.submit, button[type='submit'] {
   padding: 12px 40px;
   color: #ffffff;
   border: none;
-  background-color: #088178;
+  background-color: #0e0f0f;
   border: 1px solid #046963;
   border-radius: 5px;
 }
@@ -928,7 +928,7 @@ button.submit:hover, button[type='submit']:hover {
   border-radius: 4px;
   color: #fff;
   border: 1px solid #046963;
-  background-color: #088178;
+  background-color: #0b0c0c;
   cursor: pointer;
   -webkit-transition: all 300ms linear 0s;
   transition: all 300ms linear 0s;
@@ -1224,7 +1224,7 @@ textarea:focus {
   padding: 12px 40px;
   color: #ffffff;
   border: none;
-  background-color: #088178;
+  background-color: #1a1a1a;
   border: 1px solid #046963;
   border-radius: 5px;
 }
@@ -1659,7 +1659,7 @@ label {
 }
 
 .hero-slider-1 {
-  height: 500px;
+  height: 360px;
 }
 
 .hero-slider-1 img {
@@ -2240,7 +2240,7 @@ label {
 
 .dashboard-menu ul li a.active {
   color: #fff;
-  background-color: #088178;
+  background-color: #0f1111;
 }
 
 .dashboard-menu ul li a.active i {
@@ -3599,7 +3599,7 @@ table .product-thumbnail img {
 }
 
 .product-cart-wrap .product-badges span.hot {
-  background-color: #ff75a0;
+  background-color: #f66060;
 }
 
 .product-cart-wrap .product-badges span.new {
@@ -4021,9 +4021,9 @@ table .product-thumbnail img {
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
-  background: #f7f8f9;
+  background: #1a1a1a;
   border: 1px solid #f7f8f9;
-  color: #777;
+  color: #e9ecef;
   padding: 9px 16px;
   border-radius: 26px;
   -webkit-transition: all .3s ease 0s;
@@ -4052,12 +4052,12 @@ table .product-thumbnail img {
 .shop-product-fillter .sort-by-product-area .sort-by-product-wrap .sort-by-dropdown-wrap span {
   font-size: 13px;
   font-weight: 500;
-  color: #4f5d77;
+  color: #e02f19;
 }
 
 .shop-product-fillter .sort-by-product-area .sort-by-product-wrap .sort-by-dropdown-wrap span i {
   font-size: 15px;
-  color: #4f5d77;
+  color: #fef9f8;
   margin-left: 10px;
   position: relative;
   top: 2px;
@@ -5232,7 +5232,7 @@ h6.post-title {
 }
 
 .header-info > ul > li a {
-  color: #1a1a1a;
+  color: #fff;
   font-weight: 500;
 }
 
@@ -5613,7 +5613,7 @@ h6.post-title {
 }
 
 .header-action-2 .header-action-icon-2 > a span.pro-count.blue {
-  background-color: #088178;
+  background-color: #1a1a1a;
 }
 
 .header-action-2 .header-action-icon-2:hover > a {
@@ -5627,9 +5627,6 @@ h6.post-title {
   top: calc(100% + 10px);
 }
 
-.header-middle-ptb-1 {
-  padding: 25px 0 0 0;
-}
 
 .cart-dropdown-wrap {
   position: absolute;
@@ -6451,8 +6448,8 @@ h6.post-title {
 
 .header-style-1 .header-top-ptb-1 {
   padding: 13px 0;
-  border-bottom: 3px solid #39b4ac;
-  background-color: #d8f4e2;
+  border-bottom: 3px solid #e2e9e1;
+  background-color: #1a1a1a;
   background-image: none;
 }
 
@@ -7388,7 +7385,7 @@ span.fi-rs-apps {
 
 .pagination-area .page-item.active .page-link, .pagination-area .page-item:hover .page-link {
   color: #fff;
-  background: #088178;
+  background: #1a1a1a;
 }
 
 .pagination-area .page-link {
@@ -7433,11 +7430,11 @@ span.fi-rs-apps {
 }
 
 .widget-category ul > li a {
-  color: #242424;
+  color: #90908e;
 }
 
 .widget-category ul > li a:hover {
-  color: #088178;
+  color: #dc3545;
 }
 
 /*Social network widget*/
@@ -7576,7 +7573,7 @@ span.fi-rs-apps {
 }
 
 .newsletter {
-  background-color: #aeccc5;
+  background-color: #1a1a1a;
 }
 
 .newsletter .icon-email {
@@ -7663,7 +7660,7 @@ span.fi-rs-apps {
 #scrollUp {
   width: 40px;
   height: 40px;
-  background-color: #088178;
+  background-color: #1a1a1a;
   color: #ffffff;
   right: 30px;
   bottom: 30px;

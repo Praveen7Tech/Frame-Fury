@@ -9,7 +9,7 @@ const wishListPage = async (req, res) => {
         const userId = req.session.user._id;
 
         const wishlist = await Wishlist.findOne({ userId }).populate("products.productId");
-
+        console.log("wish",wishlist)
         res.render("wishList", { user, wishlist });
     } catch (error) {
         console.error("Error in loading wishlist:", error);

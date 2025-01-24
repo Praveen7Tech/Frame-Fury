@@ -9,6 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
     <style>
+        
         .order-status {
             font-size: 1.2rem;
             font-weight: bold;
@@ -27,10 +28,90 @@
         .table th {
             background-color: #f8f9fa;
         }
+        
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .page-header {
+            background-color: #f8f9fa;
+            padding: 15px 0;
+            margin-bottom: 20px;
+        }
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+            padding-top: 50px;
+        }
+        .breadcrumb {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .breadcrumb li {
+            display: flex;
+            align-items: center;
+        }
+        .breadcrumb a {
+            color: #007bff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .breadcrumb a:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+        .breadcrumb li:not(:last-child)::after {
+            content: "›";
+            margin: 0 10px;
+            color: #6c757d;
+        }
+        .breadcrumb li:last-child {
+            color: #6c757d;
+        }
+
+        .back-arrow {
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            color: #0d0d0d;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .back-arrow:hover {
+            color: #c53f0f;
+            text-decoration: none;
+        }
+
+        .back-arrow::before {
+            content: "←"; /* Adds the back arrow */
+            margin-right: 8px;
+            font-size: 18px;
+            color: inherit;
+        }
+
     </style>
 </head>
 
 <body>
+    <div class="container">
+        <div class="page-header breadcrumb-wrap">
+            <div class="container">
+                <a href="/userProfile" rel="nofollow" class="back-arrow"> Back To Orders List
+                </a>
+            </div>
+        </div>
+    </div>
+    
+   
+
     <div class="container mt-5">
         <div class="row mb-4">
             <div class="col-md-6">

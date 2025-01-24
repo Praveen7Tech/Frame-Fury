@@ -49,89 +49,88 @@ const login = async (req, res) => {
 const dashBoard = async(req,res)=>{
     try {
 
-        // best selling product order
+        // Best selling product order
         const product = await Order.aggregate([
-            {$unwind:"$items"},
-            {$group:
-                {_id:"$items.productId",
-                    totalOrder:{$sum:"$items.quantity"}
-                }
+            { $unwind: "$items" },
+            {
+                $group: {
+                    _id: "$items.productId",
+                    totalOrder: { $sum: "$items.quantity" },
+                },
             },
             {
-                $lookup:{
-                    from:"products",
-                    localField:"_id",
-                    foreignField:"_id",
-                    as:"productDetails"
-                }
+                $lookup: {
+                    from: "products",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "productDetails",
+                },
             },
-            { $unwind:"$productDetails" },
+            { $unwind: "$productDetails" },
             {
-                $project:{
-                    _id:1,
-                    productName:"$productDetails.productName",
-                    totalOrder:1,
-                    productImage:{$arrayElemAt:["$productDetails.productImage",0]}
-                }
+                $project: {
+                    _id: 1,
+                    productName: "$productDetails.productName",
+                    totalOrder: 1,
+                    productImage: { $arrayElemAt: ["$productDetails.productImage", 0] },
+                },
             },
-            {
-                $sort:{totalOrder:-1}
-            }
-            
-        ])
+            { $sort: { totalOrder: -1 } },
+            { $limit: 10 }, 
+        ]);
 
-        // best selling category order
+
+        // Best selling category order
         const category = await Order.aggregate([
-            {$unwind:"$items"},
+            { $unwind: "$items" },
             {
-                $lookup:{
-                    from:"products",
-                    localField:"items.productId",
-                    foreignField:"_id",
-                    as:"productDetails"
-                }
+                $lookup: {
+                    from: "products",
+                    localField: "items.productId",
+                    foreignField: "_id",
+                    as: "productDetails",
+                },
+            },
+            { $unwind: "$productDetails" },
+            {
+                $group: {
+                    _id: "$productDetails.category",
+                    totalOrder: { $sum: "$items.quantity" },
+                },
             },
             {
-                $unwind:"$productDetails"
+                $lookup: {
+                    from: "categories",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "categoryDetails",
+                },
             },
+            { $unwind: "$categoryDetails" },
             {
-                $group:{
-                    _id:"$productDetails.category",
-                    totalOrder:{$sum:"$items.quantity"}
-                }
+                $project: {
+                    categoryName: "$categoryDetails.name",
+                    totalOrder: 1,
+                },
             },
-            {
-                $lookup:{
-                    from:"categories",
-                    localField:"_id",
-                    foreignField:"_id",
-                    as:"categoryDetails"
-                }
-            },
-            {
-                $unwind:"$categoryDetails"
-            },
-            {
-                $project:{
-                    categoryName:"$categoryDetails.name",
-                    totalOrder:1
-                }
-            },
-            {$sort:{totalOrder:-1}}
-        ])
+            { $sort: { totalOrder: -1 } },
+            { $limit: 10 }, // Limit to top 10 categories
+        ]);
 
 
         // chart data for product
-        const productData = product.map(product =>({
-            productName : product.productName,
-            totalOrder : product.totalOrder
-        }))
+        const productData = product.map((item) => ({
+            productName: item.productName,
+            totalOrder: item.totalOrder,
+        }));
+        
 
         // chart data for category
-        const categoryData = category.map(category=>({
-            categoryName : category.categoryName,
-            totalOrder : category.totalOrder
-        }))
+        const categoryData = category.map((cat) => ({
+            categoryName: cat.categoryName,
+            totalOrder: cat.totalOrder,
+        }));
+        
 
         //console.log("pr",categoryData)
 
@@ -194,44 +193,46 @@ const logout = async(req,res)=>{
 const filterData = async (req, res) => {
     try {
         const { filterValue } = req.query;
-        console.log("query:", filterValue);
+        console.log("Query Filter Value:", filterValue);
 
         const today = new Date();
-        let dayStart,dayEnd
+        let dayStart, dayEnd;
 
-
+        // Determine date range based on filter value
         if (filterValue === "daily") {
-            dayStart=new Date(today.setHours(0,0,0,0));
-            dayEnd=new Date(today.setHours(23,59,59,999))
+            dayStart = new Date(today.setHours(0, 0, 0, 0));
+            dayEnd = new Date(today.setHours(23, 59, 59, 999));
         } else if (filterValue === "weekly") {
-            dayStart=new Date(today.setDate(today.getDate() - today.getDate()));
-            dayEnd=new Date(today.setDate(dayStart.getDate() + 6)) 
+            const firstDayOfWeek = today.getDate() - today.getDay();
+            dayStart = new Date(today.setDate(firstDayOfWeek));
+            dayStart.setHours(0, 0, 0, 0);
+            dayEnd = new Date(today.setDate(firstDayOfWeek + 6));
+            dayEnd.setHours(23, 59, 59, 999);
         } else if (filterValue === "monthly") {
-            dayStart=new Date(today.getFullYear(),today.getMonth(),1);
-            dayEnd=new Date(today.getFullYear(),today.getMonth() +1,0)
+            dayStart = new Date(today.getFullYear(), today.getMonth(), 1);
+            dayEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999);
         } else if (filterValue === "yearly") {
-            dayStart=new Date(today.getFullYear(),0,1);
-            dayEnd=new Date(today.getFullYear,11,31)
-        }
-        else{
-            dayStart=new Date(0);
-            dayEnd=new Date()
+            dayStart = new Date(today.getFullYear(), 0, 1);
+            dayEnd = new Date(today.getFullYear(), 11, 31, 23, 59, 59, 999);
+        } else {
+            dayStart = new Date(0);
+            dayEnd = new Date();
         }
 
-        // get top products
+        console.log("Date Range:", { dayStart, dayEnd });
+
+        // Aggregation for top products
         const products = await Order.aggregate([
             {
                 $match: {
-                    createdAt: { $gte:dayStart,$lte:dayEnd} 
+                    createdAt: { $gte: dayStart, $lte: dayEnd }
                 }
             },
-            {
-                $unwind: "$items" 
-            },
+            { $unwind: "$items" },
             {
                 $group: {
                     _id: "$items.productId",
-                    totalOrder: { $sum: "$items.quantity" } 
+                    totalOrder: { $sum: "$items.quantity" }
                 }
             },
             {
@@ -242,95 +243,79 @@ const filterData = async (req, res) => {
                     as: "productDetails"
                 }
             },
-            {
-                $unwind: "$productDetails"
-            },
+            { $unwind: "$productDetails" },
             {
                 $project: {
                     productName: "$productDetails.productName",
                     totalOrder: 1,
-                    productImage:{$arrayElemAt:["$productDetails.productImage",0]}
+                    productImage: { $arrayElemAt: ["$productDetails.productImage", 0] }
                 }
             },
-            {
-                $sort: { totalOrder: -1 } 
-            }
+            { $sort: { totalOrder: -1 } }
         ]);
 
-
-        // top categories
+        // Aggregation for top categories
         const categories = await Order.aggregate([
             {
                 $match: {
-                    createdAt: { $gte:dayStart,$lte:dayEnd } 
+                    createdAt: { $gte: dayStart, $lte: dayEnd }
+                }
+            },
+            { $unwind: "$items" },
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "items.productId",
+                    foreignField: "_id",
+                    as: "productDetails"
+                }
+            },
+            { $unwind: { path: "$productDetails", preserveNullAndEmptyArrays: true } },
+            {
+                $group: {
+                    _id: "$productDetails.category",
+                    totalOrder: { $sum: "$items.quantity" }
                 }
             },
             {
-                $unwind:"$items"
-            },
-            {
-                $lookup:{
-                    from:"products",
-                    localField:"items.productId",
-                    foreignField:"_id",
-                    as:"productDetails"
+                $lookup: {
+                    from: "categories",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "categoryDetails"
                 }
             },
+            { $unwind: "$categoryDetails" },
             {
-                $unwind:"$productDetails"
-            },
-            {
-                $group:{
-                    _id:"$productDetails.category",
-                    totalOrder:{$sum:"$items.quantity"}
+                $project: {
+                    categoryName: "$categoryDetails.name",
+                    totalOrder: 1
                 }
             },
-            {
-                $lookup:{
-                    from:"categories",
-                    localField:"_id",
-                    foreignField:"_id",
-                    as:"categoryDetails"
-                }
-            },
-            { 
-                $unwind:"$categoryDetails"
-            },
-            {
-                $project:{
-                    categoryName:"$categoryDetails.name",
-                    totalOrder:1,
-                }
-            },
-            {
-                $sort:{
-                    totalOrder:-1
-                }
-            }
-        ])
+            { $sort: { totalOrder: -1 } }
+        ]);
 
+        // Preparing chart data
+        const productData = products.map(product => ({
+            productName: product.productName,
+            totalOrder: product.totalOrder
+        }));
 
-        // update chart data
-        const productData = products.map(product=>({
-            productName : product.productName,
-            totalOrder : product.totalOrder
-        }))
+        const categoryData = categories.map(category => ({
+            categoryName: category.categoryName,
+            totalOrder: category.totalOrder
+        }));
 
-
-        const categoryData = categories.map(category=>({
-            categoryName : category.categoryName,
-            totalOrder : category.totalOrder
-        }))
-
-        //console.log("Filtered Products:",catData)
-
-        
-        res.status(200).json({ products,categories,productData,categoryData});
+        res.status(200).json({ products, categories, productData, categoryData });
     } catch (error) {
-        console.error("Error in filtering data pro and cat:", error);
+        console.error("Error in filtering data:", error);
         res.status(500).json({ message: "Internal Server Error." });
     }
 };
+
+
+
+
 
 
 
