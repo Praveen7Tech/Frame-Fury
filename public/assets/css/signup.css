@@ -44,6 +44,22 @@ POPPINS FONT */
     box-shadow: 5px 5px 10px 1px rgba(0,0,0,0.2);
 }
 
+.logo-container {
+    text-align: center; /* Centers the logo */
+    margin-bottom: 20px; /* Adds spacing between the logo and the header */
+}
+
+.logo-img {
+    max-width: 120px; /* Adjust logo size */
+    height: auto; /* Maintain aspect ratio */
+    display: inline-block; /* Keeps it inline-centered */
+}
+
+.text-center {
+    text-align: center; /* Ensures the header is also centered */
+}
+
+
 .text {
     position: absolute;
     top: 50%;
@@ -71,13 +87,6 @@ i {
 .input-box {
     width: 300px;
     box-sizing: border-box;
-}
-
-img {
-    width: 35px;
-    position: absolute;
-    top: 30px;
-    left: 30px;
 }
 
 .input-box header {
@@ -237,18 +246,6 @@ span a:hover {
     position: relative;
     z-index: 500;
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

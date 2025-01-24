@@ -491,6 +491,7 @@
                         icon: "success"
                     });
 
+                    document.getElementById("couponButton").style.display = "none"
                     document.getElementById("RemoveCoupon").style.display = "inline-Block"
                 } else {
                     Swal.fire({
@@ -522,6 +523,7 @@
             console.log("del charge ",deliveryCharge)
 
             document.getElementById("RemoveCoupon").style.display = "none"
+            document.getElementById("couponButton").style.display ="inline-Block"
             document.getElementById("couponCode").value = " "
 
 
