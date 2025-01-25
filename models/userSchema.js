@@ -47,21 +47,9 @@ const userSchema = new Schema({
         type: Number,
         default: 0
     },
-    cart: [{
-        type: Schema.Types.ObjectId,
-        ref: "Cart"
-    }],
     wallet: {
         type: Schema.Types.ObjectId
     },
-    whishlist: [{
-        type: Schema.Types.ObjectId,
-        ref: "Whishlist"
-    }],
-    orderHistory: [{
-        type: Schema.Types.ObjectId,
-        ref: "Order"
-    }],
     createdon: {
         type: Date,
         default: Date.now

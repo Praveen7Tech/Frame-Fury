@@ -7381,10 +7381,10 @@ span.fi-rs-apps {
   border-bottom-left-radius: 4px;
 }
 
-.pagination-area .page-item:last-child .page-link {
+/* .pagination-area .page-item:last-child .page-link {
   border-top-right-radius: 50%;
   border-bottom-right-radius: 50%;
-}
+} */
 
 .pagination-area .page-item.active .page-link, .pagination-area .page-item:hover .page-link {
   color: #fff;
@@ -7397,7 +7397,7 @@ span.fi-rs-apps {
   -webkit-box-shadow: none;
           box-shadow: none;
   outline: 0;
-  width: 34px;
+  width: 46px;
   height: 34px;
   display: block;
   border-radius: 4px;

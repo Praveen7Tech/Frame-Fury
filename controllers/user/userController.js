@@ -28,7 +28,7 @@ const loadHomepage = async (req, res) => {
             category: { $in: categories.map(category => category._id) },
         })
             .populate("category", "name categoryOffer") // Populate category offer
-            .sort({ createdOn: -1 });
+            .sort({ createdOn: -1 }).limit(20)
 
 
         // dynamically showing product is alraedy in wishlist
@@ -466,7 +466,7 @@ const filterByPrice = async (req, res) => {
         let maxPrice = parseFloat(req.query.lt) || Number.MAX_SAFE_INTEGER;
         let sortOrder = req.query.sort === "lowToHigh" ? 1 : -1;
 
-        let itemPerPage = 9;
+        let itemPerPage = 12;
         let currentPage = parseInt(req.query.page) || 1;
 
         //calculate currentPrice and sort/filter products
@@ -632,13 +632,14 @@ const filterByName = async (req, res) => {
         const currentPages = parseInt(req.query.page) || 1;
         const totalProducts = await Product.countDocuments({ isBlocked: false });
         const totalPages = Math.ceil(totalProducts / itemPerPage);
+        console.log("uii",totalProducts,"hooo",totalPages)
 
         res.render("shopping-page", {
             user: userData,
             products,
             category: categories,
+            totalPages:totalPages,
             currentPage: currentPages,
-            totalPages,
             selectedCategory: null
         });
 

@@ -26,9 +26,22 @@
             height: 100%;
             margin: 0;
             font-family: "Nunito Sans", sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            overflow: hidden;
+            background-image: url("/assets/imgs/buggati.jpg");
+            background-size: cover;
+            /* Ensures the image covers the entire area */
+            background-repeat: no-repeat;
+            /* Prevents tiling */
+            background-attachment: fixed;
+            /* Makes the background stay fixed on scroll */
+            background-position: center;
+            /* Centers the image */
+
+            overflow-x: hidden;
+            /* Prevents horizontal scrolling */
+            overflow-y: auto;
+            /* Allows vertical scrolling if content overflows */
         }
+
 
         .container {
             display: flex;
@@ -42,17 +55,25 @@
             max-width: 400px;
             padding: 40px;
             border-radius: 20px;
-            background: rgba(255, 255, 255, 0.9);
+
+            /* Background with transparency */
+            background: rgba(69, 66, 66, 0.5);
+            /* Lower alpha for more transparency */
+
+            /* Optional visual effects */
             box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
             backdrop-filter: blur(4px);
+            /* Adds a subtle blur effect to the background */
             border: 1px solid rgba(255, 255, 255, 0.18);
+            /* Adds a faint border for clarity */
         }
+
 
         .heading_s1 h3 {
             margin: 0 0 30px;
             font-size: 28px;
             font-weight: 700;
-            color: #4a4a4a;
+            color: #f4efef;
             text-align: center;
             text-transform: uppercase;
             letter-spacing: 2px;
@@ -66,7 +87,7 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: #555;
+            color: #f0ebeb;
         }
 
         .form-control {
@@ -93,7 +114,7 @@
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #56575d 0%, #1a1a1a 100%);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
@@ -131,12 +152,12 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1a1a1a 0%, #494849 100%);
             color: #fff;
         }
 
         .btn-primary:hover {
-            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            background: linear-gradient(135deg, #494849 0%, #1a1a1a 100%);
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
@@ -161,7 +182,7 @@
         }
 
         .text-muted {
-            color: #6c757d;
+            color: #f0f3f6;
             text-align: center;
             margin-top: 25px;
         }

@@ -11,6 +11,7 @@
         .widget-category {
             background-color: #f8f9fa;
             border-radius: 10px;
+            border-color: #0f0f0f;
             padding: 20px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
@@ -91,6 +92,7 @@
         .price-range-filter {
             background-color: #ffffff;
             border-radius: 12px;
+            border-color: #1a1a1a;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             padding: 20px;
             margin-bottom: 30px;
@@ -350,21 +352,42 @@
                                 <%}%>
 
                         </div>
-                        <!--pagination-->
+                     <!-- Pagination -->
                         <div class="pagination-area mt-15 mb-sm-5 mb-lg-0">
                             <nav aria-label="Page navigation example">
                                 <ul class="pagination justify-content-start">
-                                    <%for(let i=0;i<=totalPages;i++){%>
-                                        <li class="page-item active ?page=<%= currentPage - 1 %>">
-                                            <a class="page-link" href="?page=<%= i %>">
-                                                <%= i%>
-                                            </a>
+                                    <!-- Previous Button -->
+                                    <% if (currentPage > 1) { %>
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page=<%= currentPage - 1 %>">Back</a>
                                         </li>
-                                        <%}%>
+                                    <% } else { %>
+                                        <li class="page-item disabled">
+                                           
+                                        </li>
+                                    <% } %>
 
+                                    <!-- Page Numbers -->
+                                    <% for (let i = 1; i <= totalPages; i++) { %>
+                                        <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                            <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                                        </li>
+                                    <% } %>
+
+                                    <!-- Next Button -->
+                                    <% if (currentPage < totalPages) { %>
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+                                        </li>
+                                    <% } else { %>
+                                        <li class="page-item disabled">
+                                            <a class="page-link">Next</a>
+                                        </li>
+                                    <% } %>
                                 </ul>
                             </nav>
                         </div>
+
                     </div>
                     <!-- filter by category -->
                     <div class="col-lg-3 primary-sidebar sticky-sidebar">
@@ -417,7 +440,7 @@
                         </div>
 
                         <!-- Product sidebar Widget -->
-                        <div class="sidebar-widget product-sidebar  mb-30 p-30 bg-grey border-radius-10">
+                        <!-- <div class="sidebar-widget product-sidebar  mb-30 p-30 bg-grey border-radius-10">
                             <div class="widget-header position-relative mb-20 pb-10">
                                 <h5 class="widget-title mb-10">New products</h5>
                                 <div class="bt-1 border-color-1"></div>
@@ -441,7 +464,7 @@
                                     <%}%>
                             </div>
 
-                        </div>
+                        </div> -->
                         <div class="banner-img wow fadeIn mb-45 animated d-lg-block d-none">
                             <img src="assets/imgs/shop/classic.webp" alt="">
                             <div class="banner-text">
