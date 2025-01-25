@@ -1,396 +1,416 @@
 <%- include("../../views/partials/admin/header") %>
-<head>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
-    <style>
-        /* General Styles */
-        body {
-            background-color: #f4f6f9;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
 
-        /* Heading */
-        .content-title {
-           
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-size: 24px;
-            font-weight: bold;
-        }
+    <head>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
+        <style>
+            /* General Styles */
+            body {
+                background-color: #f4f6f9;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            }
 
-        /* Table Styling */
-        .table {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
-        }
+            /* Heading */
+            .content-title {
 
-        .table thead {
-            background-color: #007bff;
-            color: white;
-        }
+                color: white;
+                padding: 10px 20px;
+                border-radius: 5px;
+                font-size: 24px;
+                font-weight: bold;
+            }
 
-        .table tbody tr:nth-child(odd) {
-            background-color: #f9f9f9;
-        }
+            /* Table Styling */
+            .table {
+                background-color: white;
+                border-radius: 8px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                margin-top: 20px;
+            }
 
-        .table tbody tr:hover {
-            background-color: #e9f7ff;
-            cursor: pointer;
-        }
+            .table thead {
+                background-color: #007bff;
+                color: white;
+            }
 
-        .table td, .table th {
-            padding: 15px;
-            text-align: center;
-        }
+            .table tbody tr:nth-child(odd) {
+                background-color: #f9f9f9;
+            }
 
-        /* Search Bar Styling */
-        .search-bar-container {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
+            .table tbody tr:hover {
+                background-color: #e9f7ff;
+                cursor: pointer;
+            }
 
-        .input-group {
-            width: 500px;
-            display: flex;
-            border-radius: 30px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+            .table td,
+            .table th {
+                padding: 15px;
+                text-align: center;
+            }
 
-        .input-group input {
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 30px 0 0 30px;
-            width: 100%;
-            font-size: 16px;
-        }
+            /* Search Bar Styling */
+            .search-bar-container {
+                display: flex;
+                justify-content: center;
+                margin-bottom: 20px;
+            }
 
-        .input-group button {
-            background-color: #007bff;
-            color: white;
-            padding: 10px;
-            border-radius: 0 30px 30px 0;
-            border: none;
-            cursor: pointer;
-        }
+            .input-group {
+                width: 500px;
+                display: flex;
+                border-radius: 30px;
+                overflow: hidden;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
 
-        .input-group button:hover {
-            background-color: #0056b3;
-        }
+            .input-group input {
+                border: 1px solid #ddd;
+                padding: 10px;
+                border-radius: 30px 0 0 30px;
+                width: 100%;
+                font-size: 16px;
+            }
 
-        /* Action Buttons */
-        .action-btns .btn {
-            width: 100px;
-            font-size: 12px;
-            border-radius: 20px;
-            padding: 8px;
-            text-align: center;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease-in-out;
-        }
+            .input-group button {
+                background-color: #007bff;
+                color: white;
+                padding: 10px;
+                border-radius: 0 30px 30px 0;
+                border: none;
+                cursor: pointer;
+            }
 
-        .btn-block {
-            background: linear-gradient(135deg, #ff5f6d, #ffc371);
-            color: white;
-        }
+            .input-group button:hover {
+                background-color: #0056b3;
+            }
 
-        .btn-unblock {
-            background: linear-gradient(135deg, #28a745, #4dbd74);
-            color: white;
-        }
-        .btn-remove {
-            background: linear-gradient(135deg, #b80817, #7b7161);
-            color: white; 
-        }
+            /* Action Buttons */
+            .action-btns .btn {
+                width: 100px;
+                font-size: 12px;
+                border-radius: 20px;
+                padding: 8px;
+                text-align: center;
+                box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+                transition: all 0.3s ease-in-out;
+            }
 
-        .btn-edit {
-            background: linear-gradient(135deg, #17a2b8, #45a3c1);
-            color: white;
-        }
+            .btn-block {
+                background: linear-gradient(135deg, #ff5f6d, #ffc371);
+                color: white;
+            }
 
-        .btn a {
-            color: white;
-            text-decoration: none;
-        }
+            .btn-unblock {
+                background: linear-gradient(135deg, #28a745, #4dbd74);
+                color: white;
+            }
 
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-        }
+            .btn-remove {
+                background: linear-gradient(135deg, #b80817, #7b7161);
+                color: white;
+            }
 
-        /* Pagination */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            padding: 20px;
-        }
+            .btn-edit {
+                background: linear-gradient(135deg, #17a2b8, #45a3c1);
+                color: white;
+            }
 
-        .pagination .page-item.active .page-link {
-            background-color: #007bff;
-            border-color: #007bff;
-            color: white;
-        }
+            .btn a {
+                color: white;
+                text-decoration: none;
+            }
 
-        .pagination .page-item:hover .page-link {
-            background-color: #0056b3;
-            border-color: #0056b3;
-        }
+            .btn:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            }
 
-        /* Button Text Hover Effect */
-        .btn a:hover {
-            text-decoration: underline;
-        }
+            /* Pagination */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                padding: 20px;
+            }
 
-    </style>
-</head>
+            .pagination .page-item.active .page-link {
+                background-color: #007bff;
+                border-color: #007bff;
+                color: white;
+            }
 
-<div class="content-header">
-    <div>
-        <h2 class="content-title card-title">Products</h2>
-    </div>
-</div>
+            .pagination .page-item:hover .page-link {
+                background-color: #0056b3;
+                border-color: #0056b3;
+            }
 
-<header class="card-header text-center mb-20">
-    <form action="" method="get" class="d-inline">
-        <div class="search-bar-container">
-            <div class="input-group input-group-sm">
-                <input type="text" class="form-control" placeholder="Search products or brands" name="search">
-                <button class="btn" type="submit">Search</button>
-            </div>
+            /* Button Text Hover Effect */
+            .btn a:hover {
+                text-decoration: underline;
+            }
+        </style>
+    </head>
+
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Products</h2>
         </div>
-    </form>
-</header>
+    </div>
 
-<div class="right mt-5">
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th scope="col"><b>No</b></th>
-                <th scope="col"><b>Product name</b></th>
-                <th scope="col"><b>Category</b></th>
-                <th scope="col"><b>Sale Price</b></th>
-                <th scope="col"><b>Quantity</b></th>
-                <th scope="col"><b>Offer percentage</b></th>
-                <th scope="col"><b>Offer price</b></th>
-                <th scope="col"><b>Offer</b></th>
-                <th scope="col"><b>Action</b></th>
-                <th scope="col"><b>Edit</b></th>
-            </tr>
-        </thead>
-        <tbody>
-            <% for (let i = data.length - 1; i >= 0; i--) { %>
-            <tr>
-                <td><%= data.length - i %></td>
-                <td><%= data[i].productName %></td>
-                <td><%= data[i].category.name %></td>
-                <td><%= data[i].salePrice %></td>
-                <td><%= data[i].quantity %></td>
-                
-            <%if(data[i].offer !== null){%>
-                <td><%= data[i].offer%>%</td>
-            <%}else{%>
-                <td>No offer..</td>
-            <%}%>    
-                <td><%= Math.floor(data[i].salePrice-(data[i].salePrice*data[i].offer / 100))%></td>
+    <header class="card-header text-center mb-20">
+        <form action="" method="get" class="d-inline">
+            <div class="search-bar-container">
+                <div class="input-group input-group-sm">
+                    <input type="text" class="form-control" placeholder="Search products or brands" name="search">
+                    <button class="btn" type="submit">Search</button>
+                </div>
+            </div>
+        </form>
+    </header>
 
-                <td class="action-btns">
-                <%if(data[i].offer===null){%>
-                    <button class="btn btn-block" onclick="addOffer('<%= data[i]._id%>')">
-                        <a href="#">Add Offer</a>
-                    </button>
-                <%}else{%>    
-                    <button class="btn btn-unblock" onclick="editOffer('<%= data[i]._id%>','<%= data[i].productName%>','<%= data[i].offer %>')">
-                        <a href="#">Edit offer</a>
-                    </button>
-                    <button class="btn btn-remove" onclick="removeOffer('<%= data[i]._id%>')">
-                        <a href="#">Remove offer</a>
-                    </button>
-                <%}%>    
-                </td>
+    <div class="right mt-5">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col"><b>No</b></th>
+                    <th scope="col"><b>Product name</b></th>
+                    <th scope="col"><b>Category</b></th>
+                    <th scope="col"><b>Sale Price</b></th>
+                    <th scope="col"><b>Quantity</b></th>
+                    <th scope="col"><b>Offer percentage</b></th>
+                    <th scope="col"><b>Offer price</b></th>
+                    <th scope="col"><b>Offer</b></th>
+                    <th scope="col"><b>Action</b></th>
+                    <th scope="col"><b>Edit</b></th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for (let i=data.length - 1; i>= 0; i--) { %>
+                    <tr>
+                        <td>
+                            <%= data.length - i %>
+                        </td>
+                        <td>
+                            <%= data[i].productName %>
+                        </td>
+                        <td>
+                            <%= data[i].category.name %>
+                        </td>
+                        <td>
+                            <%= data[i].salePrice %>
+                        </td>
+                        <td>
+                            <%= data[i].quantity %>
+                        </td>
 
-                <td class="action-btns">
-                    <% if (data[i].isBlocked === false) { %>
-                    <button class="btn btn-block">
-                        <a href="/admin/blockProduct?id=<%= data[i]._id %>">Block</a>
-                    </button>
-                    <% } else { %>
-                    <button class="btn btn-unblock">
-                        <a href="/admin/unblockProduct?id=<%= data[i]._id %>">Unblock</a>
-                    </button>
+                        <%if(data[i].offer !==null){%>
+                            <td>
+                                <%= data[i].offer%>%
+                            </td>
+                            <%}else{%>
+                                <td>No offer..</td>
+                                <%}%>
+                                    <td>
+                                        <%= Math.floor(data[i].salePrice-(data[i].salePrice*data[i].offer / 100))%>
+                                    </td>
+
+                                    <td class="action-btns">
+                                        <%if(data[i].offer===null){%>
+                                            <button class="btn btn-block" onclick="addOffer('<%= data[i]._id%>')">
+                                                <a href="#">Add Offer</a>
+                                            </button>
+                                            <%}else{%>
+                                                <button class="btn btn-unblock"
+                                                    onclick="editOffer('<%= data[i]._id%>','<%= data[i].productName%>','<%= data[i].offer %>')">
+                                                    <a href="#">Edit offer</a>
+                                                </button>
+                                                <button class="btn btn-remove"
+                                                    onclick="removeOffer('<%= data[i]._id%>')">
+                                                    <a href="#">Remove offer</a>
+                                                </button>
+                                                <%}%>
+                                    </td>
+
+                                    <td class="action-btns">
+                                        <% if (data[i].isBlocked===false) { %>
+                                            <button class="btn btn-block">
+                                                <a href="/admin/blockProduct?id=<%= data[i]._id %>">Block</a>
+                                            </button>
+                                            <% } else { %>
+                                                <button class="btn btn-unblock">
+                                                    <a href="/admin/unblockProduct?id=<%= data[i]._id %>">Unblock</a>
+                                                </button>
+                                                <% } %>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-edit">
+                                            <a href="/admin/editProduct?id=<%= data[i]._id %>">Edit</a>
+                                        </button>
+                                    </td>
+                    </tr>
                     <% } %>
-                </td>
-                <td>
-                    <button class="btn btn-edit">
-                        <a href="/admin/editProduct?id=<%= data[i]._id %>">Edit</a>
-                    </button>
-                </td>
-            </tr>
-            <% } %>
-        </tbody>
-    </table>
-</div>
+            </tbody>
+        </table>
+    </div>
 
-<div class="container mt-3">
-    <nav aria-label="Page navigation">
-        <ul class="pagination">
-            <% for (let i = 1; i <= totalPages; i++) { %>
-            <li class="page-item <%= (i === currentPage) ? 'active' : '' %>">
-                <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-            </li>
-            <% } %>
-        </ul>
-    </nav>
-</div>
+    <div class="container mt-3">
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <% for (let i=1; i <=totalPages; i++) { %>
+                    <li class="page-item <%= (i === currentPage) ? 'active' : '' %>">
+                        <a class="page-link" href="?page=<%= i %>">
+                            <%= i %>
+                        </a>
+                    </li>
+                    <% } %>
+            </ul>
+        </nav>
+    </div>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<%- include("../../views/partials/admin/footer") %>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <%- include("../../views/partials/admin/footer") %>
 
-<!-- add offer -->
-<script>
+        <!-- add offer -->
+        <script>
 
-     function addOffer(productId,productName){
-        Swal.fire({
-            title:`Add offer for ${productName}`,
-            html: `
+            function addOffer(productId, productName) {
+                Swal.fire({
+                    title: `Add offer for ${productName}`,
+                    html: `
             <div>
                 <label>Offer Amount (%)</label>
                 <input type="number" id="offerAmount" class="swal2-input" placeholder="Enter offer percentage">
             </div>
             `,
-            showCancelButton:true,
-            confirmButtonText:"Save",
-            preConfirm: ()=>{
-                const offerAmount =document.getElementById("offerAmount").value;
-                if(!offerAmount || offerAmount <= 0 || offerAmount > 100){
-                    Swal.showValidationMessage("Please enter a valid percentage")
-                    return false
-                }
-                return {productId,offerAmount}
-            }
-        })
-        .then(result=>{
-            if(result.isConfirmed){
-                const {productId,offerAmount} =result.value;
-
-                fetch("/admin/addProOffer",{
-                    method:"POST",
-                    headers:{
-                        "Content-Type":"application/json"
-                    },
-                    body:JSON.stringify({
-                        productId,
-                        amount:offerAmount
-                    }),
-
-                })
-                .then(response=>{
-                    if(response.ok){
-                        Swal.fire("Success","Offer Added Succesfully","success").then(()=> location.reload())
-                    }
-                    else{
-                        Swal.fire("Error!","Failed to Add Offer..!","error")
+                    showCancelButton: true,
+                    confirmButtonText: "Save",
+                    preConfirm: () => {
+                        const offerAmount = document.getElementById("offerAmount").value;
+                        if (!offerAmount || offerAmount <= 0 || offerAmount > 100) {
+                            Swal.showValidationMessage("Please enter a valid percentage")
+                            return false
+                        }
+                        return { productId, offerAmount }
                     }
                 })
-                .catch(err=>{
-                    console.error(err);
-                    Swal.fire("Error.","An error occured in adding offer","error")
-                })
+                    .then(result => {
+                        if (result.isConfirmed) {
+                            const { productId, offerAmount } = result.value;
+
+                            fetch("/admin/addProOffer", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify({
+                                    productId,
+                                    amount: offerAmount
+                                }),
+
+                            })
+                                .then(response => {
+                                    if (response.ok) {
+                                        Swal.fire("Success", "Offer Added Succesfully", "success").then(() => location.reload())
+                                    }
+                                    else {
+                                        Swal.fire("Error!", "Failed to Add Offer..!", "error")
+                                    }
+                                })
+                                .catch(err => {
+                                    console.error(err);
+                                    Swal.fire("Error.", "An error occured in adding offer", "error")
+                                })
+                        }
+                    })
             }
-        })
-     }
 
-</script>
+        </script>
 
-<!-- edit offer -->
-<script>
+        <!-- edit offer -->
+        <script>
 
-    function editOffer(productId,productName,offer){
-        Swal.fire({
-            title:`Edit offer for ${productName}`,
-            html: `
+            function editOffer(productId, productName, offer) {
+                Swal.fire({
+                    title: `Edit offer for ${productName}`,
+                    html: `
             <div>
                 <label>Offer Amount (%)</label>
                 <input type="number" id="offerAmount" class="swal2-input" placeholder="Enter offer percentage" value="${offer}">
             </div>
             `,
-            showCancelButton:true,
-            confirmButtonText:"Update",
-            preConfirm:()=>{
-                const offerAmount = document.getElementById("offerAmount").value;
-                if(!offerAmount || offerAmount <=0 || offerAmount > 100){
-                    Swal.showValidationMessage("Please Enter a valid Percentage..!")
-                    return false;
-                }
-                return {productId,offerAmount}
-            }
-        })
-        .then(result=>{
-            if(result.isConfirmed){
-                const {productId,offerAmount} = result.value;
+                    showCancelButton: true,
+                    confirmButtonText: "Update",
+                    preConfirm: () => {
+                        const offerAmount = document.getElementById("offerAmount").value;
+                        if (!offerAmount || offerAmount <= 0 || offerAmount > 100) {
+                            Swal.showValidationMessage("Please Enter a valid Percentage..!")
+                            return false;
+                        }
+                        return { productId, offerAmount }
+                    }
+                })
+                    .then(result => {
+                        if (result.isConfirmed) {
+                            const { productId, offerAmount } = result.value;
 
-                fetch("/admin/editProOffer",{
-                    method:"PUT",
-                    headers:{
-                        "Content-Type":"application/json"
-                    },
-                    body:JSON.stringify({
-                        productId,
-                        amount:offerAmount
+                            fetch("/admin/editProOffer", {
+                                method: "PUT",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify({
+                                    productId,
+                                    amount: offerAmount
+                                })
+                            })
+                                .then(response => {
+                                    if (response.ok) {
+                                        Swal.fire("Success", "Offer updated Successfully", "success").then(() => location.reload())
+                                    }
+                                    else {
+                                        Swal.fire("Error.!", "Failed To update Offer..!", "error")
+                                    }
+                                })
+                                .catch(err => {
+                                    console.error(err);
+                                    Swal.fire("Error..!", "An Error occured in Updating Offer", "error")
+                                })
+                        }
                     })
-                })
-                .then(response=>{
-                    if(response.ok){
-                        Swal.fire("Success","Offer updated Successfully","success").then(()=> location.reload())
-                    }
-                    else{
-                        Swal.fire("Error.!","Failed To update Offer..!","error")
-                    }
-                })
-                .catch(err=>{
-                    console.error(err);
-                    Swal.fire("Error..!","An Error occured in Updating Offer","error")
-                })
             }
-        })
-    }
-</script>
+        </script>
 
-<!-- remove offer -->
- <script>
-    function removeOffer(productId){
-        Swal.fire({
-            title:"Are You Sure.!",
-            text:"Removing Product Offer",
-            icon:"warning",
-            showCancelButton:true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText:"Remove Offer."
-        })
-        .then(result=>{
-            if(result.isConfirmed){
-                fetch(`/admin/removeOffer/${productId}`,{
-                    method:"POST",
-                    headers:{
-                        "Content-Type":"application/json"
-                    }
-                }).then(response => response.json())
-                .then(data=>{
-                    if(data.success){
-                        Swal.fire("Removed","The offer has been Removed.!","success").then(()=> location.reload())
-                    }
-                    else{
-                        Swal.fire("Error!","Failed to Remove the Product Offer..!","error")
-                    }
+        <!-- remove offer -->
+        <script>
+            function removeOffer(productId) {
+                Swal.fire({
+                    title: "Are You Sure.!",
+                    text: "Removing Product Offer",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: "Remove Offer."
                 })
-                .catch(err=>{
-                    Swal.fire("Error!","An error occured while removing the product offer.","error")
-                })
+                    .then(result => {
+                        if (result.isConfirmed) {
+                            fetch(`/admin/removeOffer/${productId}`, {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                }
+                            }).then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        Swal.fire("Removed", "The offer has been Removed.!", "success").then(() => location.reload())
+                                    }
+                                    else {
+                                        Swal.fire("Error!", "Failed to Remove the Product Offer..!", "error")
+                                    }
+                                })
+                                .catch(err => {
+                                    Swal.fire("Error!", "An error occured while removing the product offer.", "error")
+                                })
+                        }
+                    })
             }
-        })
-    }
- </script>
+        </script>

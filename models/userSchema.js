@@ -1,83 +1,83 @@
 const mongoose = require("mongoose")
 
-const {Schema} = mongoose
+const { Schema } = mongoose
 
 const userSchema = new Schema({
-    name:{
-        type : String,
-        required : true
+    name: {
+        type: String,
+        required: true
     },
-    email:{
-        type : String,
-        required :true,
-        unique : true
+    email: {
+        type: String,
+        required: true,
+        unique: true
     },
-    phone:{
-        type : String,
-        required : false,
-        unique : false,
-        sparse : true, 
-        default : null
+    phone: {
+        type: String,
+        required: false,
+        unique: false,
+        sparse: true,
+        default: null
     },
     googleId: {
         type: String,
-        unique:true
+        unique: true
     },
-    password:{
-        type : String,
-        required : false // for single signup not using password
+    password: {
+        type: String,
+        required: false // for single signup not using password
     },
-    isBlocked:{
-        type : Boolean,
-        default : false
+    isBlocked: {
+        type: Boolean,
+        default: false
     },
-    isAdmin:{
-        type : Boolean,
-        default : false
+    isAdmin: {
+        type: Boolean,
+        default: false
     },
-    referralCode:{
-        type:String,
-        default:null
+    referralCode: {
+        type: String,
+        default: null
     },
-    refferedCode:{
-        type:String,
-        default:null
+    refferedCode: {
+        type: String,
+        default: null
     },
-    referralPoint:{
-        type:Number,
-        default:0
+    referralPoint: {
+        type: Number,
+        default: 0
     },
-    cart:[{
-        type:Schema.Types.ObjectId,
-        ref:"Cart"
+    cart: [{
+        type: Schema.Types.ObjectId,
+        ref: "Cart"
     }],
-    wallet:{
-        type : Schema.Types.ObjectId
+    wallet: {
+        type: Schema.Types.ObjectId
     },
-    whishlist:[{
-        type : Schema.Types.ObjectId,
-        ref : "Whishlist"
+    whishlist: [{
+        type: Schema.Types.ObjectId,
+        ref: "Whishlist"
     }],
-    orderHistory:[{
-        type : Schema.Types.ObjectId,
-        ref : "Order"
+    orderHistory: [{
+        type: Schema.Types.ObjectId,
+        ref: "Order"
     }],
-    createdon:{
+    createdon: {
         type: Date,
-        default : Date.now
+        default: Date.now
     },
-    searchHistory:[{
-        category : {
-        type : Schema.Types.ObjectId,
-        ref : "category"
-        }, 
-        searchOn : {
-            type : Date,
-            default : Date.now
+    searchHistory: [{
+        category: {
+            type: Schema.Types.ObjectId,
+            ref: "category"
+        },
+        searchOn: {
+            type: Date,
+            default: Date.now
         }
     }]
 })
 
-const User = mongoose.model("User",userSchema,"users")
+const User = mongoose.model("User", userSchema, "users")
 
 module.exports = User

@@ -1,24 +1,24 @@
 const User = require("../../models/userSchema");
-const mongoose =require("mongoose");
+const mongoose = require("mongoose");
 const Order = require("../../models/orderSchema")
 const bcrypt = require("bcrypt");
 //const { default: items } = require("razorpay/dist/types/items");
 
 
-const pageError = async(req,res)=>{
+const pageError = async (req, res) => {
     try {
         res.render("admin-error")
     } catch (error) {
         console.error("Error in loading 404");
-        
+
     }
 }
 
-const loadLogin = async(req,res)=>{
-    if(req.session.admin){
+const loadLogin = async (req, res) => {
+    if (req.session.admin) {
         return res.redirect("/admin")
     }
-    res.render("admin-login",{message:null})
+    res.render("admin-login", { message: null })
 }
 
 const login = async (req, res) => {
@@ -46,7 +46,7 @@ const login = async (req, res) => {
 };
 
 
-const dashBoard = async(req,res)=>{
+const dashBoard = async (req, res) => {
     try {
 
         // Best selling product order
@@ -76,7 +76,7 @@ const dashBoard = async(req,res)=>{
                 },
             },
             { $sort: { totalOrder: -1 } },
-            { $limit: 10 }, 
+            { $limit: 10 },
         ]);
 
 
@@ -123,68 +123,68 @@ const dashBoard = async(req,res)=>{
             productName: item.productName,
             totalOrder: item.totalOrder,
         }));
-        
+
 
         // chart data for category
         const categoryData = category.map((cat) => ({
             categoryName: cat.categoryName,
             totalOrder: cat.totalOrder,
         }));
-        
+
 
         //console.log("pr",categoryData)
 
-        res.render("adminDashboard",{product,category,productData,categoryData})
+        res.render("adminDashboard", { product, category, productData, categoryData })
     } catch (error) {
-        console.error("Error in Loading Admin Dashboard",error);
+        console.error("Error in Loading Admin Dashboard", error);
     }
 }
 
-const loadDashboard = async(req,res)=>{
-   try {
-    const page =parseInt(req.query.page) || 1;
-    const limit = 10;
-    const skip = (page - 1)*limit
+const loadDashboard = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10;
+        const skip = (page - 1) * limit
 
-    const orders = await Order.find().sort({createdAt:-1})
-    const order = await Order.find().sort({createdAt:-1}).populate("userId","name email").skip(skip).limit(limit).exec();
-    
-    const totalSale = orders.reduce((sum,order) =>sum + order.total,0)
-    const saleCount = await Order.countDocuments()
-    const couponDiscount = orders.reduce((sum,order) => sum+ order.couponDiscount ,0)
-    const overallDiscount = orders.reduce((sum,order) => sum + order.productOfferTotal,0)
+        const orders = await Order.find().sort({ createdAt: -1 })
+        const order = await Order.find().sort({ createdAt: -1 }).populate("userId", "name email").skip(skip).limit(limit).exec();
 
-    const totalOrder = await Order.countDocuments()
-    const totalPages = totalOrder / limit
-    
-    console.log("sale",order);
-   
-    res.render("dashboard",{
-        order,
-        totalSale,
-        saleCount,
-        couponDiscount,
-        overallDiscount,
-        totalPages:totalPages,
-        currentPage:page
-    })
-   } catch (error) {
-    console.error("Error in loading dashboard",error);
-    res.redirect("/admin/pageError")
-   }
+        const totalSale = orders.reduce((sum, order) => sum + order.total, 0)
+        const saleCount = await Order.countDocuments()
+        const couponDiscount = orders.reduce((sum, order) => sum + order.couponDiscount, 0)
+        const overallDiscount = orders.reduce((sum, order) => sum + order.productOfferTotal, 0)
+
+        const totalOrder = await Order.countDocuments()
+        const totalPages = totalOrder / limit
+
+        console.log("sale", order);
+
+        res.render("dashboard", {
+            order,
+            totalSale,
+            saleCount,
+            couponDiscount,
+            overallDiscount,
+            totalPages: totalPages,
+            currentPage: page
+        })
+    } catch (error) {
+        console.error("Error in loading dashboard", error);
+        res.redirect("/admin/pageError")
+    }
 }
 
-const logout = async(req,res)=>{
+const logout = async (req, res) => {
     try {
-        req.session.destroy(err=>{
-            if(err){
+        req.session.destroy(err => {
+            if (err) {
                 console.log("Error destroying session");
                 return res.redirect("/pageerror")
             }
             res.redirect("/admin/login")
         })
     } catch (error) {
-        console.log("unexpected error during Admin logout",error);
+        console.log("unexpected error during Admin logout", error);
         res.redirect("/pageerror")
     }
 }

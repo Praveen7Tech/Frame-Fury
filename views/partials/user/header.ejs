@@ -3,6 +3,7 @@
 
 
 <!-- Mirrored from wp.alithemes.com/html/evara/evara-frontend/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:20:36 GMT -->
+
 <head>
     <meta charset="utf-8">
     <title>Frame Fury E-commerce</title>
@@ -17,13 +18,13 @@
     <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/theme/ecom-logo.jpg">
     <!-- Template CSS -->
     <link rel="stylesheet" href="assets/css/main.css">
-    
-   
-    
+
+
+
 </head>
 
 <body>
-   
+
     <header class="header-area header-style-1 header-height-2">
         <div class="header-top header-top-ptb-1 d-none d-lg-block">
             <div class="container">
@@ -32,27 +33,29 @@
                         <div class="header-info">
                             <ul>
                                 <li><i class="fi-rs-smartphone"></i> <a href="#">(+91) - 81 81828 122</a></li>
-                                <li><i class="fi-rs-marker"></i><a  href="/conatctPage">Our location</a></li>
+                                <li><i class="fi-rs-marker"></i><a href="/conatctPage">Our location</a></li>
                             </ul>
                         </div>
                     </div>
                     <div class="col-xl-6 col-lg-4">
-                        
+
                     </div>
                     <div class="col-xl-3 col-lg-4">
                         <div class="header-info header-info-right">
 
-                                <ul>
-                                    <% if (user) { %>
-                                      <li><a href="#" class="flex-c-m trans-04 p-lr-25"><%= user.name %></a></li>
-                                      <li><a href="/userProfile">Profile</a></li>
-                                      <li><a href="/logout">Logout</a></li>
+                            <ul>
+                                <% if (user) { %>
+                                    <li><a href="#" class="flex-c-m trans-04 p-lr-25">
+                                            <%= user.name %>
+                                        </a></li>
+                                    <li><a href="/userProfile">Profile</a></li>
+                                    <li><a href="/logout">Logout</a></li>
                                     <% } else { %>
-                                      <li><i class="fi-rs-user"></i><a href="/signup">Sign Up</a></li>
-                                      <li><a href="/login">Log In</a></li>
-                                    <% } %>
-                                  </ul>
-                                  
+                                        <li><i class="fi-rs-user"></i><a href="/signup">Sign Up</a></li>
+                                        <li><a href="/login">Log In</a></li>
+                                        <% } %>
+                            </ul>
+
                         </div>
                     </div>
                 </div>
@@ -69,29 +72,33 @@
                             <form action="#">
                             </form>
                         </div>
-                        <div class="header-action-right">                           
+                        <div class="header-action-right">
                             <div class="header-action-2">
                                 <div class="header-action-icon-2">
                                     <a class="mini-wallet-icon" href="/wallet">
                                         <img alt="Frame" src="assets/imgs/theme/icons/icon-wallet.svg">
-                                    </a>  
+                                    </a>
                                 </div>
                                 <!-- wishlist count -->
                                 <div class="header-action-icon-2">
                                     <a href="/wishList">
                                         <img class="svgInject" alt="Frame" src="assets/imgs/theme/icons/icon-heart.svg">
-                                        <span class="pro-count blue wishList"><%= wishListCount %></span>
+                                        <span class="pro-count blue wishList">
+                                            <%= wishListCount %>
+                                        </span>
                                     </a>
-                                </div>  
+                                </div>
                                 <!-- cart count -->
                                 <div class="header-action-icon-2">
                                     <a class="mini-cart-icon" href="/cart">
-                                        <img alt="Frame" src="assets/imgs/theme/icons/icon-cart.svg">                                 
-                                        <span class="pro-count blue cart"><%= cartCount %></span> 
+                                        <img alt="Frame" src="assets/imgs/theme/icons/icon-cart.svg">
+                                        <span class="pro-count blue cart">
+                                            <%= cartCount %>
+                                        </span>
                                     </a>
                                 </div>
-                                
-                                
+
+
                             </div>
                         </div>
                     </div>
@@ -109,7 +116,7 @@
                             <a class="categori-button-active" href="#">
                                 <span class="fi-rs-apps"></span> Browse Categories
                             </a>
-                           
+
                         </div>
                         <div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block">
                             <nav>
@@ -118,10 +125,10 @@
                                         <a href="/">Home <i></i></a>
                                     </li>
                                     <li>
-                                        <a href="/shoppingPage">Shop <i ></i></a>
+                                        <a href="/shoppingPage">Shop <i></i></a>
                                     </li>
                                     <li>
-                                          <a href="/about">About</a>
+                                        <a href="/about">About</a>
                                     </li>
                                     <li>
                                         <a href="/contactPage">Contact</a>
@@ -133,32 +140,36 @@
                     <div class="hotline d-none d-lg-block">
                         <p><i class="fi-rs-headset"></i><span>Hotline</span> 1900 - 888 </p>
                     </div>
-                   
+
                     <div class="header-action-right d-block d-lg-none">
                         <div class="header-action-2">
                             <div class="header-action-icon-2">
                                 <a class="mini-wallet-icon" href="/wallet">
                                     <img alt="Frame" src="assets/imgs/theme/icons/icon-wallet.svg">
-                                    
-                                </a>  
+
+                                </a>
                             </div>
                             <!-- wishlist count -->
                             <div class="header-action-icon-2">
                                 <a href="/wishList">
                                     <img class="svgInject" alt="Frame" src="assets/imgs/theme/icons/icon-heart.svg">
                                     <% if (user) { %>
-                                        <span class="pro-count blue"><%= user.wishListCount || 0 %></span>
-                                    <% } %>
+                                        <span class="pro-count blue">
+                                            <%= user.wishListCount || 0 %>
+                                        </span>
+                                        <% } %>
                                 </a>
                             </div>
                             <!-- cart count -->
                             <div class="header-action-icon-2">
                                 <a class="mini-cart-icon" href="/cart">
-                                    <img alt="Frame" src="assets/imgs/theme/icons/icon-cart.svg">                                 
-                                    <span class="pro-count blue cart"><%= cartCount %></span> 
+                                    <img alt="Frame" src="assets/imgs/theme/icons/icon-cart.svg">
+                                    <span class="pro-count blue cart">
+                                        <%= cartCount %>
+                                    </span>
                                 </a>
                             </div>
-                           
+
                             <div class="header-action-icon-2 d-block d-lg-none">
                                 <div class="burger-icon burger-icon-white">
                                     <span class="burger-icon-top"></span>
@@ -187,7 +198,7 @@
             </div>
             <div class="mobile-header-content-area">
                 <div class="mobile-search search-style-3 mobile-header-border">
-                  
+
                 </div>
                 <div class="mobile-menu-wrap mobile-header-border">
                     <div class="main-categori-wrap mobile-header-border">
@@ -195,44 +206,49 @@
                             <span class="fi-rs-apps"></span> Browse Categories 
                         </a> -->
                         <div class="categori-dropdown-wrap categori-dropdown-active-small">
-                           
+
                         </div>
                     </div>
                     <!-- mobile menu start -->
                     <nav>
                         <ul class="mobile-menu">
                             <li class="menu-item-has-children"><span class="menu-expand"></span><a href="/">Home</a>
-                              
+
                             </li>
-                            <li class="menu-item-has-children"><span class="menu-expand"></span><a href="/shoppingPage">shop</a>
-                               
+                            <li class="menu-item-has-children"><span class="menu-expand"></span><a
+                                    href="/shoppingPage">shop</a>
+
                             </li>
-                            <li class="menu-item-has-children"><span class="menu-expand"></span><a href="/about">About</a>
-                               
+                            <li class="menu-item-has-children"><span class="menu-expand"></span><a
+                                    href="/about">About</a>
+
                             </li>
-                            <li class="menu-item-has-children"><span class="menu-expand"></span><a href="/contactPage">Contact</a>
-                               
+                            <li class="menu-item-has-children"><span class="menu-expand"></span><a
+                                    href="/contactPage">Contact</a>
+
                             </li>
-                            
+
                         </ul>
                     </nav>
                     <!-- mobile menu end -->
                 </div>
                 <div class="mobile-header-info-wrap mobile-header-border">
                     <div class="single-mobile-header-info mt-30">
-                        <a  href="/contactPage"> Our location </a>
+                        <a href="/contactPage"> Our location </a>
                     </div>
                     <div class="single-mobile-header-info">
                         <ul>
                             <% if (user) { %>
-                              <li><a href="#" class="flex-c-m trans-04 p-lr-25"><%= user.name %></a></li>
-                              <li><a href="/userProfile">Profile</a></li>
-                              <li><a href="/logout">Logout</a></li>
-                            <% } else { %>
-                              <li><i class="fi-rs-user"></i><a href="/signup">Sign Up</a></li>
-                              <li><a href="/login">Log In</a></li>
-                            <% } %>
-                          </ul>
+                                <li><a href="#" class="flex-c-m trans-04 p-lr-25">
+                                        <%= user.name %>
+                                    </a></li>
+                                <li><a href="/userProfile">Profile</a></li>
+                                <li><a href="/logout">Logout</a></li>
+                                <% } else { %>
+                                    <li><i class="fi-rs-user"></i><a href="/signup">Sign Up</a></li>
+                                    <li><a href="/login">Log In</a></li>
+                                    <% } %>
+                        </ul>
                     </div>
                     <div class="single-mobile-header-info">
                         <a href="#">(+01) - 2345 - 6789 </a>

@@ -1,226 +1,233 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="assets/css/signup.css">
-    <link rel="shortcut icon" type="image/x-icon" href="/assets/imgs/theme/ecom-logo.jpg">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <title>Login</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="assets/css/signup.css">
+  <link rel="shortcut icon" type="image/x-icon" href="/assets/imgs/theme/ecom-logo.jpg">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <title>Login</title>
 </head>
+
 <body>
   <div class="wrapper ">
     <div class="container main">
-        <div class="row">
-            <div class="col-md-6 side-image">
-               
-            </div>
+      <div class="row">
+        <div class="col-md-6 side-image">
 
-            <div class="col-md-6 right">
-                <div class="input-box">
-                  <div class="logo-container text-center">
-                    <img src="assets/imgs/theme/frame_fury_logo.png" alt="Logo" class="logo-img">
-                </div>
-                   <header>Create account</header>
-                <form id="signform" action="/signup" method="post">
-                  <div class="mb-2">
-                    <input type="text" class="form-control" id="name" name="name" placeholder="Full Name" required>
-                    <div id="error1" class="error-message"></div>
-                </div>
-
-                <div class="mb-2">
-                    <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
-                    <div id="error2" class="error-message"></div>
-                </div>
-
-                <div class="mb-2">
-                    <input type="tel" class="form-control" id="phone" name="phone" placeholder="Phone Number" required>
-                    <div id="error3" class="error-message"></div>
-                </div>
-
-                <div class="mb-2">
-                    <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
-                    <div id="error4" class="error-message"></div>
-                </div>
-
-                <div class="mb-2">
-                    <input type="password" class="form-control" id="confirm-password" name="cPassword" placeholder="confirm password" required>
-                    <div id="error5" class="error-message"></div>
-                </div>
-
-                <div class="mb-2">
-                  <input type="checkbox" id="showReferal" onclick="toggleReferalCode()">
-                  <label for="showReferal">Have a Referral Code?</label>
-                </div>
-                
-                <div class="mb-2" id="referalField" style="display: none;">
-                  <input type="text" class="form-control" id="referralCode" name="referalCode" placeholder="Referral Code">
-                  <div id="error5" class="error-message"></div>
-                </div>
-                
-                    
-                    <%if(locals.message && message.length>0){%>
-                      <div class="alert alert-danger text-center">
-
-                          <%=message%>
-                    
-                      </div>
-
-                  <%}%>
-                   <div class="input-field">
-                        <input type="submit" class="submit" value="Sign Up">
-                   </div> 
-                   <div class="signin">
-                    <span>Already have an account? <a href="/login">Log in here</a></span>
-                   </div>
-                   <div class="google-login">
-                        <a href="/auth/google" class="google-btn">
-                            <!-- <img src="google-logo.png" alt="Google Logo" class="google-logo"> -->
-                            Sign up with Google
-                        </a>
-                   </div>
-                </form>   
-                </div>  
-            </div>
         </div>
+
+        <div class="col-md-6 right">
+          <div class="input-box">
+            <div class="logo-container text-center">
+              <img src="assets/imgs/theme/frame_fury_logo.png" alt="Logo" class="logo-img">
+            </div>
+            <header>Create account</header>
+            <form id="signform" action="/signup" method="post">
+              <div class="mb-2">
+                <input type="text" class="form-control" id="name" name="name" placeholder="Full Name" required>
+                <div id="error1" class="error-message"></div>
+              </div>
+
+              <div class="mb-2">
+                <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
+                <div id="error2" class="error-message"></div>
+              </div>
+
+              <div class="mb-2">
+                <input type="tel" class="form-control" id="phone" name="phone" placeholder="Phone Number" required>
+                <div id="error3" class="error-message"></div>
+              </div>
+
+              <div class="mb-2">
+                <input type="password" class="form-control" id="password" name="password" placeholder="Password"
+                  required>
+                <div id="error4" class="error-message"></div>
+              </div>
+
+              <div class="mb-2">
+                <input type="password" class="form-control" id="confirm-password" name="cPassword"
+                  placeholder="confirm password" required>
+                <div id="error5" class="error-message"></div>
+              </div>
+
+              <div class="mb-2">
+                <input type="checkbox" id="showReferal" onclick="toggleReferalCode()">
+                <label for="showReferal">Have a Referral Code?</label>
+              </div>
+
+              <div class="mb-2" id="referalField" style="display: none;">
+                <input type="text" class="form-control" id="referralCode" name="referalCode"
+                  placeholder="Referral Code">
+                <div id="error5" class="error-message"></div>
+              </div>
+
+
+              <%if(locals.message && message.length>0){%>
+                <div class="alert alert-danger text-center">
+
+                  <%=message%>
+
+                </div>
+
+                <%}%>
+                  <div class="input-field">
+                    <input type="submit" class="submit" value="Sign Up">
+                  </div>
+                  <div class="signin">
+                    <span>Already have an account? <a href="/login">Log in here</a></span>
+                  </div>
+                  <div class="google-login">
+                    <a href="/auth/google" class="google-btn">
+                      <!-- <img src="google-logo.png" alt="Google Logo" class="google-logo"> -->
+                      Sign up with Google
+                    </a>
+                  </div>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
 
-<!-- Referral code togle -->
-<script>
-  function toggleReferalCode() {
-    const referalField = document.getElementById('referalField');
-    const checkbox = document.getElementById('showReferal');
+  <!-- Referral code togle -->
+  <script>
+    function toggleReferalCode() {
+      const referalField = document.getElementById('referalField');
+      const checkbox = document.getElementById('showReferal');
 
-    if (checkbox.checked) {
-      referalField.style.display = 'block';
-    } else {
-      referalField.style.display = 'none';
+      if (checkbox.checked) {
+        referalField.style.display = 'block';
+      } else {
+        referalField.style.display = 'none';
+      }
     }
-  }
-</script>
+  </script>
 
 
 
-<script>
+  <script>
 
-document.addEventListener("DOMContentLoaded", function () {
-            const nameid = document.getElementById("name");
-            const emailid = document.getElementById("email");
-            const phoneid = document.getElementById("phone");
-            const passid = document.getElementById("password");
-            const cPasswordid = document.getElementById("confirm-password");
+    document.addEventListener("DOMContentLoaded", function () {
+      const nameid = document.getElementById("name");
+      const emailid = document.getElementById("email");
+      const phoneid = document.getElementById("phone");
+      const passid = document.getElementById("password");
+      const cPasswordid = document.getElementById("confirm-password");
 
-            const error1 = document.getElementById("error1");
-            const error2 = document.getElementById("error2");
-            const error3 = document.getElementById("error3");
-            const error4 = document.getElementById("error4");
-            const error5 = document.getElementById("error5");
+      const error1 = document.getElementById("error1");
+      const error2 = document.getElementById("error2");
+      const error3 = document.getElementById("error3");
+      const error4 = document.getElementById("error4");
+      const error5 = document.getElementById("error5");
 
-            const signform = document.getElementById("signform");
+      const signform = document.getElementById("signform");
 
-            function nameValidateChecking() {
-              const nameval = nameid.value.trim();
-              const namepattern = /^[A-Za-z\s]+$/;
+      function nameValidateChecking() {
+        const nameval = nameid.value.trim();
+        const namepattern = /^[A-Za-z\s]+$/;
 
-              if (nameval === "") {
-                error1.style.display = "block";
-                error1.innerHTML = "Please enter a valid name";
-                return false;
-              } else if (!namepattern.test(nameval)) {
-                error1.style.display = "block";
-                error1.innerHTML = "Name should only contain alphabets and spaces";
-                return false;
-              } else {
-                error1.style.display = "none";
-                error1.innerHTML = "";
-                return true;
-              }
-            }
+        if (nameval === "") {
+          error1.style.display = "block";
+          error1.innerHTML = "Please enter a valid name";
+          return false;
+        } else if (!namepattern.test(nameval)) {
+          error1.style.display = "block";
+          error1.innerHTML = "Name should only contain alphabets and spaces";
+          return false;
+        } else {
+          error1.style.display = "none";
+          error1.innerHTML = "";
+          return true;
+        }
+      }
 
-            function emailValidateChecking() {
-              const emailval = emailid.value.trim();
-              const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+      function emailValidateChecking() {
+        const emailval = emailid.value.trim();
+        const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
-              if (!emailPattern.test(emailval)) {
-                error2.style.display = "block";
-                error2.innerHTML = "Invalid email format";
-                return false;
-              } else {
-                error2.style.display = "none";
-                error2.innerHTML = "";
-                return true;
-              }
-            }
+        if (!emailPattern.test(emailval)) {
+          error2.style.display = "block";
+          error2.innerHTML = "Invalid email format";
+          return false;
+        } else {
+          error2.style.display = "none";
+          error2.innerHTML = "";
+          return true;
+        }
+      }
 
-            function phoneValidateChecking() {
-              const phoneval = phoneid.value.trim();
+      function phoneValidateChecking() {
+        const phoneval = phoneid.value.trim();
 
-              if (phoneval === "") {
-                error3.style.display = "block";
-                error3.innerHTML = "Enter a valid phone number";
-                return false;
-              } else if (phoneval.length !== 10 || isNaN(phoneval)) {
-                error3.style.display = "block";
-                error3.innerHTML = "Enter a valid 10-digit phone number";
-                return false;
-              } else {
-                error3.style.display = "none";
-                error3.innerHTML = "";
-                return true;
-              }
-            }
+        if (phoneval === "") {
+          error3.style.display = "block";
+          error3.innerHTML = "Enter a valid phone number";
+          return false;
+        } else if (phoneval.length !== 10 || isNaN(phoneval)) {
+          error3.style.display = "block";
+          error3.innerHTML = "Enter a valid 10-digit phone number";
+          return false;
+        } else {
+          error3.style.display = "none";
+          error3.innerHTML = "";
+          return true;
+        }
+      }
 
-            function passValidateChecking() {
-              const passval = passid.value;
-              const cPassval = cPasswordid.value;
+      function passValidateChecking() {
+        const passval = passid.value;
+        const cPassval = cPasswordid.value;
 
-              const alpha = /[a-zA-Z]/;
-              const digit = /\d/;
+        const alpha = /[a-zA-Z]/;
+        const digit = /\d/;
 
-              let isValid = true;
+        let isValid = true;
 
-              if (passval.length < 8) {
-                error4.style.display = "block";
-                error4.innerHTML = "Password should contain at least 8 characters.";
-                isValid = false;
-              } else if (!alpha.test(passval) || !digit.test(passval)) {
-                error4.style.display = "block";
-                error4.innerHTML = "Password should contain both numbers and letters.";
-                isValid = false;
-              } else {
-                error4.style.display = "none";
-                error4.innerHTML = "";
-              }
+        if (passval.length < 8) {
+          error4.style.display = "block";
+          error4.innerHTML = "Password should contain at least 8 characters.";
+          isValid = false;
+        } else if (!alpha.test(passval) || !digit.test(passval)) {
+          error4.style.display = "block";
+          error4.innerHTML = "Password should contain both numbers and letters.";
+          isValid = false;
+        } else {
+          error4.style.display = "none";
+          error4.innerHTML = "";
+        }
 
-              if (passval !== cPassval) {
-                error5.style.display = "block";
-                error5.innerHTML = "Passwords do not match.";
-                isValid = false;
-              } else {
-                error5.style.display = "none";
-                error5.innerHTML = "";
-              }
+        if (passval !== cPassval) {
+          error5.style.display = "block";
+          error5.innerHTML = "Passwords do not match.";
+          isValid = false;
+        } else {
+          error5.style.display = "none";
+          error5.innerHTML = "";
+        }
 
-              return isValid;
-            }
+        return isValid;
+      }
 
-            signform.addEventListener("submit", function (e) {
-              const isNameValid = nameValidateChecking();
-              const isEmailValid = emailValidateChecking();
-              const isPhoneValid = phoneValidateChecking();
-              const isPasswordValid = passValidateChecking();
+      signform.addEventListener("submit", function (e) {
+        const isNameValid = nameValidateChecking();
+        const isEmailValid = emailValidateChecking();
+        const isPhoneValid = phoneValidateChecking();
+        const isPasswordValid = passValidateChecking();
 
-              // Prevent form submission if any validation fails
-              if (!isNameValid || !isEmailValid || !isPhoneValid || !isPasswordValid) {
-                e.preventDefault();
-              }
-            });
-          });
+        // Prevent form submission if any validation fails
+        if (!isNameValid || !isEmailValid || !isPhoneValid || !isPasswordValid) {
+          e.preventDefault();
+        }
+      });
+    });
 
 
-</script>
+  </script>
 
 
 </body>
+
 </html>

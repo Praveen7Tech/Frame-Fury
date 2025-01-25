@@ -80,7 +80,8 @@
                         <div class="col-md-8 col-lg-12">
                             <p class="wow fadeIn animated">From App Store or Google Play</p>
                             <div class="download-app wow fadeIn animated">
-                                <a href="#" class="hover-up mb-sm-4 mb-lg-0"><img class="active" src="assets/imgs/theme/app-store.jpg" alt=""></a>
+                                <a href="#" class="hover-up mb-sm-4 mb-lg-0"><img class="active"
+                                        src="assets/imgs/theme/app-store.jpg" alt=""></a>
                                 <a href="#" class="hover-up"><img src="assets/imgs/theme/google-play.jpg" alt=""></a>
                             </div>
                         </div>
@@ -99,7 +100,8 @@
                 <div class="footer-bottom"></div>
             </div>
             <div class="col-lg-6">
-                <p class="float-md-left font-sm text-muted mb-0">&copy; 2021, <strong class="text-brand">Frame Fury</strong> - </p>
+                <p class="float-md-left font-sm text-muted mb-0">&copy; 2021, <strong class="text-brand">Frame
+                        Fury</strong> - </p>
             </div>
             <div class="col-lg-6">
                 <p class="text-lg-end text-start font-sm text-muted mb-0">
@@ -152,19 +154,19 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-    fetch("/wishlistCount", {
-        method: "GET"
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            updateWishlistCount(data.wishListCount);
-        }
-    })
-    .catch(error => {
-        console.error("Error fetching wishlist count:", error);
+        fetch("/wishlistCount", {
+            method: "GET"
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    updateWishlistCount(data.wishListCount);
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching wishlist count:", error);
+            });
     });
-});
 
 </script>
 

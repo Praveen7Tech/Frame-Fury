@@ -1,6 +1,6 @@
 const User = require("../../models/userSchema")
 
-const GenerateReferral = async(req, res) => {
+const GenerateReferral = async (req, res) => {
     try {
         const userId = req.session.user;
         const { name } = req.body;
@@ -29,6 +29,6 @@ const GenerateReferral = async(req, res) => {
 
 
 
-module.exports ={
+module.exports = {
     GenerateReferral
 }

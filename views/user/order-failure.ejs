@@ -1,165 +1,193 @@
-<%-include("../../views/partials/user/header")%>
+<%-include(".. /../views/partials/user/header")%>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Payment Failure</title>
-<style>
-    .payment-failure-wrapper {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 1rem;
-        min-height: 100vh;
-        background-color: #fef8f8;
-    }
-    .payment-failure-card {
-        background-color: #ffffff;
-        border-radius: 12px;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-        padding: 2rem;
-        text-align: center;
-        max-width: 90%;
-        width: 400px;
-    }
-    .payment-failure-icon {
-        width: 100px;
-        height: 100px;
-        margin: 0 auto 1.5rem;
-        position: relative;
-        animation: shake 0.6s infinite;
-    }
-    .payment-failure-icon::before,
-    .payment-failure-icon::after {
-        content: '';
-        position: absolute;
-        background-color: #e74c3c;
-    }
-    .payment-failure-icon::before {
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-        animation: failure-pulse 2s infinite;
-    }
-    .payment-failure-icon::after {
-        width: 60%;
-        height: 8px;
-        background-color: white;
-        left: 50%;
-        top: 50%;
-        transform: rotate(45deg) translate(-50%, -50%);
-        transform-origin: center;
-    }
-    .payment-failure-icon span {
-        position: absolute;
-        width: 8px;
-        height: 60%;
-        background-color: white;
-        top: 50%;
-        left: 50%;
-        transform: rotate(135deg) translate(-50%, -50%);
-        transform-origin: center;
-    }
-    @keyframes failure-pulse {
-        0% {
-            transform: scale(0.95);
-            box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Failure</title>
+    <style>
+        .payment-failure-wrapper {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            min-height: 100vh;
+            background-color: #fef8f8;
         }
-        70% {
-            transform: scale(1);
-            box-shadow: 0 0 0 10px rgba(231, 76, 60, 0);
-        }
-        100% {
-            transform: scale(0.95);
-            box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
-        }
-    }
-    @keyframes shake {
-        0%, 100% {
-            transform: translateX(0);
-        }
-        25% {
-            transform: translateX(-5px);
-        }
-        50% {
-            transform: translateX(5px);
-        }
-        75% {
-            transform: translateX(-5px);
-        }
-    }
-    .payment-failure-title {
-        color: #e74c3c;
-        font-size: 1.8rem;
-        margin-bottom: 1rem;
-    }
-    .payment-failure-message {
-        color: #7f8c8d;
-        margin-bottom: 1.5rem;
-        line-height: 1.6;
-    }
-    .payment-failure-button {
-        background-color: #e74c3c;
-        border: none;
-        color: white;
-        padding: 12px 24px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 16px;
-        margin: 4px 8px;
-        cursor: pointer;
-        border-radius: 30px;
-        transition: background-color 0.3s, transform 0.3s;
-    }
-    .payment-failure-button:hover {
-        background-color: #c0392b;
-        transform: translateY(-2px);
-    }
-    .payment-failure-button-secondary {
-        background-color: #ffffff;
-        color: #e74c3c;
-        border: 2px solid #e74c3c;
-    }
-    .payment-failure-button-secondary:hover {
-        background-color: #fdeaea;
-    }
-    @media (max-width: 480px) {
+
         .payment-failure-card {
-            padding: 1.5rem;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            text-align: center;
+            max-width: 90%;
+            width: 400px;
         }
-        .payment-failure-title {
-            font-size: 1.5rem;
-        }
-        .payment-failure-message {
-            font-size: 0.9rem;
-        }
-        .payment-failure-icon {
-            width: 80px;
-            height: 80px;
-        }
-        .payment-failure-button {
-            padding: 10px 20px;
-            font-size: 14px;
-        }
-    }
-</style>
 
-<div class="payment-failure-wrapper">
-    <div class="payment-failure-card">
-        <div class="payment-failure-icon">
-            <span></span>
-        </div>
-        <h1 class="payment-failure-title">Payment Failed</h1>
-        <p class="payment-failure-message">Oops! Something went wrong with your payment. Please try again or contact customer support if the problem persists.</p>
-         <!-- Display Order ID -->
-         <p class="payment-failure-message">
-            <strong>Order ID:</strong> <%= orderId %>
-        </p>
-        <div>
-            <a href="/userProfile" class="payment-failure-button">Retry Payment</a>
-            <a href="/" class="payment-failure-button payment-failure-button-secondary">Go Back to Home</a>
+        .payment-failure-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 1.5rem;
+            position: relative;
+            animation: shake 0.6s infinite;
+        }
+
+        .payment-failure-icon::before,
+        .payment-failure-icon::after {
+            content: '';
+            position: absolute;
+            background-color: #e74c3c;
+        }
+
+        .payment-failure-icon::before {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            animation: failure-pulse 2s infinite;
+        }
+
+        .payment-failure-icon::after {
+            width: 60%;
+            height: 8px;
+            background-color: white;
+            left: 50%;
+            top: 50%;
+            transform: rotate(45deg) translate(-50%, -50%);
+            transform-origin: center;
+        }
+
+        .payment-failure-icon span {
+            position: absolute;
+            width: 8px;
+            height: 60%;
+            background-color: white;
+            top: 50%;
+            left: 50%;
+            transform: rotate(135deg) translate(-50%, -50%);
+            transform-origin: center;
+        }
+
+        @keyframes failure-pulse {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+            }
+
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 10px rgba(231, 76, 60, 0);
+            }
+
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+            }
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            50% {
+                transform: translateX(5px);
+            }
+
+            75% {
+                transform: translateX(-5px);
+            }
+        }
+
+        .payment-failure-title {
+            color: #e74c3c;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .payment-failure-message {
+            color: #7f8c8d;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .payment-failure-button {
+            background-color: #e74c3c;
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 8px;
+            cursor: pointer;
+            border-radius: 30px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .payment-failure-button:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .payment-failure-button-secondary {
+            background-color: #ffffff;
+            color: #e74c3c;
+            border: 2px solid #e74c3c;
+        }
+
+        .payment-failure-button-secondary:hover {
+            background-color: #fdeaea;
+        }
+
+        @media (max-width: 480px) {
+            .payment-failure-card {
+                padding: 1.5rem;
+            }
+
+            .payment-failure-title {
+                font-size: 1.5rem;
+            }
+
+            .payment-failure-message {
+                font-size: 0.9rem;
+            }
+
+            .payment-failure-icon {
+                width: 80px;
+                height: 80px;
+            }
+
+            .payment-failure-button {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+        }
+    </style>
+
+    <div class="payment-failure-wrapper">
+        <div class="payment-failure-card">
+            <div class="payment-failure-icon">
+                <span></span>
+            </div>
+            <h1 class="payment-failure-title">Payment Failed</h1>
+            <p class="payment-failure-message">Oops! Something went wrong with your payment. Please try again or contact
+                customer support if the problem persists.</p>
+            <!-- Display Order ID -->
+            <p class="payment-failure-message">
+                <strong>Order ID:</strong>
+                <%= orderId %>
+            </p>
+            <div>
+                <a href="/userProfile" class="payment-failure-button">Retry Payment</a>
+                <a href="/" class="payment-failure-button payment-failure-button-secondary">Go Back to Home</a>
+            </div>
         </div>
     </div>
-</div>
 
-<%-include("../../views/partials/user/footer")%>
+    <%-include(".. /../views/partials/user/footer")%>

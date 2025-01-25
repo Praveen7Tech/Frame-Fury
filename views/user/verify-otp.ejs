@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zxx">
 
@@ -28,13 +27,19 @@
             margin: 0;
             font-family: "Nunito Sans", sans-serif;
             background-image: url("/assets/imgs/buggati.jpg");
-            background-size: cover; /* Ensures the image covers the entire area */
-            background-repeat: no-repeat; /* Prevents tiling */
-            background-attachment: fixed; /* Makes the background stay fixed on scroll */
-            background-position: center; /* Centers the image */
+            background-size: cover;
+            /* Ensures the image covers the entire area */
+            background-repeat: no-repeat;
+            /* Prevents tiling */
+            background-attachment: fixed;
+            /* Makes the background stay fixed on scroll */
+            background-position: center;
+            /* Centers the image */
 
-            overflow-x: hidden; /* Prevents horizontal scrolling */
-            overflow-y: auto; /* Allows vertical scrolling if content overflows */
+            overflow-x: hidden;
+            /* Prevents horizontal scrolling */
+            overflow-y: auto;
+            /* Allows vertical scrolling if content overflows */
         }
 
 
@@ -52,12 +57,15 @@
             border-radius: 20px;
 
             /* Background with transparency */
-            background: rgba(69, 66, 66, 0.5); /* Lower alpha for more transparency */
+            background: rgba(69, 66, 66, 0.5);
+            /* Lower alpha for more transparency */
 
             /* Optional visual effects */
             box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
-            backdrop-filter: blur(4px); /* Adds a subtle blur effect to the background */
-            border: 1px solid rgba(255, 255, 255, 0.18); /* Adds a faint border for clarity */
+            backdrop-filter: blur(4px);
+            /* Adds a subtle blur effect to the background */
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            /* Adds a faint border for clarity */
         }
 
 
@@ -291,7 +299,7 @@
 
         function resendOTP() {
             clearInterval(timerInterval);
-            timer = 299; 
+            timer = 299;
             document.getElementById("otp").disabled = false;
             document.getElementById("timerValue").classList.remove("expired");
             startTimer();

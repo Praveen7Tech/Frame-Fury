@@ -14,9 +14,9 @@ const customerInfo = async (req, res) => {
                 { email: { $regex: ".*" + search + ".*", $options: "i" } }
             ]
         })
-        .limit(limit)
-        .skip((page - 1) * limit)
-        .exec();
+            .limit(limit)
+            .skip((page - 1) * limit)
+            .exec();
 
         const count = await User.countDocuments({
             isAdmin: false,

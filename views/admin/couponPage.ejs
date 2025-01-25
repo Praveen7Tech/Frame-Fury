@@ -1,25 +1,29 @@
-<%-include("../../views/partials/admin/header")%>
+<%-include(".. /../views/partials/admin/header")%>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
     <style>
         body {
             background-color: #f8f9fa;
         }
+
         .table-wrapper {
             background: #fff;
             border-radius: 10px;
             padding: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
+
         .modal-header {
             background-color: #0d6efd;
             color: white;
         }
+
         .btn-add {
             background-color: #0d6efd;
             color: white;
             border: none;
         }
+
         .btn-add:hover {
             background-color: #084298;
         }
@@ -29,141 +33,158 @@
             color: red;
         }
     </style>
-</head>
-<body>
-    <div class="container mt-5">
-        <div class="row">
-            <div class="col-md-12">
-                <h2 class="text-center mb-4">Coupon Management</h2>
-                <div class="table-wrapper">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h4>Coupons</h4>
-                        <button class="btn btn-add" data-bs-toggle="modal" data-bs-target="#addCouponModal">Add Coupon</button>
-                    </div>
-                    <table class="table table-bordered table-striped text-center">
-                        <thead class="table-primary">
-                            <tr>
-                                <th>Code</th>
-                                <th>Min Purchase</th>
-                                <th>offer Price</th>
-                                <th>Usage Limit</th>
-                                <th>Expiry Date</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        <% coupon.forEach(coupon => { %>   
-                            <!-- Dynamically add coupon rows here -->
-                            <tr>
-                                <td><%= coupon.name%></td>
-                                <td><%= coupon.minimumPrice%></td>
-                                <td><%= coupon.offerPrice%></td>
-                                <td><%= coupon.UsageLimit%></td>
-                                <td><%= coupon.expireOn.toISOString().split('T')[0] %></td>
-                                <td><%= coupon.isList ? 'active' : 'Inactive'%></td>
-                                <td>
-                                    <button class="btn btn-warning btn-sm" onclick="editOffer(
+    </head>
+
+    <body>
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2 class="text-center mb-4">Coupon Management</h2>
+                    <div class="table-wrapper">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4>Coupons</h4>
+                            <button class="btn btn-add" data-bs-toggle="modal" data-bs-target="#addCouponModal">Add
+                                Coupon</button>
+                        </div>
+                        <table class="table table-bordered table-striped text-center">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Min Purchase</th>
+                                    <th>offer Price</th>
+                                    <th>Usage Limit</th>
+                                    <th>Expiry Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% coupon.forEach(coupon=> { %>
+                                    <!-- Dynamically add coupon rows here -->
+                                    <tr>
+                                        <td>
+                                            <%= coupon.name%>
+                                        </td>
+                                        <td>
+                                            <%= coupon.minimumPrice%>
+                                        </td>
+                                        <td>
+                                            <%= coupon.offerPrice%>
+                                        </td>
+                                        <td>
+                                            <%= coupon.UsageLimit%>
+                                        </td>
+                                        <td>
+                                            <%= coupon.expireOn.toISOString().split('T')[0] %>
+                                        </td>
+                                        <td>
+                                            <%= coupon.isList ? 'active' : 'Inactive' %>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-warning btn-sm" onclick="editOffer(
                                         '<%= coupon._id %>', 
                                         <%= coupon.offerPrice %>, 
                                         '<%= coupon.expireOn.toISOString().split('T')[0] %>', 
                                         <%= coupon.minimumPrice %>,
                                         <%= coupon.UsageLimit%>
                                        )">
-                                       Edit
-                                    </button>
+                                                Edit
+                                            </button>
 
-                                    <button class="btn btn-danger btn-sm" onclick="deleteCoupon('<%= coupon._id%>')">Delete</button>
-                                </td>
-                            </tr>
-                        <%})%>
-                        </tbody>
-                    </table>
+                                            <button class="btn btn-danger btn-sm"
+                                                onclick="deleteCoupon('<%= coupon._id%>')">Delete</button>
+                                        </td>
+                                    </tr>
+                                    <%})%>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Add Coupon Modal -->
-    <div class="modal fade" id="addCouponModal" tabindex="-1" aria-labelledby="addCouponModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addCouponModalLabel">Add New Coupon</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="addCouponForm" method="POST" action="/admin/addCoupon">
-                        <div class="mb-3">
-                            <label for="couponCode" class="form-label">Coupon Code</label>
-                            <input type="text" class="form-control" id="couponCode" name="code" >
-                            <div id="code-error" class="error-message"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="minPurchaseAmount" class="form-label">Min Purchase Amount</label>
-                            <input type="number" class="form-control" id="minPurchaseAmount" name="minPurchase">
-                            <div id="minimumPrice-error" class="error-message"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="maxDiscountAmount" class="form-label">Discount Amount</label>
-                            <input type="number" class="form-control" id="DiscountAmount" name="offerPrice">
-                            <div id="discount-error" class="error-message"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="usageLimit" class="form-label">Usage Limit</label>
-                            <input type="number" class="form-control" id="UsageLimit" name="UsageLimit">
-                            <div id="usageLimit-error" class="error-message"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="expiryDate" class="form-label">Expiry Date</label>
-                            <input type="date" class="form-control" id="expiryDate" name="expiry">
-                            <div id="expiredate-error" class="error-message"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="status" class="form-label">Status</label>
-                            <select class="form-select" id="status" name="status" >
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100" onclick="return validateForm()">Add Coupon</button>
-                    </form>
+        <!-- Add Coupon Modal -->
+        <div class="modal fade" id="addCouponModal" tabindex="-1" aria-labelledby="addCouponModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addCouponModalLabel">Add New Coupon</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addCouponForm" method="POST" action="/admin/addCoupon">
+                            <div class="mb-3">
+                                <label for="couponCode" class="form-label">Coupon Code</label>
+                                <input type="text" class="form-control" id="couponCode" name="code">
+                                <div id="code-error" class="error-message"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="minPurchaseAmount" class="form-label">Min Purchase Amount</label>
+                                <input type="number" class="form-control" id="minPurchaseAmount" name="minPurchase">
+                                <div id="minimumPrice-error" class="error-message"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="maxDiscountAmount" class="form-label">Discount Amount</label>
+                                <input type="number" class="form-control" id="DiscountAmount" name="offerPrice">
+                                <div id="discount-error" class="error-message"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="usageLimit" class="form-label">Usage Limit</label>
+                                <input type="number" class="form-control" id="UsageLimit" name="UsageLimit">
+                                <div id="usageLimit-error" class="error-message"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="expiryDate" class="form-label">Expiry Date</label>
+                                <input type="date" class="form-control" id="expiryDate" name="expiry">
+                                <div id="expiredate-error" class="error-message"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="status" class="form-label">Status</label>
+                                <select class="form-select" id="status" name="status">
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100" onclick="return validateForm()">Add
+                                Coupon</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Bootstrap JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <!-- Bootstrap JS Bundle -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 
-    <script>
+        <script>
 
-        // Delete coupon function
-         function deleteCoupon(couponId){
-            Swal.fire({
-                title:"Are You Sure..!",
-                text:"Permenetly delete this Coupen..",
-                icon:"warning",
-                showCancelButton:true,
-                confirButtonColor:'#d33',
-                cancelButtonColor:'#3085d6',
-                confirmButtonText:"Delet it.."
-            })
-            .then(result=>{
-                if(result.isConfirmed){
-                    window.location.href = `/admin/deleteCoupon/?couponId=${couponId}`
-                }
-            })
-         }
+            // Delete coupon function
+            function deleteCoupon(couponId) {
+                Swal.fire({
+                    title: "Are You Sure..!",
+                    text: "Permenetly delete this Coupen..",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: "Delet it.."
+                })
+                    .then(result => {
+                        if (result.isConfirmed) {
+                            window.location.href = `/admin/deleteCoupon/?couponId=${couponId}`
+                        }
+                    })
+            }
 
-         // Edit Coupon function
-         function editOffer(couponId,offerPrice,expireOn,minimumPrice,usageLimit) {
-            Swal.fire({
-                title: "Edit this Coupon",
-                html: `
+            // Edit Coupon function
+            function editOffer(couponId, offerPrice, expireOn, minimumPrice, usageLimit) {
+                Swal.fire({
+                    title: "Edit this Coupon",
+                    html: `
                     <div>
                         <label>Discount Amount</label>
                         <input type="number" id="DiscountAmount" class="swal2-input" placeholder="Enter Discount Amount" value="${offerPrice}">
@@ -176,115 +197,116 @@
                         <input type="number" id="minPurchaseAmount" class="swal2-input" placeholder="Enter Minimum Purchase Amount" value="${minimumPrice}">
                     </div>
                 `,
-                showCancelButton: true,
-                confirmButtonText: "Update",
-                preConfirm: () => {
-                    const popup = Swal.getPopup(); // Get the modal DOM node
-                    const DiscountAmount = popup.querySelector("#DiscountAmount").value;
-                    const UsageLimit = popup.querySelector("#UsageLimit").value;
-                    const expiryDate = popup.querySelector("#expiryDate").value;
-                    const minPurchase = popup.querySelector("#minPurchaseAmount").value;
+                    showCancelButton: true,
+                    confirmButtonText: "Update",
+                    preConfirm: () => {
+                        const popup = Swal.getPopup(); // Get the modal DOM node
+                        const DiscountAmount = popup.querySelector("#DiscountAmount").value;
+                        const UsageLimit = popup.querySelector("#UsageLimit").value;
+                        const expiryDate = popup.querySelector("#expiryDate").value;
+                        const minPurchase = popup.querySelector("#minPurchaseAmount").value;
 
-                    console.log("DiscountAmount:", DiscountAmount);
-                    console.log("expiryDate:", expiryDate);
-                    console.log("minPurchase:", usageLimit);
+                        console.log("DiscountAmount:", DiscountAmount);
+                        console.log("expiryDate:", expiryDate);
+                        console.log("minPurchase:", usageLimit);
 
-                    // Validation
-                    if (!DiscountAmount || DiscountAmount <= 0) {
-                        Swal.showValidationMessage("Please Enter A valid Amount.");
-                        return false;
-                    }
+                        // Validation
+                        if (!DiscountAmount || DiscountAmount <= 0) {
+                            Swal.showValidationMessage("Please Enter A valid Amount.");
+                            return false;
+                        }
 
-                    return { couponId, DiscountAmount, expiryDate, minPurchase,UsageLimit };
-                },
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    const { couponId, DiscountAmount, expiryDate, minPurchase,UsageLimit } = result.value;
+                        return { couponId, DiscountAmount, expiryDate, minPurchase, UsageLimit };
+                    },
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const { couponId, DiscountAmount, expiryDate, minPurchase, UsageLimit } = result.value;
 
-                    fetch("/admin/editCoupon", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({
-                            couponId,
-                            amount: DiscountAmount,
-                            expiryDate,
-                            minPurchase,
-                            UsageLimit
-                        }),
-                    })
-                        .then((response) => {
-                            if (response.ok) {
-                                Swal.fire("Success", "Coupon Updated Successfully", "success").then(() =>
-                                    location.reload()
-                                );
-                            } else {
-                                Swal.fire("Error", "Error in Updating Coupon", "error");
-                            }
+                        fetch("/admin/editCoupon", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                couponId,
+                                amount: DiscountAmount,
+                                expiryDate,
+                                minPurchase,
+                                UsageLimit
+                            }),
                         })
-                        .catch((err) => {
-                            console.error(err);
-                            Swal.fire("Error.!", "An Error occurred While Updating Coupon.");
-                        });
+                            .then((response) => {
+                                if (response.ok) {
+                                    Swal.fire("Success", "Coupon Updated Successfully", "success").then(() =>
+                                        location.reload()
+                                    );
+                                } else {
+                                    Swal.fire("Error", "Error in Updating Coupon", "error");
+                                }
+                            })
+                            .catch((err) => {
+                                console.error(err);
+                                Swal.fire("Error.!", "An Error occurred While Updating Coupon.");
+                            });
+                    }
+                });
+            }
+
+            // form validation for add coupon
+            function validateForm() {
+                clearErrorMessage();
+                const couponCode = document.getElementById("couponCode").value;
+                const minPurchaseAmount = document.getElementById("minPurchaseAmount").value;
+                const discountAmount = document.getElementById("DiscountAmount").value;
+                const UsageLimit = document.getElementById("UsageLimit").value;
+                const expiryDate = document.getElementById("expiryDate").value;
+
+                let isValid = true;
+
+                if (couponCode === "" || couponCode.length < 4) {
+                    errorMessage("code-error", "Coupon code must be at least 4 characters long");
+                    isValid = false;
                 }
-            });
-        }
 
-        // form validation for add coupon
-        function validateForm() {
-            clearErrorMessage();
-            const couponCode = document.getElementById("couponCode").value;
-            const minPurchaseAmount = document.getElementById("minPurchaseAmount").value;
-            const discountAmount = document.getElementById("DiscountAmount").value;
-            const UsageLimit = document.getElementById("UsageLimit").value;
-            const expiryDate = document.getElementById("expiryDate").value;
+                if (minPurchaseAmount === "" || minPurchaseAmount <= 0) {
+                    errorMessage("minimumPrice-error", "Minimum Purchase Amount must be greater than 0");
+                    isValid = false;
+                }
 
-            let isValid = true;
+                if (discountAmount === "" || discountAmount < minPurchaseAmount) {
+                    errorMessage("discount-error", "Discount amount must be greater than 0 and less than the minimum purchase amount");
+                    isValid = false;
+                }
 
-            if (couponCode === "" || couponCode.length < 4) {
-                errorMessage("code-error", "Coupon code must be at least 4 characters long");
-                isValid = false;
+                if (UsageLimit === "" || UsageLimit > 5) {
+                    errorMessage("usageLimit-error", "Usage limit must not be greater than 5");
+                    isValid = false;
+                }
+
+                if (expiryDate === "" || new Date(expiryDate) <= new Date()) {
+                    errorMessage("expiredate-error", "The expiry date must be at least one day after today");
+                    isValid = false;
+                }
+
+                return isValid;
             }
 
-            if (minPurchaseAmount === "" || minPurchaseAmount <= 0) {
-                errorMessage("minimumPrice-error", "Minimum Purchase Amount must be greater than 0");
-                isValid = false;
+            function errorMessage(elementId, message) {
+                let errorElement = document.getElementById(elementId);
+                errorElement.innerText = message;
+                errorElement.style.display = "block";
             }
 
-            if (discountAmount === "" || discountAmount < minPurchaseAmount) {
-                errorMessage("discount-error", "Discount amount must be greater than 0 and less than the minimum purchase amount");
-                isValid = false;
+            function clearErrorMessage() {
+                const errorElements = document.getElementsByClassName("error-message");
+                Array.from(errorElements).forEach((element) => {
+                    element.innerText = "";
+                    element.style.display = "none";
+                });
             }
 
-            if (UsageLimit === "" || UsageLimit > 5) {
-                errorMessage("usageLimit-error", "Usage limit must not be greater than 5");
-                isValid = false;
-            }
+        </script>
 
-            if (expiryDate === "" || new Date(expiryDate) <= new Date()) {
-                errorMessage("expiredate-error", "The expiry date must be at least one day after today");
-                isValid = false;
-            }
+    </body>
 
-            return isValid;
-        }
-
-        function errorMessage(elementId, message) {
-            let errorElement = document.getElementById(elementId);
-            errorElement.innerText = message;
-            errorElement.style.display = "block";
-        }
-
-        function clearErrorMessage() {
-            const errorElements = document.getElementsByClassName("error-message");
-            Array.from(errorElements).forEach((element) => {
-                element.innerText = "";
-                element.style.display = "none";
-            });
-        }
-
-    </script>
-    
-</body>
-</html>
+    </html>

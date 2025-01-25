@@ -36,9 +36,9 @@ const saleFilter = async (req, res) => {
 
         // Fetch filtered orders with pagination
         const skip = (page - 1) * limit;
-        
+
         const orders = await Order.find({ createdAt: { $gte: dayStart, $lte: dayEnd } })
-            .populate("userId","name email")
+            .populate("userId", "name email")
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(parseInt(limit));
@@ -71,48 +71,48 @@ const saleFilter = async (req, res) => {
 
 
 
-const saleFilterByDate = async(req,res)=>{
+const saleFilterByDate = async (req, res) => {
     try {
-        const {startDate,endDate} = req.query;
-        console.log(" g g",startDate,endDate)
+        const { startDate, endDate } = req.query;
+        console.log(" g g", startDate, endDate)
 
-        if(!startDate || !endDate){
-            return res.status(400).json({message:"Both Dates are required..!"})
+        if (!startDate || !endDate) {
+            return res.status(400).json({ message: "Both Dates are required..!" })
         }
 
         const start = new Date(startDate)
         const end = new Date(endDate)
 
-        end.setUTCHours(23,59,59,999)
+        end.setUTCHours(23, 59, 59, 999)
 
-        const orders= await Order.find({createdAt:{$gte:start,$lte:end}}).populate("userId","name email").sort({createdAt: -1})
+        const orders = await Order.find({ createdAt: { $gte: start, $lte: end } }).populate("userId", "name email").sort({ createdAt: -1 })
 
         const saleCount = orders.length
-        const saleTotal = orders.reduce((sum,order)=> sum + order.total ,0)
-        const productDiscount = orders.reduce((sum, order)=> sum + order.productOfferTotal ,0);
-        const couponDiscount = orders.reduce((sum, order)=> sum + order.couponDiscount ,0)
+        const saleTotal = orders.reduce((sum, order) => sum + order.total, 0)
+        const productDiscount = orders.reduce((sum, order) => sum + order.productOfferTotal, 0);
+        const couponDiscount = orders.reduce((sum, order) => sum + order.couponDiscount, 0)
 
-        res.status(200).json({orders,saleCount,productDiscount,saleTotal,couponDiscount})
+        res.status(200).json({ orders, saleCount, productDiscount, saleTotal, couponDiscount })
     } catch (error) {
-        console.error("Error in sale filtering by price..",error);
-        res.status(500).json({message:"Internal server Error...!"})
+        console.error("Error in sale filtering by price..", error);
+        res.status(500).json({ message: "Internal server Error...!" })
     }
 }
 
 
-const downloadReport = async(req,res)=>{
+const downloadReport = async (req, res) => {
     try {
-        const {saleCount,totalSale,overallDiscount,couponDiscount,orders} = req.body;
+        const { saleCount, totalSale, overallDiscount, couponDiscount, orders } = req.body;
 
         // craete excel workbook and worksheet
-        const workBook =new ExcelJs.Workbook();
+        const workBook = new ExcelJs.Workbook();
         const workSheet = workBook.addWorksheet("Sales Report");
 
         // create header row
-        workSheet.addRow(["Date","Name","Email","Address","Product Details","Payment Method","Coupon Discount","Product Discount","Sub Total","Net total"]);
+        workSheet.addRow(["Date", "Name", "Email", "Address", "Product Details", "Payment Method", "Coupon Discount", "Product Discount", "Sub Total", "Net total"]);
 
         // overall data report
-        orders.forEach((order)=>{
+        orders.forEach((order) => {
             workSheet.addRow([
                 order.date,
                 order.name,
@@ -129,20 +129,20 @@ const downloadReport = async(req,res)=>{
 
         // table datas
         workSheet.addRow([])
-        workSheet.addRow(["Overal Sale Count",saleCount])
-        workSheet.addRow(["Overall Order Amount",totalSale])
-        workSheet.addRow(["Product Discount",overallDiscount])
-        workSheet.addRow(["Coupon Discount",couponDiscount])
+        workSheet.addRow(["Overal Sale Count", saleCount])
+        workSheet.addRow(["Overall Order Amount", totalSale])
+        workSheet.addRow(["Product Discount", overallDiscount])
+        workSheet.addRow(["Coupon Discount", couponDiscount])
 
         // set a header response to trigger a file to download
-        res.setHeader("Content-Type","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-        res.setHeader("Content-Disposition","attachment; filename=Sales_Report.xlsx")
+        res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        res.setHeader("Content-Disposition", "attachment; filename=Sales_Report.xlsx")
 
         //sent the work book to download
         await workBook.xlsx.write(res);
         res.end;
     } catch (error) {
-        console.error("Error in Generating the Sale Report..",error);
+        console.error("Error in Generating the Sale Report..", error);
         res.status(500).send("Failed to generate Report.")
     }
 }

@@ -1,154 +1,184 @@
-<%-include("../../views/partials/user/header")%>
+<%-include(".. /../views/partials/user/header")%>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Order Success</title>
-<style>
-    .order-success-wrapper {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 1rem; /* Reduced padding */
-        min-height: 100vh;
-    }
-    .order-success-card {
-        background-color: #ffffff;
-        border-radius: 12px;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-        padding: 2rem;
-        text-align: center;
-        max-width: 90%;
-        width: 400px;
-    }
-    .order-success-icon {
-        width: 100px;
-        height: 100px;
-        margin: 0 auto 1.5rem;
-        position: relative;
-        animation: bounce 2s infinite; /* Added bounce animation */
-    }
-    .order-success-icon::before,
-    .order-success-icon::after {
-        content: '';
-        position: absolute;
-        background-color: #4CAF50;
-    }
-    .order-success-icon::before {
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-        animation: order-success-pulse 2s infinite;
-    }
-    .order-success-icon::after {
-        width: 40px;
-        height: 80px;
-        border-right: 8px solid white;
-        border-bottom: 8px solid white;
-        transform: rotate(45deg) translate(-50%, -65%);
-        left: 50%;
-        top: 50%;
-    }
-    @keyframes order-success-pulse {
-        0% {
-            transform: scale(0.95);
-            box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Success</title>
+    <style>
+        .order-success-wrapper {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            /* Reduced padding */
+            min-height: 100vh;
         }
-        70% {
-            transform: scale(1);
-            box-shadow: 0 0 0 10px rgba(76, 175, 80, 0);
-        }
-        100% {
-            transform: scale(0.95);
-            box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
-        }
-    }
-    @keyframes bounce {
-        0%, 20%, 50%, 80%, 100% {
-            transform: translateY(0);
-        }
-        40% {
-            transform: translateY(-10px);
-        }
-        60% {
-            transform: translateY(-5px);
-        }
-    }
-    .order-success-title {
-        color: #2c3e50;
-        font-size: 1.8rem;
-        margin-bottom: 1rem;
-    }
-    .order-success-message {
-        color: #7f8c8d;
-        margin-bottom: 1.5rem;
-        line-height: 1.6;
-    }
-    .order-success-button {
-        background-color: #4CAF50;
-        border: none;
-        color: white;
-        padding: 12px 24px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 16px;
-        margin: 4px 8px;
-        cursor: pointer;
-        border-radius: 30px;
-        transition: background-color 0.3s, transform 0.3s;
-    }
-    .order-success-button:hover {
-        background-color: #45a049;
-        transform: translateY(-2px);
-    }
-    .order-success-button-secondary {
-        background-color: #ffffff;
-        color: #4CAF50;
-        border: 2px solid #4CAF50;
-    }
-    .order-success-button-secondary:hover {
-        background-color: #f1f8e9;
-    }
-    @media (max-width: 480px) {
+
         .order-success-card {
-            padding: 1.5rem;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            text-align: center;
+            max-width: 90%;
+            width: 400px;
         }
-        .order-success-title {
-            font-size: 1.5rem;
-        }
-        .order-success-message {
-            font-size: 0.9rem;
-        }
+
         .order-success-icon {
-            width: 80px;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 1.5rem;
+            position: relative;
+            animation: bounce 2s infinite;
+            /* Added bounce animation */
+        }
+
+        .order-success-icon::before,
+        .order-success-icon::after {
+            content: '';
+            position: absolute;
+            background-color: #4CAF50;
+        }
+
+        .order-success-icon::before {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            animation: order-success-pulse 2s infinite;
+        }
+
+        .order-success-icon::after {
+            width: 40px;
             height: 80px;
+            border-right: 8px solid white;
+            border-bottom: 8px solid white;
+            transform: rotate(45deg) translate(-50%, -65%);
+            left: 50%;
+            top: 50%;
         }
+
+        @keyframes order-success-pulse {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
+            }
+
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 10px rgba(76, 175, 80, 0);
+            }
+
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+            }
+        }
+
+        @keyframes bounce {
+
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateY(0);
+            }
+
+            40% {
+                transform: translateY(-10px);
+            }
+
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .order-success-title {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .order-success-message {
+            color: #7f8c8d;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
         .order-success-button {
-            padding: 10px 20px;
-            font-size: 14px;
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 8px;
+            cursor: pointer;
+            border-radius: 30px;
+            transition: background-color 0.3s, transform 0.3s;
         }
-    }
-</style>
+
+        .order-success-button:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .order-success-button-secondary {
+            background-color: #ffffff;
+            color: #4CAF50;
+            border: 2px solid #4CAF50;
+        }
+
+        .order-success-button-secondary:hover {
+            background-color: #f1f8e9;
+        }
+
+        @media (max-width: 480px) {
+            .order-success-card {
+                padding: 1.5rem;
+            }
+
+            .order-success-title {
+                font-size: 1.5rem;
+            }
+
+            .order-success-message {
+                font-size: 0.9rem;
+            }
+
+            .order-success-icon {
+                width: 80px;
+                height: 80px;
+            }
+
+            .order-success-button {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+        }
+    </style>
 
 
-<div class="order-success-wrapper">
-    <div class="order-success-card">
-        <div class="order-success-icon"></div>
-        <h1 class="order-success-title">Order Successful!</h1>
-        <p class="order-success-message">
-            Thank you for your purchase. Your order has been received and is being processed.
-            We'll send you an update when your order ships.
-        </p>
-        <!-- Display Order ID -->
-        <p class="order-success-message">
-            <strong>Order ID:</strong> <%= orderId %>
-        </p>
-        <div>
-            <a href="/userProfile" class="order-success-button">View Order Details</a>
-            <a href="/" class="order-success-button order-success-button-secondary">Go Back to Home</a>
+    <div class="order-success-wrapper">
+        <div class="order-success-card">
+            <div class="order-success-icon"></div>
+            <h1 class="order-success-title">Order Successful!</h1>
+            <p class="order-success-message">
+                Thank you for your purchase. Your order has been received and is being processed.
+                We'll send you an update when your order ships.
+            </p>
+            <!-- Display Order ID -->
+            <p class="order-success-message">
+                <strong>Order ID:</strong>
+                <%= orderId %>
+            </p>
+            <div>
+                <a href="/userProfile" class="order-success-button">View Order Details</a>
+                <a href="/" class="order-success-button order-success-button-secondary">Go Back to Home</a>
+            </div>
         </div>
     </div>
-</div>
 
 
-<%-include("../../views/partials/user/footer")%>
+    <%-include(".. /../views/partials/user/footer")%>

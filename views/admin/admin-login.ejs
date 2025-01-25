@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" type="image/x-icon" href="/backend/assets/imgs/theme/ecom-logo.jpg">
     <title>Admin Login</title>
     <style>
-        body, html {
+        body,
+        html {
             height: 100%;
             margin: 0;
             font-family: Arial, sans-serif;
         }
+
         .background {
             background-image: url("/assets/imgs/buggati.jpg");
             height: 100%;
@@ -22,6 +25,7 @@
             justify-content: flex-start;
             padding-left: 10%;
         }
+
         .login-container {
             background-color: rgba(0, 0, 0, 0.7);
             padding: 40px;
@@ -30,16 +34,19 @@
             max-width: 400px;
             width: 100%;
         }
+
         .login-container h2 {
             margin-top: 0;
             margin-bottom: 5px;
             font-size: 24px;
         }
+
         .login-container h3 {
             margin-top: 0;
             margin-bottom: 20px;
             font-size: 28px;
         }
+
         .login-form input[type="email"],
         .login-form input[type="password"] {
             width: 100%;
@@ -50,6 +57,7 @@
             background-color: rgba(255, 255, 255, 0.1);
             color: white;
         }
+
         .login-form input[type="submit"] {
             width: 100%;
             padding: 10px;
@@ -61,21 +69,26 @@
             transition: background-color 0.3s;
             font-size: 16px;
         }
+
         .login-form input[type="submit"]:hover {
             background-color: #ff7f50;
         }
+
         .forgot-password {
             text-align: center;
             margin-top: 15px;
         }
+
         .forgot-password a {
             color: #ff6347;
             text-decoration: none;
             font-size: 14px;
         }
+
         .forgot-password a:hover {
             text-decoration: underline;
         }
+
         .input-label {
             font-size: 14px;
             margin-bottom: 5px;
@@ -83,6 +96,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="background">
         <div class="login-container">
@@ -101,7 +115,7 @@
             </form>
 
             <div class="forgot-password">
-                
+
             </div>
         </div>
     </div>
@@ -116,7 +130,7 @@
     </style>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', async function(event) {
+        document.getElementById('loginForm').addEventListener('submit', async function (event) {
             event.preventDefault(); // Prevent form from submitting until validation is done
 
             // Clear previous error messages

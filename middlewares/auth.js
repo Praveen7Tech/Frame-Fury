@@ -7,7 +7,7 @@ const userAuth = (req, res, next) => {
             .then(data => {
                 if (data) {
                     if (!data.isBlocked) {
-                        next(); 
+                        next();
                     } else {
                         req.session.destroy(() => {
                             res.redirect("/login");
@@ -26,24 +26,24 @@ const userAuth = (req, res, next) => {
     }
 };
 
-const adminAuth = (req,res,next)=>{
-   if(req.session.admin){
-    User.findOne({isAdmin:true})
-    .then(data=>{
-        if(data){
-            next()
-        }else{
-            return res.redirect("/admin/login")
-        }
-    })
-    .catch(error=>{
-        console.error("Error in Login Admin panel",error)
-        res.status(500).send("Internal Server Error..")
-    })
-   }else{
-    console.log("Un Authorized access attempt")
-    res.redirect("/admin/login")
-   }
+const adminAuth = (req, res, next) => {
+    if (req.session.admin) {
+        User.findOne({ isAdmin: true })
+            .then(data => {
+                if (data) {
+                    next()
+                } else {
+                    return res.redirect("/admin/login")
+                }
+            })
+            .catch(error => {
+                console.error("Error in Login Admin panel", error)
+                res.status(500).send("Internal Server Error..")
+            })
+    } else {
+        console.log("Un Authorized access attempt")
+        res.redirect("/admin/login")
+    }
 }
 
 //error handling middleware
@@ -59,7 +59,7 @@ const adminAuth = (req,res,next)=>{
 
 
 
-module.exports={
+module.exports = {
     userAuth,
     adminAuth,
     // errorHandlingMid
