@@ -160,7 +160,7 @@ const placeOrder = async (req, res) => {
 
     req.session.cartCount = 0; // updating cart count in dynamically
 
-    res.json({ success: true, orderId: order._id, discount });
+    res.json({ success: true, orderId: order.orderId, discount });
     console.log("Order placed successfully");
   } catch (error) {
     console.error("Error placing order:", error);
@@ -249,11 +249,8 @@ const verifyRazorPayOrder = async (req, res) => {
 
           await existingOrder.save();
 
-          // Clear the user's cart
-          //await Cart.findOneAndUpdate({ userId }, { items: [] });
-
           console.log("Re payment successfull")
-          return res.json({ success: true, message: "Payment Successful Existing order hs been Updated.", orderId: existingOrder._id })
+          return res.json({ success: true, message: "Payment Successful Existing order hs been Updated.", orderId: existingOrder.orderId })
         }
       } else {
         return res.status(400).json({ success: false, message: "Invalid signature, or Payment Verification Failed" })
@@ -392,7 +389,7 @@ const verifyRazorPayOrder = async (req, res) => {
       res.json({
         success: true,
         message: "Payment successful! Your order has been placed.",
-        orderId: order._id,
+        orderId: order.orderId,
         discount,
       });
     } else {
@@ -401,7 +398,7 @@ const verifyRazorPayOrder = async (req, res) => {
       res.json({
         success: false,
         message: "Payment failed. Your order has been placed with a Failed status.",
-        orderId: order._id,
+        orderId: order.orderId,
       });
     }
   } catch (error) {
@@ -522,7 +519,7 @@ const placeOrderWallet = async (req, res) => {
     console.log("Order placed successfully");
 
     // Send response
-    return res.json({ success: true, orderId: order._id });
+    return res.json({ success: true, orderId: order.orderId });
 
 
   } catch (error) {

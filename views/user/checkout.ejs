@@ -61,9 +61,9 @@
                                 <div class="container">
                                     <div class="row">
                                         <% // Predefined list of images const
-                                            imagess=[ "assets/imgs/banner/coupon-4.webp"
-                                            , "assets/imgs/banner/coupon-2.webp" , "assets/imgs/banner/coupon-3.webp"
-                                            , "assets/imgs/banner/frame-3.png" ]; %>
+                                            imagess=[ "assets/imgs/banner/coup-1.jpg"
+                                            , "assets/imgs/banner/coup-4.jpg" , "assets/imgs/banner/coup-3.jpg"
+                                            , "assets/imgs/banner/coup-2.jpg" ]; %>
 
                                             <% for (let i=0; i < coupon.length; i++) { %>
                                                 <div class="col-lg-4 col-md-6">
@@ -72,7 +72,7 @@
                                                         <img src="<%= imagess[i % imagess.length] %>"
                                                             alt="Coupon Image">
                                                         <div class="banner-text">
-                                                            <span>Exclusive Coupon</span>
+                                                            <span style="color: rgb(248, 247, 246);">Exclusive Coupon</span>
                                                             <h4>
                                                                 <span style="color: rgb(136, 206, 244);">Save </span>
                                                                 <span style="color: rgb(70, 213, 14);">
@@ -84,7 +84,7 @@
                                                                     <%= coupon[i].minimumPrice %>
                                                                 </span>
                                                             </h4>
-                                                            <span>COUPON CODE:</span>
+                                                            <span style="color: rgb(121, 141, 148);">COUPON CODE:</span>
                                                             <strong style="color: white;" id="couponCode-<%= i %>">
                                                                 <%= coupon[i].name %>
                                                             </strong>
@@ -93,7 +93,7 @@
                                                                 Copy
                                                             </button>
                                                             <br>
-                                                            <span>Expires On:</span>
+                                                            <span style="color: bisque;">Expires On:</span>
                                                             <strong style="color: white;">
                                                                 <%= new Date(coupon[i].expireOn).toLocaleDateString() %>
                                                             </strong>
@@ -659,12 +659,7 @@
                                         const cancelData = await cancelResponse.json();
                                         console.log("Cancel Response:", cancelData);
 
-                                        Swal.fire({
-                                            icon: "error",
-                                            title: "Payment Failed",
-                                            text: "Your payment was unsuccessful. Order has been placed with status 'Payment Failed'.",
-                                            confirmButtonText: "OK"
-                                        }).then(() => window.location.href = `/oderFailure?orderId=${cancelData.orderId}`);
+                                         window.location.href = `/oderFailure?orderId=${cancelData.orderId}`;
                                     }
                                 },
                                 theme: { color: "#3399cc" },

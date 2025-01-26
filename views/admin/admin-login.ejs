@@ -168,16 +168,16 @@
                 const data = await response.json();
 
                 if (response.status === 200 && data.success) {
-                    // If login is successful, redirect to admin page
+                    
                     window.location.href = "/admin";
                 } else {
                     // If there is an error, display the message
-                    if (data.message.includes("incorrect password")) {
+                    if (data.message.includes(" Incorrect password!")) {
                         document.getElementById('passwordError').textContent = data.message;
                     } else if (data.message.includes("not found")) {
                         document.getElementById('emailError').textContent = data.message;
                     } else {
-                        document.getElementById('passwordError').textContent = "An error occurred. Please try again.";
+                        document.getElementById('passwordError').textContent = "Entered Password is Wrong..!.";
                     }
                 }
             } catch (error) {

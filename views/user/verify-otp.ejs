@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Frame-fury verification</title>
+    <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/theme/ecom-logo.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
         rel="stylesheet" />
     <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" />
@@ -105,18 +106,30 @@
         }
 
         .otp-timer {
+            font-size: 1.5rem;
+            color: #ffffff; /* White text for visibility */
+            background: rgba(0, 0, 0, 0.6); /* Semi-transparent black background */
+            width: 80px; /* Adjust size for round shape */
+            height: 80px;
+            border-radius: 50%; /* Makes it a circle */
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 20px auto;
-            /* Center horizontally */
-            font-size: 14px;
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #2a2a2b 0%, #322c37 100%);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border: 2px solid #4a4a4a; /* Subtle gray border for definition */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Shadow for depth */
+            transition: all 0.3s ease-in-out;
         }
+
+            .otp-timer span {
+            color: #f39c12; /* Highlighted timer digits */
+            font-weight: bold;
+        }
+
+            .otp-timer:hover {
+            box-shadow: 0 6px 12px rgba(243, 156, 18, 0.6); /* Soft orange glow */
+            transform: scale(1.1); /* Slightly enlarges on hover */
+        }
+
 
         #otpTimer {
             display: flex;
@@ -157,6 +170,8 @@
         }
 
         .btn-primary:hover {
+            color: #f39c12; /* Highlighted timer digits */
+            font-weight: bold;
             background: linear-gradient(135deg, #494849 0%, #1a1a1a 100%);
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -196,6 +211,13 @@
 
         .text-muted a:hover {
             color: #764ba2;
+        }
+        #otp {
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center; /* Center text inside the input */
         }
     </style>
 </head>

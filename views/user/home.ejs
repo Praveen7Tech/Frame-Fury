@@ -121,13 +121,8 @@
                                 aria-selected="true">Featured</button>
                         </li>
 
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="nav-tab-three" data-bs-toggle="tab" data-bs-target="#tab-three"
-                                type="button" role="tab" aria-controls="tab-three" aria-selected="false">New
-                                added</button>
-                        </li>
                     </ul>
-                    <a href="/shoppingPage" class="view-more d-none d-md-flex">View More<i
+                    <a href="/shoppingPage" class="view-more d-none d-md-flex">Explore More<i
                             class="fi-rs-angle-double-small-right"></i></a>
                 </div>
                 <!--End nav-tabs-->
@@ -152,9 +147,6 @@
                                                 </a>
                                             </div>
                                             <div class="product-action-1">
-                                                <a aria-label="Quick view" class="action-btn hover-up"
-                                                    data-bs-toggle="modal" data-bs-target="#quickViewModal"><i
-                                                        class="fi-rs-eye"></i></a>
                                                 <a aria-label="Add To Wishlist"
                                                     class="action-btn hover-up  <%= wishList.includes(products[i]._id.toString()) ? 'wishlist-added' : '' %> "
                                                     onclick="addToWishlist('<%=products[i]._id %>')">
@@ -229,9 +221,6 @@
                                                                 <% } %>
                                             </div>
 
-                                            <!-- <div class="product-action-1 show">
-                                            <a aria-label="Add To Cart" class="action-btn hover-up" href="/addToCart/id=<%=products[i]._id%>"><i class="fi-rs-shopping-bag-add"></i></a>
-                                        </div> -->
                                             <div class="product-action-1 show">
                                                 <a aria-label="Add To Cart" class="action-btn hover-up"><i
                                                         class="fi-rs-shopping-bag-add"
@@ -248,77 +237,7 @@
                     </div>
 
 
-                    <!--new added -->
-                    <div class="tab-pane fade" id="tab-three" role="tabpanel" aria-labelledby="tab-three">
-                        <div class="row product-grid-4">
-                            <%for(let i=0;i<products.length;i++){%>
-
-                                <div class="col-lg-3 col-md-4 col-12 col-sm-6">
-                                    <div class="product-cart-wrap mb-30">
-                                        <div class="product-img-action-wrap">
-                                            <div class="product-img product-img-zoom">
-
-                                                <a href="/productDetails?id=<%=products[i]._id%>">
-                                                    <img class="default-img"
-                                                        src="/uploads/re-image/<%=products[i].productImage[0]%>"
-                                                        alt="<%=products[i].productName%>">
-
-                                                </a>
-                                            </div>
-                                            <div class="product-action-1">
-                                                <a aria-label="Quick view" class="action-btn hover-up"
-                                                    data-bs-toggle="modal" data-bs-target="#quickViewModal"><i
-                                                        class="fi-rs-eye"></i></a>
-                                                <a aria-label="Add To Wishlist" class="action-btn hover-up"
-                                                    href="/addToWishlist/?id=<%=products._id%>"><i
-                                                        class="fi-rs-heart"></i></a>
-
-                                            </div>
-                                            <div class="product-badges product-badges-position product-badges-mrg">
-                                                <span class="hot">Hot</span>
-                                            </div>
-                                        </div>
-                                        <div class="product-content-wrap">
-                                            <div class="product-category">
-                                                <a href="shop-grid-right.html">Clothing</a>
-                                            </div>
-                                            <h2><a href="/productDetails?id=<%=products[i]._id%>">
-                                                    <%=products[i].productName%>>
-                                                </a></h2>
-                                            <div class="rating-result" title="90%">
-                                                <% if (products[i].salePrice < products[i].regularPrice) { %>
-                                                    <span class="save-price font-md color3 ml-15">
-                                                        <% const discount=Math.round(((products[i].regularPrice -
-                                                            products[i].salePrice) / products[i].regularPrice) * 100);
-                                                            %>
-                                                            <%= discount %> % Off
-                                                    </span>
-                                                    <% } %>
-                                            </div>
-
-                                            <div class="product-price">
-                                                <span>
-                                                    <%=products[i].salePrice%>>
-                                                </span>
-                                                <span class="old-price">
-                                                    <%=products[i].regularPrice%>>
-                                                </span>
-                                            </div>
-                                            <div class="product-action-1 show">
-                                                <a aria-label="Add To Cart" class="action-btn hover-up" href="#"><i
-                                                        class="fi-rs-shopping-bag-add"
-                                                        onclick="addToCart('<%=products[i]._id%>')"></i>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <%}%>
-
-                        </div>
-                        <!--End product-grid-4-->
-                    </div>
-                    <!--En tab three (New added)-->
+                    
                 </div>
                 <!--End tab-content-->
             </div>

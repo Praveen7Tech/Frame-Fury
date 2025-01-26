@@ -649,7 +649,7 @@ h4,
 h5,
 h6 {
   font-family: "Spartan", sans-serif;
-  color: #90908e;
+  color: #fcfbfb;
   font-weight: 600;
   line-height: 1.2;
 }
@@ -2187,14 +2187,16 @@ label {
   line-height: 1;
 }
 
+
+
 .nav-tabs .nav-link.active {
-  color: #088178;
-  background-color: #fde1bd;
+  color: #eff4f3;
+  background-color: #1a1a1a;
 }
 
 .nav-tabs .nav-link:hover {
-  color: #088178;
-  background-color: #fde1bd;
+  color: #ffffff;
+  background-color: #72716f;
   -webkit-transform: translateY(-3px);
           transform: translateY(-3px);
   -webkit-transition: 0.2s;

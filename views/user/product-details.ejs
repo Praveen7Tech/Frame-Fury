@@ -334,15 +334,7 @@
                                         <%}%>
 
                                 </div>
-                                <!-- <ul class="product-meta font-xs color-grey mt-50">
-                                    <li class="mb-5">SKU: <a href="#">FWM15VKT</a></li>
-                                    <li class="mb-5">Tags: <a href="#" rel="tag">frame</a>, <a href="#"
-                                            rel="tag">Hyper cars</a>, <a href="#" rel="tag">Limited edition</a>
-                                    </li>
-                                    <li>Availability:<span class="in-stock text-success ml-5">
-                                            <%=quantity%> Items InStock
-                                        </span></li>
-                                </ul> -->
+                               
                             </div>
                             <div class="col-md-6 col-sm-12 col-xs-12">
                                 <div class="detail-info">
@@ -351,7 +343,7 @@
                                     </h2>
                                     <div class="product-detail-rating">
                                         <div class="pro-details-brand">
-                                            <span> Category: <a href="shop-grid-right.html">
+                                            <span> Category: <a href="">
                                                     <%=category.name%>
                                                 </a></span>
                                         </div>
@@ -444,44 +436,10 @@
                                         </div>
                                     </div>
 
-                                    <!-- Style Selection -->
-                                    <!-- <div class="attr-detail attr-style mb-35">
-                                        <strong class="option-title">Style <span class="required">*</span></strong>
-                                        <div class="custom-select">
-                                            <select required aria-label="Select style" class="style-select">
-                                                <option value="" disabled selected>Choose your style</option>
-                                                <option value="modern">Modern Minimalist</option>
-                                                <option value="classic">Classic Sport</option>
-                                                <option value="vintage">Vintage Racing</option>
-                                                <option value="dramatic">Dramatic Black</option>
-                                            </select>
-                                            <div class="select-arrow"></div>
-                                        </div>
-                                    </div> -->
-
-                                    <!-- Size Selection -->
-                                    <!-- <div class="attr-detail attr-size mb-35">
-                                        <strong class="option-title">Size <span class="required">*</span></strong>
-                                        <div class="custom-select">
-                                            <select required aria-label="Select size" class="size-select">
-                                                <option value="" disabled selected>Select frame size</option>
-                                                <option value="small">Small (24" × 36") - Perfect for Studies</option>
-                                                <option value="medium">Medium (36" × 48") - Ideal for Living Spaces</option>
-                                                <option value="large">Large (48" × 72") - Statement Piece</option>
-                                                <option value="xlarge">Extra Large (60" × 90") - Gallery Size</option>
-                                            </select>
-                                            <div class="select-arrow"></div>
-                                        </div>
-                                    </div> -->
-
+                                   
 
                                     <div class="bt-1 border-color-1 mt-30 mb-30"></div>
                                     <div class="detail-extralink">
-                                        <!-- <div class="detail-qty border radius">
-                                            <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
-                                            <span class="qty-val">1</span>
-                                            <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
-                                        </div> -->
                                         <div class="product-extra-link2">
                                             <button type="submit" class="button button-add-to-cart"
                                                 onclick="addToCart('<%=product._id%>')">
@@ -636,7 +594,7 @@
                             </div>
                         </div>
                         <!--comment form-->
-                        <div class="comment-form">
+                        <!-- <div class="comment-form">
                             <h4 class="mb-15">Add a review</h4>
                             <div class="product-rate d-inline-block mb-30">
                             </div>
@@ -676,7 +634,7 @@
                                     </form>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
                 <div class="row mt-60">
@@ -696,16 +654,16 @@
                                                     <img class="default-img"
                                                         src="/uploads/re-image/resized/<%= related.productImage[0] %>"
                                                         alt="<%= related.productName %>">
-                                                    <!-- <img class="hover-img" src="assets/imgs/shop/product-2-2.jpg" alt=""> -->
+                                                    <img class="hover-img" src="/uploads/re-image/resized/<%= related.productImage[1] %>" alt="">
                                                 </a>
                                             </div>
                                             <div class="product-action-1">
-                                                <a aria-label="Quick view" class="action-btn small hover-up"
-                                                    data-bs-toggle="modal" data-bs-target="#quickViewModal
 "><i class="fi-rs-search"></i></a>
-                                                <a aria-label="Add To Wishlist" class="action-btn small hover-up"
-                                                    href="/addToWishlist/?id=<%= related._id %>" tabindex="0"><i
-                                                        class="fi-rs-heart"></i></a>
+                                                 <a aria-label="Add To Wishlist"
+                                                    class="action-btn hover-up "
+                                                    onclick="addToWishlist('<%=related._id %>')">
+                                                    <i class="fi-rs-heart"></i>
+                                                </a>
 
                                             </div>
                                             <div class="product-badges product-badges-position product-badges-mrg">
