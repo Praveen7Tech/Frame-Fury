@@ -233,7 +233,7 @@
                                     </div>
                                     <div class="sort-by-dropdown">
                                         <ul>
-                                            <li><a class="sort-option" href="/filterPrice?sort=featured"
+                                            <li><a class="sort-option" href="/filterByName?sort=featured"
                                                     data-label="Featured">Featured</a></li>
                                             <li><a class="sort-option" href="/filterPrice?sort=lowToHigh"
                                                     data-label="Price: Low to High">Price: Low to High</a></li>
@@ -353,40 +353,42 @@
 
                         </div>
                      <!-- Pagination -->
-                        <div class="pagination-area mt-15 mb-sm-5 mb-lg-0">
-                            <nav aria-label="Page navigation example">
-                                <ul class="pagination justify-content-start">
-                                    <!-- Previous Button -->
-                                    <% if (currentPage > 1) { %>
-                                        <li class="page-item">
-                                            <a class="page-link" href="?page=<%= currentPage - 1 %>">Back</a>
-                                        </li>
-                                    <% } else { %>
-                                        <li class="page-item disabled">
-                                           
-                                        </li>
-                                    <% } %>
-
-                                    <!-- Page Numbers -->
-                                    <% for (let i = 1; i <= totalPages; i++) { %>
-                                        <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                                            <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-                                        </li>
-                                    <% } %>
-
-                                    <!-- Next Button -->
-                                    <% if (currentPage < totalPages) { %>
-                                        <li class="page-item">
-                                            <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
-                                        </li>
-                                    <% } else { %>
-                                        <li class="page-item disabled">
-                                            <a class="page-link">Next</a>
-                                        </li>
-                                    <% } %>
-                                </ul>
-                            </nav>
-                        </div>
+                     <div class="pagination-area mt-15 mb-sm-5 mb-lg-0">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-start">
+                                <!-- Previous Button -->
+                                <% if (currentPage > 1) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<%= currentPage - 1 %>&gt=<%= minPrice %>&lt=<%= maxPrice %>&sort=<%= selectedOrder %>">Back</a>
+                                    </li>
+                                <% } else { %>
+                                    <li class="page-item disabled">
+                                        <a class="page-link">Back</a>
+                                    </li>
+                                <% } %>
+                    
+                                <!-- Page Numbers -->
+                                <% for (let i = 1; i <= totalPages; i++) { %>
+                                    <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                        <a class="page-link" href="?page=<%= i %>&gt=<%= minPrice %>&lt=<%= maxPrice %>&sort=<%= selectedOrder %>"><%= i %></a>
+                                    </li>
+                                <% } %>
+                    
+                                <!-- Next Button -->
+                                <% if (currentPage < totalPages) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<%= currentPage + 1 %>&gt=<%= minPrice %>&lt=<%= maxPrice %>&sort=<%= selectedOrder %>">Next</a>
+                                    </li>
+                                <% } else { %>
+                                    <li class="page-item disabled">
+                                        <a class="page-link">Next</a>
+                                    </li>
+                                <% } %>
+                            </ul>
+                        </nav>
+                    </div>
+                    
+                    
 
                     </div>
                     <!-- filter by category -->

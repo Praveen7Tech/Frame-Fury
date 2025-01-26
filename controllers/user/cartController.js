@@ -30,6 +30,7 @@ const cartPage = async (req, res) => {
     console.log("cartu", cart)
     const findProduct = cart.items.filter(item => {
       const product = item.productId;
+      console.log("item",product)
       return (
         product.isBlocked === false &&
         listedCategory.includes(product.category._id.toString())

@@ -307,7 +307,11 @@ input[type=number]:focus,
 }
 
 .text-muted {
-  color: #8e8e90 !important;
+  color: #0e0d0d !important;
+}
+
+.wishdlt .cartdlt{
+  color: #e41b09;
 }
 
 .text-7 {
@@ -776,7 +780,7 @@ h5.widget-title {
 }
 
 .wow {
-  color: #fff;
+  color: #484444;
 }
 
 .text-style-1 {

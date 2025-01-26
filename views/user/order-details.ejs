@@ -433,43 +433,58 @@
         // Invoice Download function
 
         async function InvoiceDownload() {
-            // Select the portion
-            const invoiceElement = document.querySelector('.container');
+    // Select the container element
+    const invoiceElement = document.querySelector('.container');
 
-            //element to change
-            const title = document.querySelector('h1')
+    // Change the title temporarily
+    const title = document.querySelector('h1');
+    const originalTitle = title.textContent;
+    title.textContent = "Order Invoice";
 
-            //store original title to restore after making pdf
-            const originalTitle = title.textContent;
+    // Hide unnecessary elements
+    const elementsToHide = document.querySelectorAll('.btn-primary, #cancelOrderButton, #returnOrderButton');
+    elementsToHide.forEach(el => el.style.display = 'none');
 
-            //title to change 
-            title.textContent = "Order Invoice"
+    // Use html2canvas with scaling for high quality
+    const canvas = await html2canvas(invoiceElement, {
+        scale: 3, // Increases resolution
+        useCORS: true, // Allows cross-origin images
+        allowTaint: true // Ensures no issues with tainted canvas
+    });
 
-            // Hide unecessary elemnts
-            const elementsToHide = document.querySelectorAll('.btn-primary, #cancelOrderButton, #returnOrderButton');
-            elementsToHide.forEach(el => el.style.display = 'none');
+    // Convert canvas to image
+    const imgData = canvas.toDataURL('image/png');
 
-            // Use html2canvas to capture the element 
-            const canvas = await html2canvas(invoiceElement);
+    // Dimensions for PDF
+    const imgWidth = 210; // A4 width in mm
+    const pageHeight = 297; // A4 height in mm
+    const imgHeight = (canvas.height * imgWidth) / canvas.width; // Maintain aspect ratio
+    let heightLeft = imgHeight;
 
-            // Convert canvas to image
-            const imgData = canvas.toDataURL('image/png');
+    // Initialize jsPDF
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    let position = 0;
 
-            // Create PDF using jsPDF
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF('p', 'mm', 'a4');
-
-            // Add image to PDF
-            pdf.addImage(imgData, 'PNG', 10, 10, 190, 280);
-
-            // Show the hidden elements again
-            elementsToHide.forEach(el => el.style.display = '');
-
-            //restore title
-            title.textContent = originalTitle
-
-            // Download the PDF
-            pdf.save('Invoice.pdf');
+    // Add the content as multiple pages if needed
+    while (heightLeft > 0) {
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+        if (heightLeft > 0) {
+            position = position - pageHeight; // Move to next page
+            pdf.addPage();
         }
+    }
+
+    // Restore hidden elements
+    elementsToHide.forEach(el => el.style.display = '');
+
+    // Restore title
+    title.textContent = originalTitle;
+
+    // Download the PDF
+    pdf.save('Invoice.pdf');
+}
+
 
     </script>
