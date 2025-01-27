@@ -529,6 +529,7 @@
                                                 <div class="row">
                                                     <div class="col-lg-8">
                                                         <!-- Form for Creating Referral Code -->
+                                                    <%if(!userData.referralCode){%>     
                                                         <form id="referralForm" class="contact-form-style mt-30 mb-50">
                                                             <!-- Referral Name -->
                                                             <div class="input-style mb-20">
@@ -540,10 +541,11 @@
 
                                                             <!-- Submit Button -->
                                                             <button class="submit submit-auto-width" type="submit"
-                                                                onclick="createRefferal(event)">Create Referral</button>
+                                                                onclick="createRefferal(event)">Create Referral
+                                                            </button>
                                                         </form>
-
-                                                        <%if(user.referralCode !==null){%>
+                                                    <%}%>    
+                                                        <%if(userData.referralCode){%>
                                                             <span>REFERRAL CODE : </span>
                                                             <strong style="color: rgb(19, 18, 18);">
                                                                 <%= userData.referralCode %>
@@ -555,7 +557,7 @@
                                                             <%}else{%>
                                                                 <label>Oops No Refferal Code is Found, Create a New
                                                                     One...</label>
-                                                                <%}%>
+                                                            <%}%>
                                                     </div>
                                                 </div>
 
