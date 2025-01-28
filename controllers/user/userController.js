@@ -151,7 +151,7 @@ const verifyOtp = async (req, res) => {
     try {
         const { otp } = req.body;
 
-        console.log("otp :", otp, req.session.userOtp);
+        console.log("otp 111 :", otp, req.session.userOtp);
 
         if (otp === req.session.userOtp) {
             const user = req.session.userData
