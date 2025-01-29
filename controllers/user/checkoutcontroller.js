@@ -248,6 +248,7 @@ const verifyRazorPayOrder = async (req, res) => {
           existingOrder.paymentId = paymentId;
 
           await existingOrder.save();
+          console.log("exist ord",existingOrder)
 
           console.log("Re payment successfull")
           return res.json({ success: true, message: "Payment Successful Existing order hs been Updated.", orderId: existingOrder.orderId })
