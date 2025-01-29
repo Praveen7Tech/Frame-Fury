@@ -271,6 +271,7 @@
 
                             filterTable.insertAdjacentHTML("beforeend", row);
                         });
+                        
 
                         // Update the summary data
                         document.querySelector(".text-primary").innerHTML = data.orderCount;
@@ -381,8 +382,8 @@
                         });
 
                         document.querySelector(".text-primary").innerHTML = data.saleCount;
-                        document.querySelector(".text-success").innerHTML = data.productDiscount;
-                        document.querySelector(".text-warning").innerHTML = data.saleTotal;
+                        document.querySelector(".text-success").innerHTML = data.saleTotal;
+                        document.querySelector(".text-warning").innerHTML = data.productDiscount;
                         document.querySelector(".coupon1").innerHTML = data.couponDiscount;
                     }
                 } catch (error) {
