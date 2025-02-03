@@ -116,6 +116,31 @@
             font-size: 18px;
             color: inherit;
         }
+
+        .repay-btn {
+            background-color: #3399cc;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .repay-btn:hover {
+            background-color: #287ba3;
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .repay-btn:active {
+            background-color: #1a5d7c;
+            box-shadow: none;
+            transform: translateY(0);
+        }
     </style>
 </head>
 
@@ -185,9 +210,10 @@
                                 <button id="returnOrderButton" type="button" class="btn btn-warning">
                                     Return Order
                                 </button>
-                                <%}else{%>
-                                    <p class="text-muted">No action possible</p>
-                                    <%}%>
+                                <%}else if(order.paymentStatus === "Failed"){%>
+                                    <button class="repay-btn" id="RePay"
+                                     onclick="RepayFailedOrder('<%= order._id %>', '<%= order.total %>', '<%= order.paymentMethod %>', <%= JSON.stringify(order.address) %>, '<%= order.couponCode %>', '<%= order.deliveryMethod %>')">RePay</button>
+                                 <%}%>
                     </div>
                 </div>
             </div>
@@ -286,6 +312,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
     <!-- Invoice download libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -443,7 +470,7 @@
     title.textContent = "Order Invoice";
 
     // Hide unnecessary elements
-    const elementsToHide = document.querySelectorAll('.btn-primary, #cancelOrderButton, #returnOrderButton');
+    const elementsToHide = document.querySelectorAll('.btn-primary, #cancelOrderButton, #returnOrderButton, #RePay');
     elementsToHide.forEach(el => el.style.display = 'none');
 
     // Use html2canvas with scaling for high quality
@@ -489,3 +516,94 @@
 
 
     </script>
+
+
+<script>
+    async function RepayFailedOrder(orderId, totalAmount, paymentMethod, selectedAddress, couponCode, deliveryMethod) {
+        console.log("id", orderId, "amt", totalAmount, "pay", paymentMethod, "add", selectedAddress, "coup", couponCode, "del", deliveryMethod)
+        try {
+
+            console.log("aap", orderId)
+            const id = orderId
+
+            const response = await fetch("/placeOrderRazorPay", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ totalAmount, orderId }),
+            });
+
+            const data = await response.json();
+            console.log("data:", data);
+
+            if (data.success) {
+                const { orderId, amount, currency, key } = data;
+
+                const options = {
+                    key,
+                    amount,
+                    currency,
+                    name: "Frame Fury",
+                    description: "Order Payment",
+                    order_id: orderId,
+                    handler: async function (response) {
+                        console.log("rz response ", response);
+
+                        const paymentId = response.razorpay_payment_id;
+                        const razorpaySignature = response.razorpay_signature;
+                        const orderId = response.razorpay_order_id;
+
+
+                        const verifyResponse = await fetch("/verifyRazorPayOrder", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                selectedAddress, paymentMethod, deliveryMethod, couponCode,
+                                orderId,
+                                paymentId,
+                                razorpaySignature,
+                                id: id ? id : null
+                            }),
+                        });
+
+                        const verifyData = await verifyResponse.json();
+                        console.log("verify:", verifyData);
+
+                        if (verifyData.success) {
+                            Swal.fire({
+                                title: "Payment Success",
+                                text: `Order RePaid Successfully. Your OrderId is: ${verifyData.orderId}`,
+                                icon: "success",
+                                confirmButtonText: "OK",
+                            }).then(() => window.location.reload());
+                        } else {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Payment Failed",
+                                text: "Payment verification failed. Please try again.",
+                                confirmButtonText: "OK",
+                            });
+                        }
+                    },
+                    theme: { color: "#3399cc" },
+                };
+
+                const rzp = new Razorpay(options);
+                rzp.open();
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: data.message,
+                    confirmButtonText: "OK",
+                });
+            }
+        } catch (error) {
+            console.error("RePay Error:", error);
+        }
+    }
+
+</script>

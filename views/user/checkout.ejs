@@ -623,7 +623,7 @@
                                     console.log("verify:", verifyData)
                                     if (verifyData.success) {
 
-                                        window.location.href = `/orderSuccess?orderId=${data.orderId}`;
+                                        window.location.href = `/orderSuccess?orderId=${verifyData.orderId}`;
                                     }
                                     else {
                                         Swal.fire({

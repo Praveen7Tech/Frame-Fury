@@ -3,23 +3,43 @@ const Address = require("../../models/addressSchema")
 
 const orderList = async (req, res) => {
     try {
-
         const page = parseInt(req.query.page) || 1;
         const limit = 10;
-        const skip = (page - 1) * limit
+        const skip = (page - 1) * limit;
+        const search = req.query.search || ""; // Capture search input
 
-        const order = await Order.find().populate("userId", 'name email').populate("items.productId", "productName productImage").sort({ createdAt: -1 }).skip(skip).limit(limit).exec()
+        let query = {};
 
-        const totalOrder = await Order.countDocuments()
-        const totalPages = Math.ceil(totalOrder / limit)
+        if (search) {
+            query = { orderId: { $regex: search, $options: "i" } }; 
+        }
 
-        console.log("order-", totalOrder, totalPages)
-        res.render("orderList", { order, totalPages: totalPages, currentPage: page })
+        const order = await Order.find(query)
+            .populate("userId", "name email")
+            .populate("items.productId", "productName productImage")
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit)
+            .exec();
+
+        const totalOrder = search
+            ? await Order.countDocuments(query) // Count filtered results if searching
+            : await Order.countDocuments(); // Count all documents otherwise
+
+        const totalPages = Math.ceil(totalOrder / limit);
+
+        res.render("orderList", { 
+            order, 
+            totalPages, 
+            currentPage: page,
+            search 
+        });
     } catch (error) {
-        console.error("error in load order page", error);
-        res.redirect("/pageerror")
+        console.error("Error in load order page", error);
+        res.redirect("/pageerror");
     }
-}
+};
+
 
 
 const orderView = async (req, res) => {
@@ -98,9 +118,11 @@ const EditStatus = async (req, res) => {
 
 
 
+
+
 module.exports = {
     orderList,
     orderView,
     EditStatusPage,
-    EditStatus
+    EditStatus,
 }
