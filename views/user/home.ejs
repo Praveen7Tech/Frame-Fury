@@ -86,19 +86,19 @@
 
                     <div class="carausel-6-columns" id="carausel-6-columns">
                         <% const images1=[ 
+                        "assets/imgs/shop/porch1.jpg" ,
+                        "assets/imgs/shop/lambo.jpg" ,
+                        "assets/imgs/shop/ferrari.webp" ,
+                        "assets/imgs/shop/mercedes.jpg" ,
+                        "assets/imgs/shop/mclaren.jpg" ,
                         "assets/imgs/shop/rolls.jpg" ,
+                        "assets/imgs/shop/buggati.jpg" ,
                         "assets/imgs/shop/nissan.jpg" ,
                         "assets/imgs/shop/bmw.jpg" ,
+                        "assets/imgs/shop/chevy.jpg" ,
                         "assets/imgs/shop/audi.jpg" ,
+                        "assets/imgs/shop/ford.jpg" ,
                         "assets/imgs/shop/totyo.jpg" ,
-                        "assets/imgs/shop/porch1.jpg" ,
-                        "assets/imgs/shop/ferrari.webp" ,
-                        "assets/imgs/shop/mclaren.jpg" ,
-                        "assets/imgs/shop/mercedes.jpg" ,
-                        "assets/imgs/shop/lambo.jpg" ,
-                        "assets/imgs/shop/buggati.jpg" ,
-                         "assets/imgs/shop/chevy.jpg" ,
-                         "assets/imgs/shop/ford.jpg" ,
                              ]; %>
 
                             <% for (let i=0; i < category.length; i++) { %>
@@ -108,7 +108,7 @@
                                             <img src="<%= images1[i % images1.length] %>" alt="<%= category[i].name %>">
                                         </a>
                                     </figure>
-                                    <h5><a href="shop-grid-right.html">
+                                    <h5><a href="/filter?category=<%= category[i]._id %>">
                                             <%= category[i].name %>
                                         </a></h5>
                                 </div>

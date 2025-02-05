@@ -6,7 +6,7 @@
     <section class="content-main">
         <div class="content-header">
             <h2 class="content-title card-title">Categories</h2>
-            <p>Add, edit or delete a category</p>
+           
         </div>
 
         <!-- Add Category Form Section -->
@@ -57,7 +57,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <% cat.reverse().forEach((category, index)=> { %>
+                            <% cat.forEach((category, index) => { %>
                                 <tr>
                                     <td class="text-center">
                                         <div class="form-check">
@@ -65,7 +65,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <%= index + 1 %>
+                                        <%= (currentPage - 1) * 5 + index + 1 %>
                                     </td>
                                     <td>
                                         <%= category.name %>
@@ -77,46 +77,47 @@
                                         <td>
                                             <%= category.categoryOffer %>%
                                         </td>
+                                    <% } else { %>
+                                        <td>No offer..</td>
+                                    <% } %>
+                                    <td>
+                                        <% if (category.categoryOffer) { %>
+                                            <button class="offer-btn offer-btn-edit"
+                                                onclick="editOffer('<%= category._id %>','<%= category.name %>','<%= category.categoryOffer %>')">Edit
+                                                Offer</button>
+                                            <button class="offer-btn offer-btn-remove"
+                                                onclick="removeOffer('<%= category._id %>')">Remove
+                                                Offer</button>
                                         <% } else { %>
-                                            <td>No offer..</td>
-                                            <% } %>
-                                                <td>
-                                                    <% if (category.categoryOffer) { %>
-                                                        <button class="offer-btn offer-btn-edit"
-                                                            onclick="editOffer('<%= category._id %>','<%= category.name %>','<%= category.categoryOffer %>')">Edit
-                                                            Offer</button>
-                                                        <button class="offer-btn offer-btn-remove"
-                                                            onclick="removeOffer('<%= category._id %>')">Remove
-                                                            Offer</button>
-                                                        <% } else { %>
-                                                            <button class="offer-btn offer-btn-add"
-                                                                onclick="addOffer('<%= category._id %>','<%= category.name %>')">Add
-                                                                Offer</button>
-                                                            <% } %>
-                                                </td>
-                                                <td>
-                                                    <% if (category.isListed) { %>
-                                                        <span class="badge badge-success">Listed</span>
-                                                        <% } else { %>
-                                                            <span class="badge badge-danger">Unlisted</span>
-                                                            <% } %>
-                                                </td>
-                                                <td>
-                                                    <% if (category.isListed) { %>
-                                                        <a href="/admin/listCategory?id=<%= category._id %>"
-                                                            class="btn btn-danger text-white">Unlist</a>
-                                                        <% } else { %>
-                                                            <a href="/admin/unlistCategory?id=<%= category._id %>"
-                                                                class="btn btn-success text-white">List</a>
-                                                            <% } %>
-                                                </td>
-                                                <td>
-                                                    <a href="/admin/editCategory?id=<%= category._id %>"
-                                                        class="btn btn-info text-white">Edit</a>
-                                                </td>
+                                            <button class="offer-btn offer-btn-add"
+                                                onclick="addOffer('<%= category._id %>','<%= category.name %>')">Add
+                                                Offer</button>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <% if (category.isListed) { %>
+                                            <span class="badge badge-success">Listed</span>
+                                        <% } else { %>
+                                            <span class="badge badge-danger">Unlisted</span>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <% if (category.isListed) { %>
+                                            <a href="/admin/listCategory?id=<%= category._id %>"
+                                                class="btn btn-danger text-white">Unlist</a>
+                                        <% } else { %>
+                                            <a href="/admin/unlistCategory?id=<%= category._id %>"
+                                                class="btn btn-success text-white">List</a>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <a href="/admin/editCategory?id=<%= category._id %>"
+                                            class="btn btn-info text-white">Edit</a>
+                                    </td>
                                 </tr>
-                                <% }) %>
+                            <% }) %>
                         </tbody>
+                        
                     </table>
                 </div>
             </div>

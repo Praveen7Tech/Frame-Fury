@@ -1,21 +1,41 @@
 
 const Product = require("../../models/productSchema");
-const Wishlist = require("../../models/wishListSchema")
+const Wishlist = require("../../models/wishListSchema");
+const Category = require("../../models/categorySchema")
 
 
 const wishListPage = async (req, res) => {
     try {
-        const user = req.session.user;
-        const userId = req.session.user._id;
+      const user = req.session.user;
+      const userId = req.session.user._id;
+  
+      const wishlist = await Wishlist.findOne({ userId }).populate("products.productId");
+      const categories = await Category.find({ isListed: true });
 
-        const wishlist = await Wishlist.findOne({ userId }).populate("products.productId");
-        console.log("wish", wishlist)
-        res.render("wishList", { user, wishlist });
+      const listedCategory = categories.map((category) => category._id.toString());
+  
+      if (!wishlist) {
+        return res.render("wishList", { user, wishlist: [] });
+      }
+  
+      // Filter out blocked products and category
+      const filteredProducts = wishlist.products.filter((item) => {
+        const product = item.productId;
+        return product && product.isBlocked === false && listedCategory.includes(product.category._id.toString())
+      });
+  
+      // Update the wishlist object to reflect only non-blocked products
+      wishlist.products = filteredProducts;
+  
+      console.log("Filtered wishlist:", wishlist);
+  
+      res.render("wishList", { user, wishlist });
     } catch (error) {
-        console.error("Error in loading wishlist:", error);
-        res.status(500).send("Internal Server Error");
+      console.error("Error in loading wishlist:", error);
+      res.status(500).send("Internal Server Error");
     }
-};
+  };
+  
 
 
 const addToWishList = async (req, res) => {

@@ -19,28 +19,31 @@ const cartPage = async (req, res) => {
     const user = await User.findById(userId);
     const categories = await Category.find({ isListed: true });
 
-    const listedCategory = categories.map(category => category._id.toString());
+    const listedCategory = categories.map((category) => category._id.toString());
     if (!cart) {
       cart = new Cart({
         userId,
-        items: []
-      })
+        items: [],
+      });
     }
 
-    console.log("cartu", cart)
-    const findProduct = cart.items.filter(item => {
+    console.log("cartu", cart);
+    const findProduct = cart.items.filter((item) => {
       const product = item.productId;
-      console.log("item",product)
-      return (
-        product.isBlocked === false &&
-        listedCategory.includes(product.category._id.toString())
-      );
+      // Check if product exists before accessing its properties
+      if (product && product.category) {
+        console.log("item", product);
+        return (
+          product.isBlocked === false &&
+          listedCategory.includes(product.category._id.toString())
+        );
+      }
+      return false; // Exclude items with null or invalid products
     });
-    console.log('find product:', findProduct)
+    console.log("find product:", findProduct);
 
-    const total = findProduct.reduce((sum, items) => sum + items.totalPrice, 0)
-    console.log("tot", total)
-
+    const total = findProduct.reduce((sum, items) => sum + items.totalPrice, 0);
+    console.log("tot", total);
 
     res.render("cart", { user: userId, cart: findProduct, total });
   } catch (error) {
@@ -48,6 +51,7 @@ const cartPage = async (req, res) => {
     res.redirect("/pageNotFound");
   }
 };
+
 
 
 const addToCart = async (req, res) => {

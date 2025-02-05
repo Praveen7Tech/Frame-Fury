@@ -256,9 +256,24 @@ const login = async (req, res) => {
         }
 
         // dynamically showing wishlist count
-        const wishlist = await Wishlist.findOne({ userId: findUser._id })
-        const wishListCount = wishlist ? req.session.wishListCount = wishlist.products.length : 0;
-
+        const wishlist = await Wishlist.findOne({ userId: findUser._id }).populate({
+            path: "products.productId",
+            populate: { path: "category", select: "isBlocked" },
+          });
+          
+          // Check if the wishlist exists
+          const wishListCount = wishlist
+            ? (req.session.wishListCount = wishlist.products.filter((item) => {
+                const product = item.productId;
+                const category = product?.category;
+          
+                // Exclude blocked products or products in blocked categories
+                return product && !product.isBlocked && category && !category.isBlocked;
+              }).length)
+            : 0;
+          
+          req.session.wishListCount = wishListCount;
+          
         // dynamically showing the cartcount
         const cart = await Cart.findOne({ userId: findUser._id })
         if (cart) {

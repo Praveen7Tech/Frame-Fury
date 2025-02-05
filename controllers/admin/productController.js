@@ -88,7 +88,7 @@ const getAllProducts = async (req, res) => {
                 { productName: { $regex: new RegExp(".*" + search + ".*", "i") } },
             ],
         })
-            .sort({ createdOn: 1 })
+            .sort({ createdOn: -1 })
             .limit(limit)
             .skip((page - 1) * limit)
             .populate("category")
