@@ -101,15 +101,19 @@
                                             <span class="badge badge-danger">Unlisted</span>
                                         <% } %>
                                     </td>
+
                                     <td>
                                         <% if (category.isListed) { %>
-                                            <a href="/admin/listCategory?id=<%= category._id %>"
-                                                class="btn btn-danger text-white">Unlist</a>
+                                                <button class="btn btn-danger text-white"
+                                                data-id="<%= category._id %>"
+                                                 onclick="categoryAction('<%= category._id %>', 'UnList')">Unlist</button>
                                         <% } else { %>
-                                            <a href="/admin/unlistCategory?id=<%= category._id %>"
-                                                class="btn btn-success text-white">List</a>
+                                                <button class="btn btn-success text-white" 
+                                                data-id="<%= category._id %>"
+                                                 onclick="categoryAction('<%= category._id%>', 'List')">List</button>
                                         <% } %>
                                     </td>
+
                                     <td>
                                         <a href="/admin/editCategory?id=<%= category._id %>"
                                             class="btn btn-info text-white">Edit</a>
@@ -270,9 +274,62 @@
 
 
     <%-include("../../views/partials/admin/footer")%>
+</main>
 
+      <!-- listing and unlistig category -->
+      <script>
 
-        </main>
+          async function categoryAction(categoryId, action){
+            try {
+
+                const Action =  action === "UnList" ? "/admin/unlistCategory" : "/admin/listCategory"
+                console.log("action-",Action)
+
+                const response = await fetch(Action,{
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({id:categoryId})
+                })
+
+                const result =await response.json()
+                console.log("result",result)
+
+                if(result.success){
+                    const button = document.querySelector(`button[data-id='${categoryId}']`);
+
+                    if(action === "UnList"){
+                        button.classList.remove("btn-danger")
+                        button.classList.add("btn-success")
+                        button.textContent = "List"
+                        button.setAttribute("onclick",`categoryAction('${categoryId}','List')`)
+                    }
+                    else{
+                        button.classList.remove("btn-success")
+                        button.classList.add("btn-danger")
+                        button.textContent = "UnList"
+                        button.setAttribute("onclick",`categoryAction('${categoryId}','UnList')`)
+                    }
+                }else{
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: result.message || "Failed to process the request.",
+                    });
+                }
+                
+            } catch (error) {
+                console.error("Error:", error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Network Error",
+                    text: "Unable to process the request. Please try again later.",
+                });
+            }
+          }
+
+      </script>
 
 
         <!-- add category function -->

@@ -352,7 +352,8 @@ const shoppingPage = async (req, res) => {
             selectedCategory: null,
             selectedOrder : null,
             minPrice:null,
-            maxPrice:null
+            maxPrice:null,
+            search:null
         })
     } catch (error) {
         console.error("Error in shopping page", error);
@@ -430,7 +431,8 @@ const filterProduct = async (req, res) => {
             selectedCategory: category || null,
             selectedOrder:null,
             minPrice:null,
-            maxPrice:null
+            maxPrice:null,
+            search:null
         });
     } catch (error) {
         res.redirect("/pageNotFound");
@@ -517,7 +519,8 @@ const filterByPrice = async (req, res) => {
             selectedCategory: null,
             selectedOrder: sortOption,
             minPrice,
-            maxPrice
+            maxPrice,
+            search:null
         });
     } catch (error) {
         console.error("Error in filterByPrice:", error);
@@ -686,7 +689,8 @@ const SearchProducts = async (req, res) => {
             selectedCategory: null,
             selectedOrder:null,
             minPrice:null,
-            maxPrice:null
+            maxPrice:null,
+            search:search 
         });
     } catch (error) {
         console.error("Error in search product", error);
@@ -767,7 +771,8 @@ const filterByName = async (req, res) => {
             selectedCategory: null,
             selectedOrder : Order, // for pagination 
             minPrice:null,
-            maxPrice:null
+            maxPrice:null,
+            search:null
         });
 
     } catch (error) {

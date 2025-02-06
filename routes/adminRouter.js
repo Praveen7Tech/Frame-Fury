@@ -27,8 +27,8 @@ router.get("/logout", adminController.logout)
 
 //customer management
 router.get("/users", adminAuth, customerController.customerInfo)
-router.get("/blockCustomer", adminAuth, customerController.customerBlocked)
-router.get("/unBlockCustomer", adminAuth, customerController.customerunBlocked)
+router.post("/blockCustomer", adminAuth, customerController.customerBlocked)
+router.post("/unBlockCustomer", adminAuth, customerController.customerunBlocked)
 
 //category management
 router.get("/category", adminAuth, categoryController.categoryInfo)
@@ -38,8 +38,8 @@ router.put("/editOffer", adminAuth, categoryController.editOffer)
 router.get("/removeOffer", adminAuth, categoryController.removeOffer)
 
 // listing category
-router.get("/listCategory", adminAuth, categoryController.listCategory)
-router.get("/unlistCategory", adminAuth, categoryController.unlistCategory)
+router.post("/listCategory", adminAuth, categoryController.listCategory)
+router.post("/unlistCategory", adminAuth, categoryController.unlistCategory)
 router.get("/editCategory", adminAuth, categoryController.editCategory)
 router.post("/editCategory/:id", adminAuth, categoryController.updateCategory)
 
@@ -52,8 +52,8 @@ router.put("/editProOffer", adminAuth, productController.editOffer)
 router.post("/removeOffer/:id", adminAuth, productController.removeOffer)
 
 //block / unblock product
-router.get("/blockProduct", adminAuth, productController.blockProduct)
-router.get("/unblockProduct", adminAuth, productController.unblockProduct)
+router.post("/blockProduct", adminAuth, productController.blockProduct)
+router.post("/unblockProduct", adminAuth, productController.unblockProduct)
 
 router.get("/editProduct", adminAuth, productController.editProduct)
 router.post("/editProduct/:id", adminAuth, uploads.array("images", 4), productController.updateProduct)

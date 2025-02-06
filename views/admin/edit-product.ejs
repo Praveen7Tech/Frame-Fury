@@ -200,7 +200,7 @@
                 const saleprice = document.getElementsByName('salePrice')[0].value;
                 const category = document.getElementsByName('category')[0].value;
                 const images = document.getElementById('input1')
-                const quantity = document.getElementsByName('quantity')
+                const quantity = document.getElementsByName('quantity')[0].value
                 imageDatas = document.getElementById("imageDatas")?.value;
                 let isValid = true;
                 if (name.trim() === "") {
@@ -214,7 +214,7 @@
                 }
 
 
-                if (parseInt(quantity) < 0) {
+                if (quantity.trim() === "" || !/^\d+$/.test(quantity) || parseInt(quantity) < 0) {
                     displayErrorMessage('quantity-error', 'Please enter a valid non-negative quantity.');
                     isValid = false;
                 }

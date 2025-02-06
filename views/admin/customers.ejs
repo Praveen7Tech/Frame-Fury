@@ -1,4 +1,5 @@
 <%- include("../../views/partials/admin/header") %>
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <style>
         /* General Styles */
         body {
@@ -146,6 +147,9 @@
                 font-size: 12px;
             }
         }
+        .fas{
+              margin-top: 11px;
+            }
     </style>
     <div class="content-header row">
         <div class="d-flex justify-content-between align-items-center">
@@ -159,6 +163,14 @@
                 <input type="text" class="form-control border-0 rounded-pill" placeholder="Search customers..."
                     name="search" value="<%= search %>">
                 <button class="btn border-0" type="submit">Search</button>
+                <% if (search) { %>
+                    <a 
+                        href="/admin/users" 
+                        class="btn btn-danger clear-search-icon" 
+                        title="Clear Search">
+                        <i class="fas fa-times"></i>
+                    </a>
+                <% } %>
             </div>
         </form>
     </header>
@@ -188,7 +200,7 @@
                         <td>
                             <%= data[i].phone %>
                         </td>
-                        <td>
+                        <!-- <td>
                             <% if (data[i].isBlocked===false) { %>
                                 <button class="btn btn-danger" style="width: 80px;">
                                     <a href="/admin/blockCustomer?id=<%= data[i]._id %>&search=<%= search %>&page=<%= currentPage %>"
@@ -200,7 +212,27 @@
                                             class="text-white" style="text-decoration: none;">Unblock</a>
                                     </button>
                                     <% } %>
+                        </td> -->
+                        <td>
+                            <% if (data[i].isBlocked === false) { %>
+                                <button 
+                                    class="btn btn-danger block-unblock-btn" 
+                                    data-id="<%= data[i]._id %>" 
+                                    data-action="block" 
+                                    style="width: 80px;">
+                                    Block
+                                </button>
+                            <% } else { %>
+                                <button 
+                                    class="btn btn-success block-unblock-btn" 
+                                    data-id="<%= data[i]._id %>" 
+                                    data-action="unblock" 
+                                    style="width: 80px;">
+                                    Unblock
+                                </button>
+                            <% } %>
                         </td>
+                        
                     </tr>
                     <% } %>
             </tbody>
@@ -220,3 +252,58 @@
         </nav>
     </div>
     <%- include("../../views/partials/admin/footer") %>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Add click event listener for all block/unblock buttons
+            document.querySelectorAll(".block-unblock-btn").forEach(button => {
+                button.addEventListener("click", async (event) => {
+                    const userId = button.getAttribute("data-id");
+                    const action = button.getAttribute("data-action");
+    
+                    try {
+                        // Send AJAX request
+                        const response = await fetch(`/admin/${action}Customer`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({ id: userId }),
+                        });
+    
+                        // Parse response
+                        const result = await response.json();
+    
+                        if (result.success) {
+                            // Update the button dynamically
+                            if (action === "block") {
+                                button.classList.remove("btn-danger");
+                                button.classList.add("btn-success");
+                                button.textContent = "Unblock";
+                                button.setAttribute("data-action", "unblock");
+                            } else {
+                                button.classList.remove("btn-success");
+                                button.classList.add("btn-danger");
+                                button.textContent = "Block";
+                                button.setAttribute("data-action", "block");
+                            }
+                        } else {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Oops...",
+                                text: result.message || "Something went wrong. Please try again.",
+                            });
+                        }
+                    } catch (error) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Request Failed",
+                            text: "An error occurred while processing your request.",
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+    

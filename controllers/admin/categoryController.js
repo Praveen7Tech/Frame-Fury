@@ -51,9 +51,10 @@ const addCategory = async (req, res) => {
 
 const listCategory = async (req, res) => {
     try {
-        let id = req.query.id;
-        await Category.updateOne({ _id: id }, { $set: { isListed: false } });
-        res.redirect("/admin/category");
+        let id = req.body.id;
+        console.log("id",id)
+        await Category.updateOne({ _id: id }, { $set: { isListed: true } });
+        res.json({success:true})
     } catch (error) {
         res.redirect("/pageerror")
     }
@@ -61,9 +62,10 @@ const listCategory = async (req, res) => {
 
 const unlistCategory = async (req, res) => {
     try {
-        let id = req.query.id;
-        await Category.updateOne({ _id: id }, { $set: { isListed: true } });
-        res.redirect("/admin/category")
+        let id = req.body.id;
+        console.log("id2",id)
+        await Category.updateOne({ _id: id }, { $set: { isListed: false } });
+        res.json({success:true})
     } catch (error) {
         res.redirect("/pageerror")
     }

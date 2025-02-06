@@ -49,7 +49,7 @@
                                 <div class="col-lg-4">
                                     <div class="mb-4">
                                         <label class="form-label">Regular price</label>
-                                        <input placeholder="$" name="regularPrice" type="text"
+                                        <input placeholder="₹" name="regularPrice" type="text"
                                             class="form-control border">
                                         <div id="regularPrice-error" class="error-message"></div>
                                     </div>
@@ -57,7 +57,7 @@
                                 <div class="col-lg-4">
                                     <div class="mb-4">
                                         <label class="form-label">Sale price</label>
-                                        <input placeholder="$" name="salePrice" type="text" class="form-control border">
+                                        <input placeholder="₹" name="salePrice" type="text" class="form-control border">
 
                                     </div>
                                     <div id="salePrice-error" class="error-message"></div>
@@ -65,9 +65,9 @@
                                 <div class="col-lg-4">
                                     <div class="mb-4">
                                         <label class="form-label">Quantity</label>
-                                        <input placeholder="" name="quantity" type="text" class="form-control border">
-                                        <div id="quantity-error" class="error-message"></div>
+                                        <input placeholder="0" name="quantity" type="text" class="form-control border">
                                     </div>
+                                    <div id="quantity-error" class="error-message"></div>
                                 </div>
                             </div>
 
@@ -177,7 +177,6 @@
 
 
     <script>
-
 
 
         function viewImage1(event) {
@@ -311,7 +310,7 @@
 
             const category = document.getElementsByName('category')[0].value;
             const images = document.getElementById('input1')
-            const quantity = document.getElementsByName('quantity')
+            const quantity = document.getElementsByName('quantity')[0].value;
             let isValid = true
 
             if (name.trim() === "") {
@@ -328,12 +327,10 @@
             }
 
 
-            if (parseInt(quantity) < 0) {
+            if (quantity.trim() === "" || !/^\d+$/.test(quantity) || parseInt(quantity) < 0) {
                 displayErrorMessage('quantity-error', 'Please enter a valid non-negative quantity.');
                 isValid = false;
             }
-
-
 
 
             if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) < 0) {

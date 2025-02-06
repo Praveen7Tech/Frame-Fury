@@ -217,6 +217,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <%- include("../../views/partials/admin/footer") %>
 
+
+    <!-- limit date selection for filtering -->
+       <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const today = new Date().toISOString().split("T")[0];
+            document.getElementById("start-date").setAttribute("max", today);
+            document.getElementById("end-date").setAttribute("max", today);
+        });
+
+       </script>
+
         <script>
 
             // filter orders

@@ -42,26 +42,26 @@ const customerInfo = async (req, res) => {
 // Block a customer
 const customerBlocked = async (req, res) => {
     try {
-        let id = req.query.id;
+        let id = req.body.id;
         await User.updateOne({ _id: id }, { $set: { isBlocked: true } });
-        res.redirect(`/admin/users?search=${req.query.search || ""}&page=${req.query.page || 1}`);
+        res.json({ success: true });
     } catch (error) {
         console.error(error);
-        res.redirect("/admin/pageerror");
+        res.json({ success: false, message: "Error blocking user" });
     }
 };
 
-// Unblock a customer
 const customerunBlocked = async (req, res) => {
     try {
-        let id = req.query.id;
+        let id = req.body.id;
         await User.updateOne({ _id: id }, { $set: { isBlocked: false } });
-        res.redirect(`/admin/users?search=${req.query.search || ""}&page=${req.query.page || 1}`);
+        res.json({ success: true });
     } catch (error) {
         console.error(error);
-        res.redirect("/admin/pageerror");
+        res.json({ success: false, message: "Error unblocking user" });
     }
 };
+
 
 
 module.exports = {

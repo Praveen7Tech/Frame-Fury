@@ -13,7 +13,7 @@ const wishListPage = async (req, res) => {
       const categories = await Category.find({ isListed: true });
 
       const listedCategory = categories.map((category) => category._id.toString());
-  
+       
       if (!wishlist) {
         return res.render("wishList", { user, wishlist: [] });
       }
@@ -26,8 +26,6 @@ const wishListPage = async (req, res) => {
   
       // Update the wishlist object to reflect only non-blocked products
       wishlist.products = filteredProducts;
-  
-      console.log("Filtered wishlist:", wishlist);
   
       res.render("wishList", { user, wishlist });
     } catch (error) {
@@ -66,6 +64,7 @@ const addToWishList = async (req, res) => {
             wishlist.products.push({
                 productId,
                 price: product.salePrice,
+                stockCount:product.quantity,
                 stockStatus: product.status,
             });
 

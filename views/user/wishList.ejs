@@ -136,7 +136,7 @@
                                                 </td>
                                                 <td class="text-center" data-title="Stock">
                                                     <span class="font-weight-bold"
-                                                        style="<%= item.stockStatus === 'Out of Stock' ? 'color: red;' : '' %>">
+                                                        style="<%= item.stockCount === 0 ? 'color: red;' : '' %>">
                                                         <%= item.stockStatus %>
                                                     </span>
 

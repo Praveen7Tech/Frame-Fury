@@ -108,6 +108,7 @@ const getAllProducts = async (req, res) => {
                 currentPage: page,
                 totalPages: Math.ceil(count / limit),
                 cat: category,
+                search:search
             });
         } else {
             res.render("page-404");
@@ -120,23 +121,24 @@ const getAllProducts = async (req, res) => {
 
 const blockProduct = async (req, res) => {
     try {
-        const id = req.query.id
+        const id = req.body.id; // Use `req.body` for AJAX data
         await Product.updateOne({ _id: id }, { $set: { isBlocked: true } });
-        res.redirect("/admin/products")
+        res.json({ success: true, message: "Product blocked successfully." });
     } catch (error) {
-        res.redirect("/pageerror")
+        res.status(500).json({ success: false, message: "An error occurred." });
     }
-}
+};
 
 const unblockProduct = async (req, res) => {
     try {
-        const id = req.query.id;
+        const id = req.body.id; // Use `req.body` for AJAX data
         await Product.updateOne({ _id: id }, { $set: { isBlocked: false } });
-        res.redirect("/admin/products")
+        res.json({ success: true, message: "Product unblocked successfully." });
     } catch (error) {
-        res.redirect("/pageerror")
+        res.status(500).json({ success: false, message: "An error occurred." });
     }
-}
+};
+
 
 
 const editProduct = async (req, res) => {
@@ -187,7 +189,7 @@ const updateProduct = async (req, res) => {
             regularPrice: data.regularPrice,
             salePrice: data.salePrice,
             quantity: data.quantity,
-            status: data.quantity = '0' ? "Out of Stock" : "Available"
+            status: data.quantity === '0' ? "Out of Stock" : "Available"
 
         }
         if (req.files.length > 0) {

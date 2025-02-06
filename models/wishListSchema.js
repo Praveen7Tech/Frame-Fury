@@ -19,6 +19,10 @@ const wishlistSchema = new Schema({
                 type: Number,
                 required: true,
             },
+            stockCount: {
+                type: Number,
+                required : true
+            },
             stockStatus: {
                 type: String,
                 required: true,

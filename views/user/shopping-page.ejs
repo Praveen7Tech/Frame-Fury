@@ -192,10 +192,19 @@
                     <div class="logo logo-width-1">
 
                     </div>
-                    <div class="header-right">
+                    <div class="header-right" style="margin-top: 30px;">
                         <div class="search-style-2">
                             <form action="/search" method="POST">
-                                <input type="text" name="query" placeholder="Search for items...">
+                                <input style="width: 250px;" type="text" name="query" placeholder="Search for items..." value="<%= search %>">
+                                <%if(search !== null){%>
+                                <a 
+                                style="width: 25px;"
+                                href="/shoppingPage" 
+                                class="btn btn-danger clear-search-icon" 
+                                title="Clear Search">
+                                <i style="margin-left: -5px;" class="fas fa-times"></i>
+                            </a>
+                            <%}%>
                             </form>
                         </div>
                     </div>

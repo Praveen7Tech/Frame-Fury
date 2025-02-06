@@ -146,6 +146,9 @@
             .btn a:hover {
                 text-decoration: underline;
             }
+            .fas{
+              margin-top: 11px;
+            }
         </style>
     </head>
 
@@ -161,6 +164,14 @@
                 <div class="input-group input-group-sm">
                     <input type="text" class="form-control" placeholder="Search products or brands" name="search">
                     <button class="btn" type="submit">Search</button>
+                    <% if (search) { %>
+                        <a 
+                            href="/admin/products" 
+                            class="btn btn-danger clear-search-icon" 
+                            title="Clear Search">
+                            <i class="fas fa-times"></i>
+                        </a>
+                    <% } %>
                 </div>
             </div>
         </form>
@@ -227,15 +238,13 @@
                         </td>
                         <td class="action-btns">
                             <% if (!data[i].isBlocked) { %>
-                                <button class="btn btn-block">
-                                    <a href="/admin/blockProduct?id=<%= data[i]._id %>">Block</a>
-                                </button>
+                                <button class="btn btn-block" onclick="toggleProductStatus('<%= data[i]._id %>', 'block')">Block</button>
                             <% } else { %>
-                                <button class="btn btn-unblock">
-                                    <a href="/admin/unblockProduct?id=<%= data[i]._id %>">Unblock</a>
-                                </button>
+                                <button class="btn btn-unblock" onclick="toggleProductStatus('<%= data[i]._id %>', 'unblock')">Unblock</button>
                             <% } %>
                         </td>
+                        
+                        
                         <td>
                             <button class="btn btn-edit">
                                 <a href="/admin/editProduct?id=<%= data[i]._id %>">Edit</a>
@@ -268,6 +277,51 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <%- include("../../views/partials/admin/footer") %>
+
+    <script>
+       async function toggleProductStatus(productId, action) {
+            try {
+                const response = await fetch(`/admin/${action}Product`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ id: productId }),
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Update the button text and class dynamically
+                    const button = document.querySelector(`button[onclick="toggleProductStatus('${productId}', '${action}')"]`);
+                    if (action === "block") {
+                        button.textContent = "Unblock";
+                        button.classList.remove("btn-block");
+                        button.classList.add("btn-unblock");
+                        button.setAttribute("onclick", `toggleProductStatus('${productId}', 'unblock')`);
+                    } else {
+                        button.textContent = "Block";
+                        button.classList.remove("btn-unblock");
+                        button.classList.add("btn-block");
+                        button.setAttribute("onclick", `toggleProductStatus('${productId}', 'block')`);
+                    }
+                } else {
+                        Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: result.message || "An error occurred. Please try again.",
+                    });
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "An unexpected error occurred. Please try again later.",
+                });
+            }
+        }
+
+    </script>
+    
 
         <!-- add offer -->
         <script>
