@@ -57,8 +57,8 @@
         }
 
         .category-count {
-            background-color: #e0e0e0;
-            color: #333;
+            background-color: #fff;
+            color: #fff;
             padding: 2px 8px;
             border-radius: 12px;
             font-size: 0.8rem;
@@ -70,7 +70,7 @@
         }
 
         .active-category .category-count {
-            background-color: rgba(255, 255, 255, 0.2);
+            background-color: rgba(250, 244, 244, 0.2);
             color: #fff;
         }
 
@@ -175,6 +175,7 @@
         }
     </style>
 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <main class="main">
@@ -414,6 +415,12 @@
                                                 <%=category[i].name%>
                                             </span>
                                             <!-- <span class="category-count">0</span> -->
+                                             <%if(isActive){%>
+                                            <span class="category-count">
+                                                <i class="bi bi-x"></i>
+                                            </span>
+                                            <%}%> 
+                                            
                                         </a>
                                     </li>
                                     <% } %>
@@ -450,40 +457,17 @@
                             </div>
                         </div>
 
-                        <!-- Product sidebar Widget -->
-                        <!-- <div class="sidebar-widget product-sidebar  mb-30 p-30 bg-grey border-radius-10">
-                            <div class="widget-header position-relative mb-20 pb-10">
-                                <h5 class="widget-title mb-10">New products</h5>
-                                <div class="bt-1 border-color-1"></div>
-                            </div>
-                            <div class="single-post clearfix">
-                                <%for(let i=0;i<products.length-9;i++){%>
-                                    <div class="image">
-                                        <img src="/uploads/re-image/<%=products[i].productImage[0]%>" alt="">
-                                    </div>
-                                    <div class="content pt-10">
-                                        <h5><a href="/productDetails?id=<%=products[i]._id%>">
-                                                <%=products[i].productName%>
-                                            </a></h5>
-                                        <p class="price mb-0 mt-5">
-                                            <%=products[i].salePrice%>
-                                        </p>
-                                        <div class="product-rate">
-                                            <div class="product-rating" style="width:90%"></div>
-                                        </div>
-                                    </div>
-                                    <%}%>
-                            </div>
-
-                        </div> -->
+                        <!--limited edition portion -->
+                        <%if(LEavailability){%>
                         <div class="banner-img wow fadeIn mb-45 animated d-lg-block d-none">
                             <img src="assets/imgs/page/Rolls-Royce Phantom-1.jpg" alt="">
                             <div class="banner-text">
                                 <span style="color: #1a1a1a;">Limited Edition</span>
                                 <h4 style="color: #f5f5f5;">Limitted to <br>Total 10 Pcs</h4>
-                                <a style="color: red;" href="/productDetails?id=6790862368da509cc45c7ad6">Shop Now <i class="fi-rs-arrow-right"></i></a>
+                                <a style="color: red;" href="/productDetails?id=6790862368da509cc45c7ad6 %>">Shop Now <i class="fi-rs-arrow-right"></i></a>
                             </div>
                         </div>
+                        <%}%>
 
                     </div>
                 </div>
@@ -613,7 +597,7 @@
                             })
                         } else {
                             Swal.fire({
-                                icon: "Warning",
+                                icon: "warning",
                                 titile: "Ooop..",
                                 text: data.message,
                                 timer: 2000,

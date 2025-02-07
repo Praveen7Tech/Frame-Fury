@@ -174,7 +174,7 @@ const downloadPdfFormat = async (req, res) => {
         const tableLeft = 50;
         const cellPadding = 5;
         const columnWidths = [20, 70, 60, 100, 120, 160, 50, 35, 35, 45, 45];
-        const cellHeight = 50;
+        const cellHeight = 45;
 
         // Render Table Headers
         const headers = [
@@ -204,7 +204,7 @@ const downloadPdfFormat = async (req, res) => {
             const productDetails = order.items
                 .map(item => `Product: ${item.productName}, Qty: ${item.quantity}, Price: ${item.price}`)
                 .join("\n");
-
+        
             const row = [
                 index + 1,
                 order.date,
@@ -218,18 +218,20 @@ const downloadPdfFormat = async (req, res) => {
                 order.subTotal,
                 order.netTotal
             ];
-
+        
+            // Calculate the maximum cell height for the row
+            const cellHeights = row.map((cell, cellIndex) =>
+                doc.heightOfString(cell, { width: columnWidths[cellIndex] - cellPadding * 2 })
+            );
+            const maxRowHeight = Math.max(cellHeight, ...cellHeights) + cellPadding * 2;
+        
+            // Render the row cells
             row.forEach((cell, cellIndex) => {
-                const cellHeightAdjusted = Math.max(
-                    cellHeight,
-                    doc.heightOfString(cell, { width: columnWidths[cellIndex] - cellPadding * 2 })
-                );
-
                 doc.rect(
                     tableLeft + columnWidths.slice(0, cellIndex).reduce((a, b) => a + b, 0),
                     yPosition,
                     columnWidths[cellIndex],
-                    cellHeightAdjusted
+                    maxRowHeight
                 )
                     .stroke()
                     .fontSize(9)
@@ -239,15 +241,16 @@ const downloadPdfFormat = async (req, res) => {
                         align: cellIndex === 4 ? "left" : "center" // Align Address to left for better readability
                     });
             });
-
-            yPosition += Math.max(cellHeight, doc.heightOfString(productDetails, { width: columnWidths[5] - cellPadding * 2 }) + cellPadding * 2);
-
+        
+            // Update yPosition for the next row
+            yPosition += maxRowHeight;
+        
             // Check if page break is needed
             if (yPosition + cellHeight > doc.page.height - 50) {
                 doc.addPage();
                 yPosition = 50; // Reset for new page
             }
-        });
+        });  
 
         doc.end();
     } catch (error) {

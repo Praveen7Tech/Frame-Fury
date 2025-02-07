@@ -342,6 +342,13 @@ const shoppingPage = async (req, res) => {
         const totalPages = Math.ceil(totalProducts / limit);
         const categoryWithId = categories.map(category => ({ _id: category._id, name: category.name }))
 
+        // limited edition product
+        const limitedEdition = await Product.findById({_id:"6790862368da509cc45c7ad6"}).populate("category")
+        const limitedEditionAvailable = limitedEdition && !limitedEdition.isBlocked && 
+        limitedEdition.category && limitedEdition.category.isListed 
+       
+        console.log("id-",limitedEdition.category.isListed)
+
         res.render("shopping-page", {
             user: userData,
             products: products,
@@ -353,7 +360,9 @@ const shoppingPage = async (req, res) => {
             selectedOrder : null,
             minPrice:null,
             maxPrice:null,
-            search:null
+            search:null,
+            limitedEdition:limitedEdition,
+            LEavailability:limitedEditionAvailable
         })
     } catch (error) {
         console.error("Error in shopping page", error);
@@ -432,7 +441,9 @@ const filterProduct = async (req, res) => {
             selectedOrder:null,
             minPrice:null,
             maxPrice:null,
-            search:null
+            search:null,
+            limitedEdition:null,
+            LEavailability:null
         });
     } catch (error) {
         res.redirect("/pageNotFound");
@@ -520,103 +531,15 @@ const filterByPrice = async (req, res) => {
             selectedOrder: sortOption,
             minPrice,
             maxPrice,
-            search:null
+            search:null,
+            limitedEdition:null,
+            LEavailability:null
         });
     } catch (error) {
         console.error("Error in filterByPrice:", error);
         res.redirect("/pageNotFound");
     }
 };
-
-
-
-
-
-// const filterByPrice = async (req, res) => {
-//     try {
-//         const user = req.session.user;
-//         const userData = await User.findOne({ _id: user });
-//         const categories = await Category.find({ isListed: true }).lean();
-//         const categoryListed = categories.map(category => category._id);
-
-//         let minPrice = parseFloat(req.query.gt) || 0;
-//         let maxPrice = parseFloat(req.query.lt) || Number.MAX_SAFE_INTEGER;
-//         let sortOrder = req.query.sort === "lowToHigh" ? 1 : -1;
-
-//         let itemPerPage = 12;
-//         let currentPage = parseInt(req.query.page) || 1;
-
-//         //calculate currentPrice and sort/filter products
-//         const findProducts = await Product.aggregate([
-//             {
-//                 $match: {
-//                     salePrice: { $gt: minPrice, $lt: maxPrice },
-//                     isBlocked: false,
-//                     category: { $in: categoryListed }
-//                 }
-//             },
-//             {
-//                 $addFields: {
-//                     currentPrice: {
-//                         $subtract: ["$salePrice", "$offerAmount"]
-//                     }
-//                 }
-//             },
-//             {
-//                 $match: {
-//                     currentPrice: { $gte: minPrice, $lte: maxPrice }
-//                 }
-//             },
-//             {
-//                 $sort: { currentPrice: sortOrder }
-//             },
-//             {
-//                 $skip: (currentPage - 1) * itemPerPage
-//             },
-//             {
-//                 $limit: itemPerPage
-//             }
-//         ]);
-
-//         // Count total products for pagination
-//         const totalProductsCount = await Product.aggregate([
-//             {
-//                 $match: {
-//                     salePrice: { $gt: minPrice, $lt: maxPrice },
-//                     isBlocked: false,
-//                     category: { $in: categoryListed }
-//                 }
-//             },
-//             {
-//                 $addFields: {
-//                     currentPrice: {
-//                         $subtract: ["$salePrice", "$offerAmount"]
-//                     }
-//                 }
-//             },
-//             {
-//                 $match: {
-//                     currentPrice: { $gte: minPrice, $lte: maxPrice }
-//                 }
-//             }
-//         ]);
-
-//         let totalPages = Math.ceil(totalProductsCount.length / itemPerPage);
-
-
-//         res.render("shopping-page", {
-//             user: userData,
-//             products: findProducts,
-//             category: categories,
-//             totalPages,
-//             currentPage,
-//             selectedCategory: null
-//         });
-//     } catch (error) {
-//         console.error("Error in filterByPrice:", error);
-//         res.redirect("/pageNotFound");
-//     }
-// };
 
 
 
@@ -690,7 +613,9 @@ const SearchProducts = async (req, res) => {
             selectedOrder:null,
             minPrice:null,
             maxPrice:null,
-            search:search 
+            search:search,
+            limitedEdition:null,
+            LEavailability:null
         });
     } catch (error) {
         console.error("Error in search product", error);
@@ -772,7 +697,9 @@ const filterByName = async (req, res) => {
             selectedOrder : Order, // for pagination 
             minPrice:null,
             maxPrice:null,
-            search:null
+            search:null,
+            limitedEdition:null,
+            LEavailability:null
         });
 
     } catch (error) {

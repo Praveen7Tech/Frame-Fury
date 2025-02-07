@@ -89,6 +89,12 @@
                 transform: translateY(0);
             }
         }
+        .menu-item a.menu-link.active {
+            background-color: #6e7e6e;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
     </style>
 </head>
 
@@ -123,7 +129,8 @@
 
                 </li>
                 <li class="menu-item">
-                    <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-person"></i>
+                    <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-category"></i>
+
                         <span class="text">Category</span>
                     </a>
 
@@ -144,10 +151,6 @@
                     <a class="menu-link" href="/admin/coupon"> <i class="icon material-icons md-class"></i>
                         <span class="text">Coupon</span> </a>
                 </li>
-                <!-- <li class="menu-item">
-                    <a class="menu-link" href="/admin/banner"> <i class="icon material-icons md-photo_size_select_actual"></i>
-                        <span class="text">Banner</span> </a>
-                </li> -->
 
                 <li class="menu-item">
                     <a class="menu-link" href="/admin/orderList"> <i class="icon material-icons md-shopping_cart"></i>
@@ -179,3 +182,36 @@
                 </ul>
             </div>
         </header>
+
+
+        <!-- side bar option highlight -->
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const menuLinks = document.querySelectorAll(".menu-item a.menu-link");
+        
+                // Function to set the active menu item based on the current URL
+                function setActiveMenu() {
+                    const currentPath = window.location.pathname; // Get the current path
+                    menuLinks.forEach(link => {
+                        if (link.getAttribute("href") === currentPath) {
+                            link.classList.add("active");
+                        } else {
+                            link.classList.remove("active");
+                        }
+                    });
+                }
+        
+                // Initial setup to highlight the menu
+                setActiveMenu();
+        
+                // Optional: Handle clicks to ensure highlight is updated immediately
+                menuLinks.forEach(link => {
+                    link.addEventListener("click", function () {
+                        menuLinks.forEach(item => item.classList.remove("active"));
+                        this.classList.add("active");
+                    });
+                });
+            });
+        </script>
+        
+        

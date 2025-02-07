@@ -31,7 +31,8 @@ const categoryInfo = async (req, res) => {
 const addCategory = async (req, res) => {
     const { name, description } = req.body;
     try {
-        const existingCategory = await Category.findOne({ name });
+        const existingCategory = await Category.findOne({ name: { $regex: ".*" + name + ".*", $options: "i" } });
+        console.log("name",existingCategory)
         if (existingCategory) {
             return res.status(400).json({ error: "Category already exists" });
         }
@@ -87,7 +88,10 @@ const updateCategory = async (req, res) => {
 
         const id = req.params.id;
         const { categoryName, description } = req.body;
-        const existingCategory = await Category.findOne({ name: categoryName });
+        const existingCategory = await Category.findOne({
+            name: {$regex: ".*"+ categoryName +".*",$options: "i"},
+            _id: { $ne: id } // Exclude the current category 
+        });
 
         // checking existing name 
         if (existingCategory) {

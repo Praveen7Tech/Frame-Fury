@@ -46,11 +46,20 @@ const addToWishList = async (req, res) => {
         const wishlist = await Wishlist.findOne({ userId });
         console.log("Wishlist:", wishlist);
 
-        const product = await Product.findById(productId);
+        const product = await Product.findById(productId).populate("category", "categoryOffer")
         if (!product) {
             return res.status(404).json({ success: false, message: "Product not found." });
         }
-        //console.log("Product:", product);
+        console.log("sale prod",product)
+        const productOffer = product.offer || 0;
+        const categoryOffer = product.category.categoryOffer || 0;
+        const bestOffer = Math.max(productOffer,categoryOffer)
+        const price = product.salePrice
+
+        console.log("debug",productOffer,categoryOffer,bestOffer,price)
+
+        const offerPrice = bestOffer > 0 ? Math.floor(price -(price * bestOffer / 100)) : price
+        console.log("Product:", offerPrice);
 
         if (wishlist) {
             const existProduct = wishlist.products.find(
@@ -63,7 +72,7 @@ const addToWishList = async (req, res) => {
             // Add the product to the existing wishlist
             wishlist.products.push({
                 productId,
-                price: product.salePrice,
+                price: offerPrice,
                 stockCount:product.quantity,
                 stockStatus: product.status,
             });
@@ -82,7 +91,7 @@ const addToWishList = async (req, res) => {
             products: [
                 {
                     productId,
-                    price: product.salePrice,
+                    price: offerPrice,
                     stockStatus: product.status,
                 },
             ],
