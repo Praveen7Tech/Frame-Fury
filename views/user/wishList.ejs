@@ -124,7 +124,7 @@
                                                 </td>
                                                 <td class="product-des product-name">
                                                     <h5 class="product-name">
-                                                        <a href="shop-product-right.html">
+                                                        <a href="#">
                                                             <%= item.productId.productName %>
                                                         </a>
                                                     </h5>
@@ -135,12 +135,11 @@
                                                     </span>
                                                 </td>
                                                 <td class="text-center" data-title="Stock">
-                                                    <span class="font-weight-bold"
-                                                        style="<%= item.stockCount === 0 ? 'color: red;' : '' %>">
-                                                        <%= item.stockStatus %>
+                                                    <span class="font-weight-bold" style="<%= item.stockStatus === 'Out of Stock' ? 'color: red;' : '' %>">
+                                                      <%= item.stockStatus %>
                                                     </span>
-
-                                                </td>
+                                                  </td>
+                                                  
                                                 <td class="text-right" data-title="Cart">
                                                     <button class="btn btn-sm"
                                                         onclick="addToCart('<%= item.productId._id %>')">

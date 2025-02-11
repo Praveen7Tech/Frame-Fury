@@ -8,6 +8,7 @@ const productDetails = async (req, res) => {
         const userId = req.session.user;
         const userData = await User.findById(userId);
         const productId = req.query.id;
+        console.log("piro",productId)
 
 
         // Fetch the product and ensure both product and category are not blocked

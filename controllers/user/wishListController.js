@@ -10,30 +10,82 @@ const wishListPage = async (req, res) => {
       const userId = req.session.user._id;
   
       const wishlist = await Wishlist.findOne({ userId }).populate("products.productId");
-      const categories = await Category.find({ isListed: true });
 
+      const categories = await Category.find({ isListed: true });
       const listedCategory = categories.map((category) => category._id.toString());
-       
+  
       if (!wishlist) {
         return res.render("wishList", { user, wishlist: [] });
       }
   
-      // Filter out blocked products and category
-      const filteredProducts = wishlist.products.filter((item) => {
-        const product = item.productId;
-        return product && product.isBlocked === false && listedCategory.includes(product.category._id.toString())
-      });
+      // Filter and map products with stock status
+      const filteredProducts = await Promise.all(
+        wishlist.products.map(async (item) => {
+          const product = item.productId;
   
-      // Update the wishlist object to reflect only non-blocked products
-      wishlist.products = filteredProducts;
+          // Check if the product exists, is not blocked, and belongs to a listed category
+          if (
+            product &&
+            product.isBlocked === false &&
+            listedCategory.includes(product.category._id.toString())
+          ) {
+            // Dynamically calculate stock status
+            const stockStatus = product.quantity === 0 ? "Out of Stock" : "Available";
   
-      res.render("wishList", { user, wishlist });
+            return {
+              ...item._doc, // Spread original item properties
+              productId: {
+                ...product._doc, // Spread product details
+              },
+              stockStatus, // Add the stock status
+            };
+          }
+          return null; // Exclude products that don't match the criteria
+        })
+      );
+  
+      // Filter out any null entries
+      const updatedWishlist = filteredProducts.filter((item) => item !== null);
+  
+      res.render("wishList", { user, wishlist: { products: updatedWishlist } });
     } catch (error) {
       console.error("Error in loading wishlist:", error);
       res.status(500).send("Internal Server Error");
     }
   };
   
+  
+//   const wishListPage = async (req, res) => {
+//     try {
+//       const user = req.session.user;
+//       const userId = req.session.user._id;
+  
+//       const wishlist = await Wishlist.findOne({ userId }).populate("products.productId");
+//       const categories = await Category.find({ isListed: true });
+
+//       const listedCategory = categories.map((category) => category._id.toString());
+       
+//       if (!wishlist) {
+//         return res.render("wishList", { user, wishlist: [] });
+//       }
+  
+//       // Filter out blocked products and category
+//       const filteredProducts = wishlist.products.filter((item) => {
+//         const product = item.productId;
+//         return product && product.isBlocked === false && listedCategory.includes(product.category._id.toString())
+//       });
+  
+//       // Update the wishlist object to reflect only non-blocked products
+//       wishlist.products = filteredProducts;
+//       console.log("wish-",wishlist);
+      
+  
+//       res.render("wishList", { user, wishlist });
+//     } catch (error) {
+//       console.error("Error in loading wishlist:", error);
+//       res.status(500).send("Internal Server Error");
+//     }
+//   };
 
 
 const addToWishList = async (req, res) => {
@@ -59,7 +111,7 @@ const addToWishList = async (req, res) => {
         console.log("debug",productOffer,categoryOffer,bestOffer,price)
 
         const offerPrice = bestOffer > 0 ? Math.floor(price -(price * bestOffer / 100)) : price
-        console.log("Product:", offerPrice);
+        console.log("Product:", product);
 
         if (wishlist) {
             const existProduct = wishlist.products.find(
@@ -93,6 +145,7 @@ const addToWishList = async (req, res) => {
                     productId,
                     price: offerPrice,
                     stockStatus: product.status,
+                    stockCount:product.quantity
                 },
             ],
         });
