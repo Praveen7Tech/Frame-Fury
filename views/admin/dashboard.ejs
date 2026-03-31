@@ -232,7 +232,34 @@
 
             // filter orders
             async function filterOrder(page = 1) {
-                const filterType = document.getElementById("filter-order").value;
+                const filterType = document.getElementById(" removeValue(value){
+        if(this.head.value === value){
+            if(this.size === 1){
+                this.head = null
+                this.tail = null
+            }else{
+                this.head = this.head.next
+                this.head.prev = null
+            }
+        }
+        else if(this.tail.value === value){
+            this.tail = this.tail.prev
+            this.tail.next = null
+        }
+        else{
+            let curr = this.head
+            while(curr && curr.value !== value){
+                curr = curr.next
+            }
+            if(!curr){
+                console.log("Value is missing")
+                return
+            }
+            curr.prev.next = curr.next
+            curr.next.prev = curr.prev
+        }
+        this.size--
+    }").value;
                 console.log("filter type:", filterType);
 
                 try {
