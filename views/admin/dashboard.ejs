@@ -218,7 +218,6 @@
     <%- include("../../views/partials/admin/footer") %>
 
 
-<<<<<<< HEAD
         <!-- limit date selection for filtering -->
         <script>
             document.addEventListener("DOMContentLoaded", () => {
@@ -228,55 +227,14 @@
             });
 
         </script>
-=======
-    <!-- limit date selection for filtering -->
-       <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const today = new Date().toISOString().split("T")[0];
-            document.getElementById("start-date").setAttribute("max", today);
-            document.getElementById("end-date").setAttribute("max", today);
-        });
-
-       </script>
->>>>>>> adb32bcb3a7464b93faedbdcea4a783e113300ce
 
         <script>
 
             // filter orders
             async function filterOrder(page = 1) {
-<<<<<<< HEAD
                 const filterType = document.getElementById("filter-order").value;
 
-=======
-                const filterType = document.getElementById(" removeValue(value){
-        if(this.head.value === value){
-            if(this.size === 1){
-                this.head = null
-                this.tail = null
-            }else{
-                this.head = this.head.next
-                this.head.prev = null
-            }
-        }
-        else if(this.tail.value === value){
-            this.tail = this.tail.prev
-            this.tail.next = null
-        }
-        else{
-            let curr = this.head
-            while(curr && curr.value !== value){
-                curr = curr.next
-            }
-            if(!curr){
-                console.log("Value is missing")
-                return
-            }
-            curr.prev.next = curr.next
-            curr.next.prev = curr.prev
-        }
-        this.size--
-    }").value;
->>>>>>> adb32bcb3a7464b93faedbdcea4a783e113300ce
+
                 console.log("filter type:", filterType);
 
                 try {
@@ -284,7 +242,6 @@
                     const data = await response.json();
 
                     if (data.orders) {
-<<<<<<< HEAD
                         const filterTable = document.querySelector("table tbody");
                         filterTable.innerHTML = "";
 
@@ -329,59 +286,7 @@
                         document.querySelector(".text-warning").innerText = data.overallDiscount;
                         document.querySelector(".coupon1").innerText = data.couponDiscountTotal;
 
-=======
-                        console.log("data:", data);
 
-                        const filterTable = document.querySelector("table tbody");
-                        filterTable.textContent = "";
-
-                        // Loop through the orders and add rows dynamically
-                        data.orders.forEach(order => {
-                            const addressDetails = `
-                    ${order.address.addressType}, ${order.address.city},<br>
-                    ${order.address.landMark}, ${order.address.state},<br>
-                    ${order.address.pincode}, ${order.address.phone}
-                `;
-
-                            const productDetails = order.items.map(item => `
-                    <li>
-                        <strong>Product Name:</strong> ${item.productName}<br>
-                        <strong>Category:</strong> ${item.category}<br>
-                        <strong>Quantity:</strong> ${item.quantity}<br>
-                        <strong>Price:</strong> ₹${item.price}<br>
-                    </li>
-                `).join("");
-
-                            const row = `
-                    <tr>
-                        <td>${new Date(order.createdAt).toLocaleString()}</td>
-                        <td>${order.userId.name}</td>
-                        <td>${order.userId.email}</td>
-                        <td>${addressDetails}</td>
-                        <td>
-                            <ul>${productDetails}</ul>
-                        </td>
-                        <td>${order.paymentMethod}</td>
-                        <td>₹ ${order.couponDiscount}</td>
-                        <td>₹ ${order.productOfferTotal}</td>
-                        <td>₹ ${order.deliveryCharge}</td>
-                        <td>₹ ${order.subTotal}</td>
-                        <td>₹ ${order.total}</td>
-                    </tr>
-                `;
-
-                            filterTable.insertAdjacentHTML("beforeend", row);
-                        });
-                        
-
-                        // Update the summary data
-                        document.querySelector(".text-primary").innerHTML = data.orderCount;
-                        document.querySelector(".text-success").innerHTML = data.orderTotal;
-                        document.querySelector(".text-warning").innerHTML = data.overalDiscount;
-                        document.querySelector(".coupon1").innerHTML = data.couponDiscountTotal;
-
-                        // Update pagination controls
->>>>>>> adb32bcb3a7464b93faedbdcea4a783e113300ce
                         updatePagination(data.currentPage, data.totalPages);
                     }
                 } catch (error) {
@@ -441,15 +346,12 @@
                     const response = await fetch(`/admin/filterbyDate?startDate=${startDate}&endDate=${endDate}`);
 
                     const data = await response.json()
-<<<<<<< HEAD
                     console.log("joiii",data)
                     if(data.message){
                         alert(data.message)
                         return;
                     }
-=======
-                    console.log(data)
->>>>>>> adb32bcb3a7464b93faedbdcea4a783e113300ce
+
                     if (data.orders) {
                         const filterTable = document.querySelector("table tbody");
                         filterTable.textContent = ""
@@ -567,7 +469,7 @@
             //Sales report download PDF
 
             async function downloadPdf() {
-<<<<<<< HEAD
+
                 const saleCount = document.querySelector(".text-primary").innerText;
                 const totalSale = document.querySelector(".text-success").innerText;
                 const productDiscount = document.querySelector(".text-warning").innerText;
@@ -647,87 +549,6 @@
                     console.error("Error downloading the sale report in PDF method.", error);
                 }
             }
-=======
-    const saleCount = document.querySelector(".text-primary").innerText;
-    const totalSale = document.querySelector(".text-success").innerText;
-    const productDiscount = document.querySelector(".text-warning").innerText;
-    const couponDiscount = document.querySelector(".coupon1").innerText;
-
-    const rows = Array.from(document.querySelectorAll("table tbody tr"));
-    const orders = rows.map((row) => {
-        const cells = row.querySelectorAll("td");
-
-        // Extract address safely and handle any HTML tags
-        const addressHtml = cells[3]?.innerHTML || "";
-        const addressParts = addressHtml.replace(/<br\s*\/?>/g, ",").split(",").map(part => part.trim());
-
-        return {
-            date: cells[0]?.innerText,
-            userName: cells[1]?.innerText,
-            userEmail: cells[2]?.innerText,
-            addressType: addressParts[0] || "",
-            city: addressParts[1] || "",
-            landMark: addressParts[2] || "",
-            state: addressParts[3] || "",
-            pincode: addressParts[4] || "",
-            phone: addressParts[5] || "",
-            items: Array.from(cells[4]?.querySelectorAll("li") || []).map((li) => {
-                const itemDetails = li.innerText.split("\n").reduce((acc, line) => {
-                    const [key, value] = line.split(":").map(s => s.trim());
-                    if (key && value) {
-                        acc[key] = value;
-                    }
-                    return acc;
-                }, {});
-
-                return {
-                    productName: itemDetails["Product Name"] || "",
-                    category: itemDetails["Category"] || "",
-                    quantity: itemDetails["Quantity"] || "",
-                    price: itemDetails["Price"] ? itemDetails["Price"].replace("₹", "") : "",
-                };
-            }),
-            paymentMethod: cells[5]?.innerText,
-            couponDiscount: cells[6]?.innerText.replace("₹", ""),
-            productDiscount: cells[7]?.innerText.replace("₹", ""),
-            deliveryCharge: cells[8]?.innerText.replace("₹", ""),
-            subTotal: cells[9]?.innerText.replace("₹", ""),
-            netTotal: cells[10]?.innerText.replace("₹", ""),
-        };
-    });
-
-    try {
-        const response = await fetch("/admin/saleReportDownloadPDF", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                saleCount,
-                totalSale,
-                productDiscount,
-                couponDiscount,
-                orders,
-            }),
-        });
-
-        if (response.ok) {
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "Sale_Report.pdf";
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-        } else {
-            console.error("Failed to download the sale report in PDF format.");
-        }
-    } catch (error) {
-        console.error("Error downloading the sale report in PDF method.", error);
-    }
-}
->>>>>>> adb32bcb3a7464b93faedbdcea4a783e113300ce
 
 
         </script>

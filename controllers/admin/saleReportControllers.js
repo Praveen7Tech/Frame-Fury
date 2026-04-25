@@ -50,22 +50,14 @@ const saleFilter = async (req, res) => {
             .sort({ createdAt: -1 })
         const orderCount = order.length;
         const orderTotal = order.reduce((sum, order) => sum + order.total, 0);
-<<<<<<< HEAD
         const overallDiscount = order.reduce((sum, order) => sum + (order.productOfferTotal || 0),0);
-=======
-        const overalDiscount = order.reduce((sum, order) => sum + order.productOfferTotal, 0);
->>>>>>> adb32bcb3a7464b93faedbdcea4a783e113300ce
         const couponDiscountTotal = order.reduce((sum, order) => sum + order.couponDiscount, 0);
 
         res.status(200).json({
             orders,
             orderCount,
             orderTotal,
-<<<<<<< HEAD
             overallDiscount,
-=======
-            overalDiscount,
->>>>>>> adb32bcb3a7464b93faedbdcea4a783e113300ce
             couponDiscountTotal,
             currentPage: parseInt(page),
             totalPages,
