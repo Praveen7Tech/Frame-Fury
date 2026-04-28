@@ -56,6 +56,8 @@ app.use("/admin", adminRouter)
 
 
 PORT = process.env.PORT
+console.log("STATUS : ", process.env.STATUS)
+console.log("STATUS : ", process.env.GOOGLE_AUTH_CALLBACK_URL)
 app.listen(PORT, () => {
     console.log(`User : http://localhost:${PORT}`);
     console.log(`admin : http://localhost:${PORT}/admin/login`)
