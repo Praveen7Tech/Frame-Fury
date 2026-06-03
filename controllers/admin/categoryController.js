@@ -1,4 +1,6 @@
 const Category = require("../../models/categorySchema");
+const STATUS_CODE = require("../../constants/statuscode");
+const MESSAGES = require("../../constants/messages");
 
 
 const categoryInfo = async (req, res) => {
@@ -34,7 +36,7 @@ const addCategory = async (req, res) => {
         const existingCategory = await Category.findOne({ name: { $regex: ".*" + name + ".*", $options: "i" } });
         console.log("name",existingCategory)
         if (existingCategory) {
-            return res.status(400).json({ error: "Category already exists" });
+            return res.status(STATUS_CODE.BAD_REQUEST).json({ error: MESSAGES.CATEGORY_ALREADY_EXISTS });
         }
 
         const newCategory = new Category({
@@ -43,10 +45,10 @@ const addCategory = async (req, res) => {
         });
         await newCategory.save();
         console.log("New category added:", newCategory);
-        return res.json({ message: "Category added successfully" });
+        return res.json({ message: MESSAGES.CATEGORY_ADDED_SUCCESS });
     } catch (error) {
         console.error("Error adding category:", error);
-        return res.status(500).json({ error: "Internal server error" });
+        return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ error: MESSAGES.INTERNAL_SERVER_ERROR });
     }
 };
 
@@ -95,7 +97,7 @@ const updateCategory = async (req, res) => {
 
         // checking existing name 
         if (existingCategory) {
-            return res.status(400).json({ error: "Category exist, Please choose another Name." })
+            return res.status(STATUS_CODE.BAD_REQUEST).json({ error: MESSAGES.CATEGORY_ALREADY_EXISTS })
         }
 
         //update category
@@ -106,15 +108,15 @@ const updateCategory = async (req, res) => {
             { new: true }); // return updation immediately
 
         if (updateCategory) {
-            res.status(200).json({ message: "Category updated successfully" });
+            res.status(STATUS_CODE.OK).json({ message: MESSAGES.CATEGORY_UPDATED_SUCCESS });
             //res.redirect("/admin/category")
         } else {
-            res.status(400).json({ error: "Category Not found" })
+            res.status(STATUS_CODE.BAD_REQUEST).json({ error: "Category Not found" })
         }
 
     } catch (error) {
         console.error("Error updating category:", error);
-        res.status(500).json({ error: "Internal server error" })
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ error: MESSAGES.INTERNAL_SERVER_ERROR })
 
     }
 }
@@ -131,11 +133,11 @@ const addOffer = async (req, res) => {
         category.categoryOffer = amount;
         category.save();
 
-        res.status(200).send("Category offer added successfully")
+        res.status(STATUS_CODE.OK).send(MESSAGES.CATEGORY_OFFER_ADDED_SUCCESS)
         console.log("category offer added succesfully")
     } catch (error) {
         console.error("Error in adding cat offer", error);
-        res.status(500).send("Error while adding  category offer")
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).send(MESSAGES.ERROR_ADDING_CATEGORY_OFFER)
     }
 }
 
@@ -151,12 +153,12 @@ const editOffer = async (req, res) => {
         category.categoryOffer = amount;
         category.save();
 
-        res.status(200).send("Category Offer Updated Successfully.")
+        res.status(STATUS_CODE.OK).send(MESSAGES.CATEGORY_OFFER_UPDATED_SUCCESS)
         console.log("category offer updated succesfully");
 
     } catch (error) {
         console.error("Error in updating cat offer");
-        res.status(500).send("Error in updating category offer")
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).send(MESSAGES.ERROR_UPDATING_CATEGORY_OFFER)
     }
 }
 
@@ -177,7 +179,7 @@ const removeOffer = async (req, res) => {
         console.log("category offer removed succssfully")
     } catch (error) {
         console.error("Error in removing category");
-        res.status(500).json({ success: false, message: "Server Error..!" })
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ success: false, message: MESSAGES.SERVER_ERROR_ALT })
     }
 }
 

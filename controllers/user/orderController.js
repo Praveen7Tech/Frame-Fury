@@ -2,6 +2,8 @@ const Order = require("../../models/orderSchema")
 const Address = require("../../models/addressSchema");
 const Product = require("../../models/productSchema");
 const Wallet = require("../../models/walletSchema")
+const STATUS_CODE = require("../../constants/statuscode");
+const MESSAGES = require("../../constants/messages");
 const { v4: uuidv4 } = require("uuid")
 
 const orderDetails = async (req, res) => {
@@ -50,7 +52,7 @@ const orderCancel = async (req, res) => {
 
             console.log("order cancelled succussfully...");
 
-            res.status(200).json({ success: true, message: "Order Cancelled successfully" })
+            res.status(STATUS_CODE.OK).json({ success: true, message: MESSAGES.ORDER_CANCELLED_SUCCESS })
 
             const transactionId = uuidv4();
 
@@ -66,12 +68,12 @@ const orderCancel = async (req, res) => {
                 console.log("wallet updated successfully")
             }
         } else if (order.orderStatus === "Shipped") {
-            res.status(400).json({ success: false, message: "Order Can't Cancel, Shipping started.." })
+            res.status(STATUS_CODE.BAD_REQUEST).json({ success: false, message: MESSAGES.ORDER_CANNOT_CANCEL })
         }
 
     } catch (error) {
         console.error("Error in cancelling order", error);
-        res.status(500).json({ message: "Server error..!" })
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: MESSAGES.SERVER_ERROR_ALT })
     }
 }
 
@@ -97,7 +99,7 @@ const ReturnOrder = async (req, res) => {
 
 
         if (currentDate <= expectedDate) {
-            res.status(200).json({ success: true, message: "Return Order Request Confirmed..!" })
+            res.status(STATUS_CODE.OK).json({ success: true, message: MESSAGES.RETURN_REQUEST_CONFIRMED })
 
             order.orderStatus = "Returned"
             await order.save()
@@ -120,11 +122,11 @@ const ReturnOrder = async (req, res) => {
 
         }
         else {
-            res.status(400).json({ success: false, message: "Unfortunately The Return Period Has Expired..!" })
+            res.status(STATUS_CODE.BAD_REQUEST).json({ success: false, message: MESSAGES.RETURN_PERIOD_EXPIRED })
         }
     } catch (error) {
         console.error("Error in Return ORder Request..", error);
-        res.status(500).json({ message: "Server Error..!" })
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: MESSAGES.SERVER_ERROR_ALT })
     }
 }
 

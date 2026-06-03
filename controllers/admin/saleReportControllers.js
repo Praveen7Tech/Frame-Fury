@@ -1,6 +1,8 @@
 const ExcelJs = require("exceljs")
 const PDFdocucument = require("pdfkit")
 const Order = require("../../models/orderSchema")
+const STATUS_CODE = require("../../constants/statuscode");
+const MESSAGES = require("../../constants/messages");
 
 const saleFilter = async (req, res) => {
     try {
@@ -53,7 +55,7 @@ const saleFilter = async (req, res) => {
         const overallDiscount = order.reduce((sum, order) => sum + (order.productOfferTotal || 0),0);
         const couponDiscountTotal = order.reduce((sum, order) => sum + order.couponDiscount, 0);
 
-        res.status(200).json({
+        res.status(STATUS_CODE.OK).json({
             orders,
             orderCount,
             orderTotal,
@@ -65,7 +67,7 @@ const saleFilter = async (req, res) => {
         //console.log("ord :",orders)
     } catch (error) {
         console.error("Error in Sale order filtering", error);
-        res.status(500).json({ message: "Internal Server Error." });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: MESSAGES.INTERNAL_SERVER_ERROR_ALT });
     }
 };
 
@@ -77,7 +79,7 @@ const saleFilterByDate = async (req, res) => {
         console.log(" g g", startDate, endDate)
 
         if (!startDate || !endDate) {
-            return res.status(400).json({ message: "Both Dates are required..!" })
+            return res.status(STATUS_CODE.BAD_REQUEST).json({ message: MESSAGES.BOTH_DATES_REQUIRED })
         }
 
         const start = new Date(startDate)
@@ -92,10 +94,10 @@ const saleFilterByDate = async (req, res) => {
         const productDiscount = orders.reduce((sum, order) => sum + order.productOfferTotal, 0);
         const couponDiscount = orders.reduce((sum, order) => sum + order.couponDiscount, 0)
 
-        res.status(200).json({ orders, saleCount, productDiscount, saleTotal, couponDiscount })
+        res.status(STATUS_CODE.OK).json({ orders, saleCount, productDiscount, saleTotal, couponDiscount })
     } catch (error) {
         console.error("Error in sale filtering by price..", error);
-        res.status(500).json({ message: "Internal server Error...!" })
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: MESSAGES.SERVER_ERROR_ALT })
     }
 }
 
@@ -143,7 +145,7 @@ const downloadReport = async (req, res) => {
         res.end;
     } catch (error) {
         console.error("Error in Generating the Sale Report..", error);
-        res.status(500).send("Failed to generate Report.")
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).send(MESSAGES.ERROR_GENERATING_REPORT)
     }
 }
 

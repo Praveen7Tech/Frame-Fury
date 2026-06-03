@@ -1,6 +1,8 @@
 const User = require("../../models/userSchema");
 const Address = require("../../models/addressSchema");
 const Order = require("../../models/orderSchema")
+const STATUS_CODE = require("../../constants/statuscode");
+const MESSAGES = require("../../constants/messages");
 const nodemailer = require("nodemailer");
 const dotenv = require("dotenv");
 const bcrypt = require("bcrypt");
@@ -121,10 +123,10 @@ const forgotPasswordOTPverify = async (req, res) => {
         if (enteredOtp === req.session.userOtp) {
             res.json({ success: true, redirectUrl: "/reset-password" })
         } else {
-            res.json({ success: false, message: "OTP not matching" })
+            res.json({ success: false, message: MESSAGES.OTP_NOT_MATCHING })
         }
     } catch (error) {
-        res.status(500).json({ success: false, message: "An Eroor occured, Please try again" })
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ success: false, message: MESSAGES.ERROR_RESENDING_OTP })
     }
 }
 
@@ -146,13 +148,13 @@ const forgotPassResendOtp = async (req, res) => {
         const sendMail = await sendVerificationEmail(email, otp)
         if (sendMail) {
             console.log("Resend OTP :", otp);
-            res.status(200).json({ success: true, message: "OTP Resend Successfully" })
+            res.status(STATUS_CODE.OK).json({ success: true, message: MESSAGES.OTP_RESEND_SUCCESS })
         } else {
-            res.status(500).json({ success: false, message: "Failed to Resend OTP, please try again later!" })
+            res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ success: false, message: MESSAGES.ERROR_RESENDING_OTP_ALT })
         }
     } catch (error) {
         console.error("Error Re sending OTP", error);
-        res.status(500).json({ success: false, message: "Internal Server Error, Please try again!" })
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ success: false, message: MESSAGES.INTERNAL_SERVER_ERROR })
     }
 }
 
@@ -335,7 +337,7 @@ const editAddress = async (req, res) => {
         const currentAddress = userAddress.address.find(address => address._id.toString() === addressId);
 
         if (!currentAddress) {
-            return res.status(404).send("Address not found!")
+            return res.status(STATUS_CODE.NOT_FOUND).send(MESSAGES.ADDRESS_NOT_FOUND)
         }
 
         res.render("edit-address", { address: currentAddress, user: user })
@@ -394,7 +396,7 @@ const deleteAddress = async (req, res) => {
         const findAddress = await Address.findOne({ "address._id": addressId });
 
         if (!findAddress) {
-            return res.status(404).send("Canot find address..!")
+            return res.status(STATUS_CODE.NOT_FOUND).send(MESSAGES.ADDRESS_NOT_FOUND_ALT)
         }
 
         await Address.updateOne({ "address._id": addressId },
@@ -419,7 +421,7 @@ const profileUpdate = async (req, res) => {
         res.redirect("/userProfile")
     } catch (error) {
         console.error("Error in profile update");
-        res.status(500).send("something went wrong please try again later")
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).send(MESSAGES.ERROR_SOMETHING_WENT_WRONG)
     }
 }
 

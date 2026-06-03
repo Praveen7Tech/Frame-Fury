@@ -3,6 +3,8 @@ const Product = require("../../models/productSchema");
 const Cart = require("../../models/cartSchema");
 const Category = require("../../models/categorySchema");
 const Wishlist = require("../../models/wishListSchema");
+const STATUS_CODE = require("../../constants/statuscode");
+const MESSAGES = require("../../constants/messages");
 //const { default: items } = require("razorpay/dist/types/items");
 //const { cartCount } = require("../../middlewares/auth");
 
@@ -71,12 +73,12 @@ const addToCart = async (req, res) => {
 
     console.log("product : ", product)
     if (!product) {
-      return res.status(404).json({ success: false, message: "Product not found" });
+      return res.status(STATUS_CODE.NOT_FOUND).json({ success: false, message: MESSAGES.PRODUCT_NOT_FOUND });
     }
 
     console.log("pro qty :", product.quantity)
     if (product.quantity <= 0) {
-      return res.status(400).json({ success: false, message: "Product is out of stock..!" });
+      return res.status(STATUS_CODE.BAD_REQUEST).json({ success: false, message: MESSAGES.PRODUCT_OUT_OF_STOCK });
     }
 
     // Get product and category offers
@@ -93,7 +95,7 @@ const addToCart = async (req, res) => {
 
     if (productInCart) {
       if (productInCart.quantity >= cartLimit) {
-        return res.status(400).json({ success: false, message: "Maximum quantity for this product reached...!" });
+        return res.status(STATUS_CODE.BAD_REQUEST).json({ success: false, message: MESSAGES.MAX_QUANTITY_REACHED });
       }
 
       // Update the quantity and total price
@@ -121,11 +123,11 @@ const addToCart = async (req, res) => {
     //console.log("suii",cartCount)
 
     console.log("Product added to cart successfully");
-    return res.status(200).json({ success: true, message: "Product added to Cart Successfully.", cartCount: cartCount });
+    return res.status(STATUS_CODE.OK).json({ success: true, message: MESSAGES.PRODUCT_ADDED_TO_CART, cartCount: cartCount });
 
   } catch (error) {
     console.error("Error in add to cart", error);
-    return res.status(500).json({ success: false, message: "Server Error!" });
+    return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ success: false, message: MESSAGES.SERVER_ERROR });
   }
 };
 
@@ -153,11 +155,11 @@ const removeProduct = async (req, res) => {
     const cartCount = cart.items.length;
     req.session.cartCount = cartCount;
 
-    res.status(200).json({ success: true, cartCount: cartCount });
+    res.status(STATUS_CODE.OK).json({ success: true, cartCount: cartCount });
 
   } catch (error) {
     console.error("Error in removing item from cart", error);
-    return res.status(500).json({ status: false, message: "Server Error!" });
+    return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ status: false, message: MESSAGES.SERVER_ERROR });
   }
 };
 
@@ -172,37 +174,37 @@ const updateCartQuantity = async (req, res) => {
 
     const cart = await Cart.findOne({ userId });
     if (!cart) {
-      return res.status(404).json({ status: false, message: "Cart not found..!" })
+      return res.status(STATUS_CODE.NOT_FOUND).json({ status: false, message: MESSAGES.CART_NOT_FOUND })
     }
 
     const product = await Product.findById(productId); // Find the product in the database
     if (!product) {
-      return res.status(404).json({ status: false, message: "Product not found!" });
+      return res.status(STATUS_CODE.NOT_FOUND).json({ status: false, message: MESSAGES.PRODUCT_NOT_FOUND });
     }
 
     console.log("product--", product)
 
     const findProduct = cart.items.find((item) => item.productId.toString() === productId);
     if (!findProduct) {
-      return res.status(404).json({ status: false, message: "Product not found in the cart..!" })
+      return res.status(STATUS_CODE.NOT_FOUND).json({ status: false, message: MESSAGES.PRODUCT_NOT_IN_CART })
     }
 
 
     console.log("find item:", findProduct)
 
     if (quantity > limit) {
-      return res.status(400).json({ status: false, message: "Quantity not exceed 5." })
+      return res.status(STATUS_CODE.BAD_REQUEST).json({ status: false, message: MESSAGES.QUANTITY_LIMIT_EXCEEDED })
     }
 
     const qtyDefference = quantity - findProduct.quantity;
 
     if (qtyDefference > 0 && product.quantity < qtyDefference) {
-      return res.status(400).json({ status: false, message: "Product out of stock..!" })
+      return res.status(STATUS_CODE.BAD_REQUEST).json({ status: false, message: MESSAGES.PRODUCT_OUT_OF_STOCK })
     }
 
     product.quantity -= qtyDefference;
     if (product.quantity <= 0) {
-      return res.status(400).json({ statusbar: false, message: "Insufficient stock..." })
+      return res.status(STATUS_CODE.BAD_REQUEST).json({ statusbar: false, message: MESSAGES.INSUFFICIENT_STOCK })
     }
 
     findProduct.quantity = quantity;
@@ -213,17 +215,17 @@ const updateCartQuantity = async (req, res) => {
 
     await product.save();
     await cart.save();
-    return res.status(200).json({ status: true, quantity: findProduct.quantity, totalPrice: findProduct.price, message: "Cart updated succesfuly." })
+    return res.status(STATUS_CODE.OK).json({ status: true, quantity: findProduct.quantity, totalPrice: findProduct.price, message: MESSAGES.CART_UPDATED })
   } catch (error) {
     console.error("Error in updating quantity", error);
-    return res.status(500).json({ status: false, message: "Server Error...!" })
+    return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ status: false, message: MESSAGES.SERVER_ERROR_ALT })
   }
 }
 
 const cartCount = async (req, res) => {
   try {
     if (!req.session.user) {
-      return res.json({ success: false, message: "User not logged in" });
+      return res.json({ success: false, message: MESSAGES.USER_NOT_LOGGED_IN });
     }
 
     const userId = req.session.user._id;
@@ -233,7 +235,7 @@ const cartCount = async (req, res) => {
     return res.json({ success: true, cartCount });
   } catch (error) {
     console.error("Error fetching wishlist count:", error);
-    return res.json({ success: false, message: "Failed to fetch wishlist count" });
+    return res.json({ success: false, message: MESSAGES.ERROR_FETCHING_WISHLIST });
   }
 }
 

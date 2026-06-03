@@ -1,4 +1,6 @@
 const User = require("../../models/userSchema");
+const STATUS_CODE = require("../../constants/statuscode");
+const MESSAGES = require("../../constants/messages");
 
 // Fetch and render customer data
 const customerInfo = async (req, res) => {
@@ -47,7 +49,7 @@ const customerBlocked = async (req, res) => {
         res.json({ success: true });
     } catch (error) {
         console.error(error);
-        res.json({ success: false, message: "Error blocking user" });
+        res.json({ success: false, message: MESSAGES.ERROR_BLOCKING_USER });
     }
 };
 
@@ -58,7 +60,7 @@ const customerunBlocked = async (req, res) => {
         res.json({ success: true });
     } catch (error) {
         console.error(error);
-        res.json({ success: false, message: "Error unblocking user" });
+        res.json({ success: false, message: MESSAGES.ERROR_UNBLOCKING_USER });
     }
 };
 

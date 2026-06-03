@@ -6,6 +6,8 @@ const Address = require("../../models/addressSchema");
 const Category = require("../../models/categorySchema");
 const Coupon = require("../../models/coupenSchema");
 const Wallet = require("../../models/walletSchema");
+const STATUS_CODE = require("../../constants/statuscode");
+const MESSAGES = require("../../constants/messages");
 const axios = require("axios")
 
 const { v4: uuidv4 } = require("uuid")
@@ -125,7 +127,7 @@ const placeOrder = async (req, res) => {
 
     //maximum price limit for COD 
     if (total >= 15000) {
-      return res.status(400).json({ success: false, message: "Cash On Delivery Option Only Available, at Maximum Purchase of ₹ 15000, Please use another payment option..!" })
+      return res.status(STATUS_CODE.BAD_REQUEST).json({ success: false, message: MESSAGES.COD_LIMIT_EXCEEDED })
     }
 
     const orderId = generateOrderId()
@@ -164,9 +166,9 @@ const placeOrder = async (req, res) => {
     console.log("Order placed successfully");
   } catch (error) {
     console.error("Error placing order:", error);
-    res.status(500).json({
+    res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: "Failed to place the order",
+      message: MESSAGES.ERROR_PLACING_ORDER,
       error: error.message,
     });
   }
@@ -201,9 +203,9 @@ const razorPayOrder = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in creating Razorpay Order:", error);
-    res.status(500).json({
+    res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: "Failed to create Razorpay order.",
+      message: MESSAGES.ERROR_CREATING_RAZORPAY_ORDER,
       error: error.message,
     });
   }
@@ -254,7 +256,7 @@ const verifyRazorPayOrder = async (req, res) => {
           return res.json({ success: true, message: "Payment Successful Existing order hs been Updated.", orderId: existingOrder.orderId })
         }
       } else {
-        return res.status(400).json({ success: false, message: "Invalid signature, or Payment Verification Failed" })
+        return res.status(STATUS_CODE.BAD_REQUEST).json({ success: false, message: MESSAGES.PAYMENT_VERIFICATION_FAILED })
       }
     }
 
@@ -404,7 +406,7 @@ const verifyRazorPayOrder = async (req, res) => {
     }
   } catch (error) {
     console.error("Error verifying Razorpay payment:", error);
-    res.status(500).json({ success: false, message: "Failed to verify payment" });
+    res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ success: false, message: MESSAGES.ERROR_VERIFYING_PAYMENT });
   }
 };
 
@@ -421,7 +423,7 @@ const placeOrderWallet = async (req, res) => {
     const wallet = await Wallet.findOne({ userId });
     console.log("wallet", wallet);
     if (!wallet || wallet.balance < totalAmount) {
-      return res.status(400).json({ success: false, message: "Insufficient Balance in Your Wallet" });
+      return res.status(STATUS_CODE.BAD_REQUEST).json({ success: false, message: MESSAGES.INSUFFICIENT_WALLET_BALANCE });
     }
 
     // Validate selected address
@@ -431,7 +433,7 @@ const placeOrderWallet = async (req, res) => {
     );
 
     if (!userAddress) {
-      return res.status(400).json({ success: false, message: "Invalid address selected" });
+      return res.status(STATUS_CODE.BAD_REQUEST).json({ success: false, message: MESSAGES.INVALID_ADDRESS });
     }
 
     // Extract address details
@@ -448,7 +450,7 @@ const placeOrderWallet = async (req, res) => {
     });
 
     if (!findProduct || findProduct.length === 0) {
-      return res.status(400).json({ success: false, message: "Cart is empty" });
+      return res.status(STATUS_CODE.BAD_REQUEST).json({ success: false, message: MESSAGES.CART_EMPTY });
     }
 
     // Calculate totals
@@ -525,9 +527,9 @@ const placeOrderWallet = async (req, res) => {
 
   } catch (error) {
     console.error("Error placing order:", error);
-    return res.status(500).json({
+    return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: "Failed to place the order",
+      message: MESSAGES.ERROR_PLACING_ORDER,
       error: error.message
     });
   }

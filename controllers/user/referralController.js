@@ -1,4 +1,6 @@
 const User = require("../../models/userSchema")
+const STATUS_CODE = require("../../constants/statuscode");
+const MESSAGES = require("../../constants/messages");
 
 const GenerateReferral = async (req, res) => {
     try {
@@ -15,7 +17,7 @@ const GenerateReferral = async (req, res) => {
         await user.save();
 
         // Respond with the referral code
-        res.status(200).json({
+        res.status(STATUS_CODE.OK).json({
             success: true,
             referralCode: user.referralCode // Send the generated referral code
         });
@@ -23,7 +25,7 @@ const GenerateReferral = async (req, res) => {
         console.log("Referral Code created successfully..");
     } catch (error) {
         console.error("Error in Creating Referral code", error);
-        res.status(500).json({ message: "Internal Server Error..!" });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: MESSAGES.INTERNAL_SERVER_ERROR });
     }
 }
 

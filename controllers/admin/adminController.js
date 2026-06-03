@@ -1,6 +1,8 @@
 const User = require("../../models/userSchema");
 const mongoose = require("mongoose");
 const Order = require("../../models/orderSchema")
+const STATUS_CODE = require("../../constants/statuscode");
+const MESSAGES = require("../../constants/messages");
 const bcrypt = require("bcrypt");
 //const { default: items } = require("razorpay/dist/types/items");
 
@@ -32,12 +34,12 @@ const login = async (req, res) => {
 
             if (passwordMatch) {
                 req.session.admin = true;
-                return res.status(200).json({ success: true, message: "Login successful!" });
+                return res.status(STATUS_CODE.OK).json({ success: true, message: MESSAGES.LOGIN_SUCCESS });
             } else {
-                return res.status(400).json({ success: false, message: "Incorrect password!" });
+                return res.status(STATUS_CODE.BAD_REQUEST).json({ success: false, message: MESSAGES.INCORRECT_PASSWORD });
             }
         } else {
-            return res.status(400).json({ success: false, message: "Admin account not found!" });
+            return res.status(STATUS_CODE.BAD_REQUEST).json({ success: false, message: MESSAGES.ADMIN_ACCOUNT_NOT_FOUND });
         }
     } catch (error) {
         console.log("Login error", error);

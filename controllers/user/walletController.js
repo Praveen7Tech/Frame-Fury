@@ -1,6 +1,8 @@
 const Order = require("../../models/orderSchema")
 const Wallet = require("../../models/walletSchema")
 const User = require("../../models/userSchema")
+const STATUS_CODE = require("../../constants/statuscode");
+const MESSAGES = require("../../constants/messages");
 const { v4: uuidv4 } = require("uuid")
 
 const walletPage = async (req, res) => {
@@ -69,12 +71,12 @@ const AddMoneyToWallet = async (req, res) => {
         }
 
         console.log("Amount added to wallet successfully");
-        return res.status(200).json({ message: "Amount Added To Wallet Successfully.", wallet })
+        return res.status(STATUS_CODE.OK).json({ message: MESSAGES.AMOUNT_ADDED_TO_WALLET, wallet })
 
 
     } catch (error) {
         console.error("Error in amount adding in wallet", error);
-        res.status(500).json({ messgae: "Internal Server Error.!" })
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ message: MESSAGES.INTERNAL_SERVER_ERROR_ALT })
     }
 }
 

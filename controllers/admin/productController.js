@@ -1,6 +1,8 @@
 const Product = require("../../models/productSchema");
 const Category = require("../../models/categorySchema");
 const User = require("../../models/userSchema");
+const STATUS_CODE = require("../../constants/statuscode");
+const MESSAGES = require("../../constants/messages");
 
 const fs = require("fs");
 const path = require("path");
@@ -46,7 +48,7 @@ const addProducts = async (req, res) => {
             console.log("Category Found:", categoryId);
 
             if (!categoryId) {
-                return res.status(400).json("Invalid Category name");
+                return res.status(STATUS_CODE.BAD_REQUEST).json(MESSAGES.INVALID_CATEGORY_NAME);
             }
 
             const newProduct = new Product({
@@ -67,7 +69,7 @@ const addProducts = async (req, res) => {
             await newProduct.save();
             return res.redirect("/admin/addProducts");
         } else {
-            return res.status(400).json("Product already exists, Please try with another name");
+            return res.status(STATUS_CODE.BAD_REQUEST).json(MESSAGES.PRODUCT_ALREADY_EXISTS);
         }
     } catch (error) {
         console.error("Error saving new product", error);
@@ -123,9 +125,9 @@ const blockProduct = async (req, res) => {
     try {
         const id = req.body.id; // Use `req.body` for AJAX data
         await Product.updateOne({ _id: id }, { $set: { isBlocked: true } });
-        res.json({ success: true, message: "Product blocked successfully." });
+        res.json({ success: true, message: MESSAGES.PRODUCT_BLOCKED_SUCCESS });
     } catch (error) {
-        res.status(500).json({ success: false, message: "An error occurred." });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ success: false, message: MESSAGES.SERVER_ERROR });
     }
 };
 
@@ -133,9 +135,9 @@ const unblockProduct = async (req, res) => {
     try {
         const id = req.body.id; // Use `req.body` for AJAX data
         await Product.updateOne({ _id: id }, { $set: { isBlocked: false } });
-        res.json({ success: true, message: "Product unblocked successfully." });
+        res.json({ success: true, message: MESSAGES.PRODUCT_UNBLOCKED_SUCCESS });
     } catch (error) {
-        res.status(500).json({ success: false, message: "An error occurred." });
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ success: false, message: MESSAGES.SERVER_ERROR });
     }
 };
 
@@ -171,7 +173,7 @@ const updateProduct = async (req, res) => {
         })
 
         if (existingProduct) {
-            return res.status(400).json({ error: "Product with this name is already exist, Please try with another name" })
+            return res.status(STATUS_CODE.BAD_REQUEST).json({ error: MESSAGES.PRODUCT_ALREADY_EXISTS })
         }
 
         const images = [];
@@ -243,11 +245,11 @@ const addOffer = async (req, res) => {
         product.offerAmount = Math.floor(product.salePrice * amount / 100)
         product.save();
 
-        res.status(200).send("Offer added successfully")
+        res.status(STATUS_CODE.OK).send(MESSAGES.OFFER_ADDED_SUCCESS)
         console.log("offer added successfully")
     } catch (error) {
         console.error("error in adding offer", error);
-        res.status(500).send("Failed to add offer")
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).send(MESSAGES.ERROR_ADDING_OFFER)
     }
 }
 
@@ -261,11 +263,11 @@ const editOffer = async (req, res) => {
         product.offerAmount = Math.ceil(product.salePrice * amount / 100)
         product.save();
 
-        res.status(200).send("Poduct offer updated succesfully.")
+        res.status(STATUS_CODE.OK).send(MESSAGES.OFFER_UPDATED_SUCCESS)
         console.log("offer updated succesfully.")
     } catch (error) {
         console.error("RError in updating product offer", error);
-        res.status(500).send("failed to update product offer");
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).send(MESSAGES.ERROR_UPDATING_OFFER);
     }
 }
 
@@ -282,11 +284,11 @@ const removeOffer = async (req, res) => {
         product.offerAmount = 0;
         product.save();
 
-        res.status(200).json({ success: true, message: "Product offer removed successfull.." })
+        res.status(STATUS_CODE.OK).json({ success: true, message: MESSAGES.PRODUCT_OFFER_REMOVED_SUCCESSFULLY })
         console.log("product offer removed successfull")
     } catch (error) {
         console.error("Error in remove product offer", error);
-        res.status(500).json({ success: false, message: "Internal server error" })
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ success: false, message: MESSAGES.INTERNAL_SERVER_ERROR })
     }
 }
 

@@ -1,4 +1,6 @@
 const Coupen = require("../../models/coupenSchema")
+const STATUS_CODE = require("../../constants/statuscode");
+const MESSAGES = require("../../constants/messages");
 
 const CoupenPage = async (req, res) => {
     try {
@@ -44,7 +46,7 @@ const deleteCoupon = async (req, res) => {
 
     } catch (error) {
         console.error("Error in deleting coupon");
-        res.status(500).send("An Error occured while deleting the coupon..")
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).send(MESSAGES.ERROR_DELETING_COUPON)
     }
 }
 
@@ -62,11 +64,11 @@ const editCoupon = async (req, res) => {
         coupon.UsageLimit = UsageLimit
         coupon.save()
 
-        res.status(200).send("Coupon Updated Succesfully")
+        res.status(STATUS_CODE.OK).send(MESSAGES.COUPON_UPDATED_SUCCESS)
         console.log("Coupon Updated Successfully")
     } catch (error) {
         console.error("Error in Editing Coupon", error);
-        res.status(500).send("An error occured in updating Coupon..!")
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).send(MESSAGES.ERROR_UPDATING_COUPON)
     }
 }
 
