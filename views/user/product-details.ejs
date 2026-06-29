@@ -416,7 +416,7 @@
                                         <strong class="option-title">Material</strong>
                                         <div class="material-options">
                                             <label class="material-option">
-                                                <input type="radio" name="material" value="acrylic">
+                                                <input type="radio" name="material" value="acrylic" checked>
                                                 <span class="material-check"></span>
                                                 <span class="material-name">Acrylic Glass</span>
                                                 <span class="material-desc">Ultra-clear, modern finish</span>
@@ -761,13 +761,15 @@
 
         // add to cart function
         function addToCart(productId) {
+            const selectedMaterial = document.querySelector('input[name="material"]:checked')?.value || 'acrylic';
+
             fetch('/addToCart', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json', // Ensures that the request body is JSON
                     'Accept': 'application/json'
                 },
-                body: JSON.stringify({ productId: productId }), // Send productId as JSON
+                body: JSON.stringify({ productId: productId, material: selectedMaterial }), // Send productId as JSON
             })
                 .then(async (response) => {
                     const text = await response.text();
@@ -823,13 +825,15 @@
     <script>
 
         function addToWishlist(productId) {
+            const selectedMaterial = document.querySelector('input[name="material"]:checked')?.value || 'acrylic';
+
             fetch("/addToWishlist", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "Accept": "application/json"
                 },
-                body: JSON.stringify({ productId })
+                body: JSON.stringify({ productId, material: selectedMaterial })
             })
                 .then(async (response) => {
                     const text = await response.text();

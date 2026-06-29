@@ -5,15 +5,20 @@ const MESSAGES = require("../../constants/messages");
 const verifyCoupon = async (req, res) => {
   try {
     const { couponCode, subTotal } = req.body;
+    const userId = req.session.user?._id
     console.log("body : ", req.body);
 
-    const coupon = await Coupon.findOne({ name: couponCode });
+    if (!userId) {
+      return res.status(STATUS_CODE.UNAUTHORIZED).json({ success: false, message: MESSAGES.USER_NOT_LOGGED_IN })
+    }
+
+    const coupon = await Coupon.findOne({ name: couponCode, isList: true });
     if (!coupon) {
       return res.status(STATUS_CODE.NOT_FOUND).json({ success: false, message: MESSAGES.COUPON_NOT_FOUND })
     }
     console.log("coupon -", coupon);
 
-    if (new Date > coupon.expireOn) {
+    if (new Date() > coupon.expireOn) {
       return res.status(STATUS_CODE.BAD_REQUEST).json({ success: false, message: MESSAGES.COUPON_EXPIRED })
     }
 
@@ -22,12 +27,14 @@ const verifyCoupon = async (req, res) => {
     }
     console.log("min price:", coupon.minimumPrice);
 
-    if (coupon.UsageLimit <= 0) {
+    const usedUsers = Array.isArray(coupon.userId) ? coupon.userId : [];
+    const alreadyUsedByUser = usedUsers.some((id) => id.toString() === userId.toString());
+    console.log("User already userd -", alreadyUsedByUser, userId)
+
+    if (coupon.UsageLimit <= 0 || alreadyUsedByUser) {
       return res.status(STATUS_CODE.BAD_REQUEST).json({ success: false, message: MESSAGES.COUPON_LIMIT_REACHED })
     }
 
-    //coupon.UsageLimit -=1
-    coupon.save()
     return res.status(STATUS_CODE.OK).json({ success: true, discount: coupon.offerPrice })
 
   } catch (error) {

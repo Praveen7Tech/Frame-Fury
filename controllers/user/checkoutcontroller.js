@@ -108,11 +108,29 @@ const placeOrder = async (req, res) => {
     let discount = 0
     if (couponCode) {
       const coupon = await Coupon.findOne({ name: couponCode, isList: true });
-      if (coupon) {
-        discount = coupon.offerPrice
+      if (!coupon) {
+        return res.status(STATUS_CODE.BAD_REQUEST).json({ success: false, message: MESSAGES.COUPON_NOT_FOUND });
       }
+
+      if (new Date() > coupon.expireOn) {
+        return res.status(STATUS_CODE.BAD_REQUEST).json({ success: false, message: MESSAGES.COUPON_EXPIRED });
+      }
+
+      if (subTotal < coupon.minimumPrice) {
+        return res.status(STATUS_CODE.BAD_REQUEST).json({ success: false, message: MESSAGES.MINIMUM_PURCHASE_REQUIRED + coupon.minimumPrice });
+      }
+
+      const usedUsers = Array.isArray(coupon.userId) ? coupon.userId : [];
+      const alreadyUsedByUser = usedUsers.some((id) => id.toString() === userId.toString());
+
+      if (coupon.UsageLimit <= 0 || alreadyUsedByUser) {
+        return res.status(STATUS_CODE.BAD_REQUEST).json({ success: false, message: MESSAGES.COUPON_LIMIT_REACHED });
+      }
+
+      discount = coupon.offerPrice;
       coupon.UsageLimit -= 1;
-      await coupon.save()
+      coupon.userId = [...usedUsers, userId];
+      await coupon.save();
     }
 
     //Total product Offer
@@ -249,6 +267,20 @@ const verifyRazorPayOrder = async (req, res) => {
           existingOrder.paymentStatus = "Paid";
           existingOrder.paymentId = paymentId;
 
+          // Consume coupon if order has one
+          if (existingOrder.couponCode) {
+            const coupon = await Coupon.findOne({ name: existingOrder.couponCode, isList: true });
+            if (coupon) {
+              const usedUsers = Array.isArray(coupon.userId) ? coupon.userId : [];
+              const alreadyUsedByUser = usedUsers.some((id) => id.toString() === userId.toString());
+              if (!alreadyUsedByUser && coupon.UsageLimit > 0) {
+                coupon.UsageLimit -= 1;
+                coupon.userId = [...usedUsers, userId];
+                await coupon.save();
+              }
+            }
+          }
+
           await existingOrder.save();
           console.log("exist ord",existingOrder)
 
@@ -306,13 +338,29 @@ const verifyRazorPayOrder = async (req, res) => {
 
     // Apply coupon discount if applicable
     let discount = 0;
+    let coupon = null;
     if (couponCode) {
-      const coupon = await Coupon.findOne({ name: couponCode, isList: true });
-      if (coupon) {
-        discount = coupon.offerPrice;
-        coupon.UsageLimit -= 1;
-        await coupon.save();
+      coupon = await Coupon.findOne({ name: couponCode, isList: true });
+      if (!coupon) {
+        return res.status(STATUS_CODE.BAD_REQUEST).json({ success: false, message: MESSAGES.COUPON_NOT_FOUND });
       }
+
+      if (new Date() > coupon.expireOn) {
+        return res.status(STATUS_CODE.BAD_REQUEST).json({ success: false, message: MESSAGES.COUPON_EXPIRED });
+      }
+
+      if (subTotal < coupon.minimumPrice) {
+        return res.status(STATUS_CODE.BAD_REQUEST).json({ success: false, message: MESSAGES.MINIMUM_PURCHASE_REQUIRED + coupon.minimumPrice });
+      }
+
+      const usedUsers = Array.isArray(coupon.userId) ? coupon.userId : [];
+      const alreadyUsedByUser = usedUsers.some((id) => id.toString() === userId.toString());
+
+      if (coupon.UsageLimit <= 0 || alreadyUsedByUser) {
+        return res.status(STATUS_CODE.BAD_REQUEST).json({ success: false, message: MESSAGES.COUPON_LIMIT_REACHED });
+      }
+
+      discount = coupon.offerPrice;
     }
 
     const deliveryCharge = deliveryMethod === "fast" ? 80 : 0;
@@ -387,6 +435,12 @@ const verifyRazorPayOrder = async (req, res) => {
 
     // Handle the cart and response based on payment status
     if (paymentStatusValue === "Paid") {
+      if (coupon) {
+        const usedUsers = Array.isArray(coupon.userId) ? coupon.userId : [];
+        coupon.UsageLimit -= 1;
+        coupon.userId = [...usedUsers, userId];
+        await coupon.save();
+      }
       await Cart.findOneAndUpdate({ userId }, { items: [] });
       req.session.cartCount = 0; // dynamically changing cart count
       res.json({
@@ -459,12 +513,29 @@ const placeOrderWallet = async (req, res) => {
 
     if (couponCode) {
       const coupon = await Coupon.findOne({ name: couponCode, isList: true });
-      if (coupon) {
-        discount = coupon.offerPrice;
+      if (!coupon) {
+        return res.status(STATUS_CODE.BAD_REQUEST).json({ success: false, message: MESSAGES.COUPON_NOT_FOUND });
       }
 
+      if (new Date() > coupon.expireOn) {
+        return res.status(STATUS_CODE.BAD_REQUEST).json({ success: false, message: MESSAGES.COUPON_EXPIRED });
+      }
+
+      if (subTotal < coupon.minimumPrice) {
+        return res.status(STATUS_CODE.BAD_REQUEST).json({ success: false, message: MESSAGES.MINIMUM_PURCHASE_REQUIRED + coupon.minimumPrice });
+      }
+
+      const usedUsers = Array.isArray(coupon.userId) ? coupon.userId : [];
+      const alreadyUsedByUser = usedUsers.some((id) => id.toString() === userId.toString());
+
+      if (coupon.UsageLimit <= 0 || alreadyUsedByUser) {
+        return res.status(STATUS_CODE.BAD_REQUEST).json({ success: false, message: MESSAGES.COUPON_LIMIT_REACHED });
+      }
+
+      discount = coupon.offerPrice;
       coupon.UsageLimit -= 1;
-      await coupon.save()
+      coupon.userId = [...usedUsers, userId];
+      await coupon.save();
     }
 
     //Total product offer

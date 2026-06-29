@@ -46,7 +46,7 @@ const MESSAGES = {
   PRODUCT_ALREADY_IN_WISHLIST: "Product is already in the wishlist!",
   COUPON_EXPIRED: "Coupon is Expired..!",
   MINIMUM_PURCHASE_REQUIRED: "Minimum Purchase Amount for this Coupon is ₹ : ",
-  COUPON_LIMIT_REACHED: "Coupon Limit is Reached..!",
+  COUPON_LIMIT_REACHED: "Coupon usage limit is reached..!",
   ORDER_CANNOT_CANCEL: "Order Can't Cancel, Shipping started..",
   RETURN_PERIOD_EXPIRED: "Unfortunately The Return Period Has Expired..!",
   CATEGORY_ALREADY_EXISTS: "Category already exists",
