@@ -5,8 +5,9 @@ const Wishlist = require("../../models/wishListSchema");
 
 const productDetails = async (req, res) => {
     try {
-        const userId = req.session.user;
-        const userData = await User.findById(userId);
+        const sessionUser = req.session.user;
+        const userId = typeof sessionUser === "object" ? sessionUser?._id : sessionUser;
+        const userData = userId ? await User.findById(userId) : null;
         const productId = req.query.id;
         console.log("piro",productId)
 

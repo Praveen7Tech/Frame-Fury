@@ -64,7 +64,7 @@ router.post("/resend-forgot-otp", profileController.forgotPassResendOtp)
 router.post("/reset-password", profileController.resetPassword)
 
 // Product details
-router.get("/productDetails", userAuth, productController.productDetails)
+router.get("/productDetails", productController.productDetails)
 
 // Profile management
 router.get("/userProfile", userAuth, profileController.profile);

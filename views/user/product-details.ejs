@@ -765,16 +765,30 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json', // Ensures that the request body is JSON
+                    'Accept': 'application/json'
                 },
                 body: JSON.stringify({ productId: productId }), // Send productId as JSON
             })
-                .then((response) => response.json()) // Parse JSON response
-                .then((response) => {
-                    console.log("response :", response);
-                    if (response.success) {
+                .then(async (response) => {
+                    const text = await response.text();
+                    let data = {};
+                    if (text) {
+                        try {
+                            data = JSON.parse(text);
+                        } catch (error) {
+                            data = {};
+                        }
+                    }
+
+                    if (response.status === 401 && data.redirectUrl) {
+                        window.location.href = data.redirectUrl;
+                        return;
+                    }
+
+                    if (response.ok && data.success) {
                         const cartCountElement = document.querySelector(".cart");
                         if (cartCountElement) {
-                            cartCountElement.textContent = response.cartCount;
+                            cartCountElement.textContent = data.cartCount;
                         }
                         Swal.fire({
                             title: "Added To Cart",
@@ -785,7 +799,7 @@
                     } else {
                         Swal.fire({
                             title: "Error",
-                            text: response.message,
+                            text: data.message || "Error Adding the Product to your Cart..!",
                             icon: "error",
                             timer: 2000
                         });
@@ -812,12 +826,27 @@
             fetch("/addToWishlist", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
                 },
                 body: JSON.stringify({ productId })
             })
-                .then(response => response.json())
-                .then(data => {
+                .then(async (response) => {
+                    const text = await response.text();
+                    let data = {};
+                    if (text) {
+                        try {
+                            data = JSON.parse(text);
+                        } catch (error) {
+                            data = {};
+                        }
+                    }
+
+                    if (response.status === 401 && data.redirectUrl) {
+                        window.location.href = data.redirectUrl;
+                        return;
+                    }
+
                     if (data.success) {
                         //dynamically changing wishList count
                         const wishlistCountElement = document.querySelector(".wishList")
@@ -835,7 +864,7 @@
                         Swal.fire({
                             icon: "warning",
                             titile: "Ooop..",
-                            text: data.message,
+                            text: data.message || "Please log in to continue",
                             timer: 2000,
                             showConfrimButton: false
                         })

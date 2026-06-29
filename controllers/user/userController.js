@@ -298,7 +298,9 @@ const login = async (req, res) => {
             await wallet.save()
         }
         console.log("count", req.session.cartCount, req.session.wishListCount)
-        res.redirect("/")
+        const returnTo = req.session.returnTo || "/";
+        delete req.session.returnTo;
+        return res.redirect(returnTo)
     } catch (error) {
         console.error("Login error", error);
         res.render("login", { message: "Login failed, please try again later" })
