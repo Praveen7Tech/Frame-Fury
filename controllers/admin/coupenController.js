@@ -4,11 +4,22 @@ const MESSAGES = require("../../constants/messages");
 
 const CoupenPage = async (req, res) => {
     try {
-        const coupon = await Coupen.find();
+        const limit = 5;
+        const requestedPage = Number.parseInt(req.query.page, 10);
+        const couponCount = await Coupen.countDocuments();
+        const totalPages = Math.max(1, Math.ceil(couponCount / limit));
+        const currentPage = Number.isInteger(requestedPage) && requestedPage > 0
+            ? Math.min(requestedPage, totalPages)
+            : 1;
+        const coupon = await Coupen.find()
+            .sort({ createon: -1 })
+            .skip((currentPage - 1) * limit)
+            .limit(limit);
 
-        res.render("couponPage", { coupon })
+        res.render("couponPage", { coupon, currentPage, totalPages })
     } catch (error) {
-        console.error("Error in loading copen page", error);
+        console.error("Error in loading coupon page", error);
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).send(MESSAGES.SERVER_ERROR);
     }
 }
 
@@ -76,15 +87,13 @@ const addCopen = async (req, res) => {
 
 const deleteCoupon = async (req, res) => {
     try {
-        const couponId = req.query.couponId;
-        console.log("cop id", couponId);
-
-        await Coupen.findByIdAndDelete(couponId);
-        res.redirect("/admin/coupon")
-        console.log("coupon deleted successfully");
-
+        const deletedCoupon = await Coupen.findByIdAndDelete(req.params.couponId);
+        if (!deletedCoupon) {
+            return res.status(STATUS_CODE.NOT_FOUND).send("Coupon not found");
+        }
+        res.sendStatus(STATUS_CODE.OK);
     } catch (error) {
-        console.error("Error in deleting coupon");
+        console.error("Error in deleting coupon", error);
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).send(MESSAGES.ERROR_DELETING_COUPON)
     }
 }
@@ -92,8 +101,7 @@ const deleteCoupon = async (req, res) => {
 
 const editCoupon = async (req, res) => {
     try {
-        const { couponId, amount, expiryDate, minPurchase, UsageLimit } = req.body
-        console.log(" cop body :", req.body);
+        const { amount, expiryDate, minPurchase, UsageLimit } = req.body;
 
         if (!expiryDate) {
             return res.status(400).send("Please select an expiry date");
@@ -108,13 +116,16 @@ const editCoupon = async (req, res) => {
             return res.status(400).send("The expiry date must be today or later");
         }
 
-        const coupon = await Coupen.findById(couponId)
+        const coupon = await Coupen.findById(req.params.couponId);
+        if (!coupon) {
+            return res.status(STATUS_CODE.NOT_FOUND).send("Coupon not found");
+        }
 
         coupon.offerPrice = amount
         coupon.expireOn = expiryDate
         coupon.minimumPrice = minPurchase
         coupon.UsageLimit = UsageLimit
-        coupon.save()
+        await coupon.save()
 
         res.status(STATUS_CODE.OK).send(MESSAGES.COUPON_UPDATED_SUCCESS)
         console.log("Coupon Updated Successfully")

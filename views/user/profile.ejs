@@ -345,8 +345,8 @@
                                                                 <div class="d-flex justify-content-between">
                                                                     <a href="/editAddress?id=<%=address._id%>"
                                                                         class="btn-small">Edit</a>
-                                                                    <a href="/deleteAddress?id=<%=address._id%>"
-                                                                        class="btn-small">Delete</a>
+                                                                    <a href="#" class="btn-small"
+                                                                        onclick="deleteAddress('<%=address._id%>'); return false;">Delete</a>
                                                                 </div>
 
                                                             </div>
@@ -632,6 +632,24 @@
         </script>
 
         <script>
+            async function deleteAddress(addressId) {
+                try {
+                    const response = await fetch(`/deleteAddress?id=${encodeURIComponent(addressId)}`, {
+                        method: "DELETE"
+                    });
+                    const result = await response.json();
+                    if (!response.ok || !result.success) {
+                        throw new Error(result.message || "Unable to delete address.");
+                    }
+                    location.reload();
+                } catch (error) {
+                    console.error("Error deleting address:", error);
+                    alert(error.message || "Unable to delete address.");
+                }
+            }
+        </script>
+
+        <script>
             async function RepayFailedOrder(orderId, totalAmount, paymentMethod, selectedAddress, couponCode, deliveryMethod) {
                 console.log("id", orderId, "amt", totalAmount, "pay", paymentMethod, "add", selectedAddress, "coup", couponCode, "del", deliveryMethod)
                 try {
@@ -720,5 +738,4 @@
             }
 
         </script>
-
 

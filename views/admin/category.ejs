@@ -283,7 +283,7 @@
                 console.log("action-",Action)
 
                 const response = await fetch(Action,{
-                    method:"POST",
+                    method:"PATCH",
                     headers:{
                         "Content-Type":"application/json"
                     },
@@ -562,7 +562,17 @@
                 })
                     .then(result => {
                         if (result.isConfirmed) {
-                            window.location.href = `/admin/removeOffer/?categoryId=${categoryId}`
+                            fetch(`/admin/category/${encodeURIComponent(categoryId)}/offer`, {
+                                method: "DELETE"
+                            }).then(response => {
+                                if (!response.ok) {
+                                    throw new Error("Unable to remove category offer.");
+                                }
+                                location.reload();
+                            }).catch(error => {
+                                console.error("Error removing category offer:", error);
+                                Swal.fire("Error", "Unable to remove the category offer.", "error");
+                            });
                         }
                     })
             }

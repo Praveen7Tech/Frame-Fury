@@ -165,20 +165,17 @@ const editOffer = async (req, res) => {
 
 const removeOffer = async (req, res) => {
     try {
-        const categoryId = req.query.categoryId;
-        console.log("cat id 1", categoryId);
-
-        const category = await Category.findById(categoryId)
-        console.log("cat 1 ", category);
-
-
-        category.categoryOffer = 0;
-        category.save()
-
-        res.redirect("/admin/category");
-        console.log("category offer removed succssfully")
+        const category = await Category.findByIdAndUpdate(
+            req.params.categoryId,
+            { categoryOffer: 0 },
+            { new: true }
+        );
+        if (!category) {
+            return res.status(STATUS_CODE.NOT_FOUND).json({ success: false, message: "Category not found" });
+        }
+        res.json({ success: true });
     } catch (error) {
-        console.error("Error in removing category");
+        console.error("Error in removing category offer", error);
         res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({ success: false, message: MESSAGES.SERVER_ERROR_ALT })
     }
 }

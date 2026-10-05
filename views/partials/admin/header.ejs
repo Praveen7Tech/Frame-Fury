@@ -175,8 +175,12 @@
                         class="material-icons md-apps"></i> </button>
                 <ul class="nav">
                     <div>
-                        <a class="dropdown-item text-danger" href="/admin/logout"><i
-                                class="material-icons md-exit_to_app"></i>Logout</a>
+                        <form action="/admin/logout" method="post">
+                            <button type="submit" class="dropdown-item text-danger"
+                                style="background: none; border: 0; width: 100%; text-align: left;">
+                                <i class="material-icons md-exit_to_app"></i>Logout
+                            </button>
+                        </form>
                     </div>
                     </li>
                 </ul>

@@ -282,7 +282,7 @@
        async function toggleProductStatus(productId, action) {
             try {
                 const response = await fetch(`/admin/${action}Product`, {
-                    method: "POST",
+                    method: "PATCH",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ id: productId }),
                 });
@@ -447,8 +447,8 @@
                 })
                     .then(result => {
                         if (result.isConfirmed) {
-                            fetch(`/admin/removeOffer/${productId}`, {
-                                method: "POST",
+                            fetch(`/admin/products/${encodeURIComponent(productId)}/offer`, {
+                                method: "DELETE",
                                 headers: {
                                     "Content-Type": "application/json"
                                 }

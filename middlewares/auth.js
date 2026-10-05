@@ -11,7 +11,11 @@ const userAuth = (req, res, next) => {
     const userId = getUserId(req.session.user);
 
     if (!userId) {
-        if (req.xhr || (req.headers.accept && req.headers.accept.includes("application/json"))) {
+        if (
+            req.xhr ||
+            (req.headers.accept && req.headers.accept.includes("application/json")) ||
+            req.is("application/json")
+        ) {
             return res.status(401).json({
                 success: false,
                 message: "Please log in to continue",
