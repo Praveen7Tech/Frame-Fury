@@ -53,7 +53,7 @@ router.get(
 //login
 router.get("/login", userController.loadLogin)
 router.post("/login", userController.login)
-router.get("/logout", userController.logout)
+router.post("/logout", userController.logout)
 
 // forget password
 router.get("/forgot-password", profileController.forgetPassPage)
@@ -82,12 +82,12 @@ router.get("/addAddress", userAuth, profileController.addressPage)
 router.post("/addAddress", userAuth, profileController.addAddress)
 router.get("/editAddress", userAuth, profileController.editAddress)
 router.post("/editAddress", userAuth, profileController.updateAddress)
-router.get("/deleteAddress", userAuth, profileController.deleteAddress)
+router.delete("/deleteAddress", userAuth, profileController.deleteAddress)
 
 // cart management
 router.get("/cart", userAuth, cartController.cartPage)
 router.post("/addToCart", userAuth, cartController.addToCart)
-router.get("/removeFromCart", userAuth, cartController.removeProduct)
+router.delete("/removeFromCart", userAuth, cartController.removeProduct)
 router.post("/updateCartQuantity", userAuth, cartController.updateCartQuantity)
 
 //checkout management
@@ -107,7 +107,7 @@ router.post("/ReturnOrder/:orderId", userAuth, orderController.ReturnOrder)
 //wishlist management
 router.get("/Wishlist", userAuth, whishListController.wishListPage)
 router.post("/addToWishlist", userAuth, whishListController.addToWishList)
-router.get("/removeFromWishList", userAuth, whishListController.removeFromWishList)
+router.delete("/removeFromWishList", userAuth, whishListController.removeFromWishList)
 
 //coupon management
 router.post("/verifyCoupon", userAuth, couponController.verifyCoupon)

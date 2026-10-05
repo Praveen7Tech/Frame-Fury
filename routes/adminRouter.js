@@ -23,23 +23,23 @@ router.get("/saleReport", adminAuth, adminController.loadDashboard)
 //login management
 router.get("/login", adminController.loadLogin)
 router.post("/login", adminController.login)
-router.get("/logout", adminController.logout)
+router.post("/logout", adminController.logout)
 
 //customer management
 router.get("/users", adminAuth, customerController.customerInfo)
-router.post("/blockCustomer", adminAuth, customerController.customerBlocked)
-router.post("/unBlockCustomer", adminAuth, customerController.customerunBlocked)
+router.patch("/blockCustomer", adminAuth, customerController.customerBlocked)
+router.patch("/unblockCustomer", adminAuth, customerController.customerunBlocked)
 
 //category management
 router.get("/category", adminAuth, categoryController.categoryInfo)
 router.post("/addCategory", adminAuth, categoryController.addCategory)
 router.post("/addOffer", adminAuth, categoryController.addOffer)
 router.put("/editOffer", adminAuth, categoryController.editOffer)
-router.get("/removeOffer", adminAuth, categoryController.removeOffer)
+router.delete("/category/:categoryId/offer", adminAuth, categoryController.removeOffer)
 
 // listing category
-router.post("/listCategory", adminAuth, categoryController.listCategory)
-router.post("/unlistCategory", adminAuth, categoryController.unlistCategory)
+router.patch("/listCategory", adminAuth, categoryController.listCategory)
+router.patch("/unlistCategory", adminAuth, categoryController.unlistCategory)
 router.get("/editCategory", adminAuth, categoryController.editCategory)
 router.post("/editCategory/:id", adminAuth, categoryController.updateCategory)
 
@@ -49,15 +49,15 @@ router.post("/addProducts", adminAuth, uploads.array("images", 4), productContro
 router.get("/products", adminAuth, productController.getAllProducts)
 router.post("/addProOffer", adminAuth, productController.addOffer)
 router.put("/editProOffer", adminAuth, productController.editOffer)
-router.post("/removeOffer/:id", adminAuth, productController.removeOffer)
+router.delete("/products/:id/offer", adminAuth, productController.removeOffer)
 
 //block / unblock product
-router.post("/blockProduct", adminAuth, productController.blockProduct)
-router.post("/unblockProduct", adminAuth, productController.unblockProduct)
+router.patch("/blockProduct", adminAuth, productController.blockProduct)
+router.patch("/unblockProduct", adminAuth, productController.unblockProduct)
 
 router.get("/editProduct", adminAuth, productController.editProduct)
 router.post("/editProduct/:id", adminAuth, uploads.array("images", 4), productController.updateProduct)
-router.post("/deleteImage", adminAuth, productController.deleteImage)
+router.delete("/deleteImage", adminAuth, productController.deleteImage)
 
 //order management
 router.get("/orderList", adminAuth, orderController.orderList)
@@ -68,8 +68,8 @@ router.post("/orderEdit/:orderId", adminAuth, orderController.EditStatus)
 //coupen management
 router.get("/coupon", adminAuth, coupenController.CoupenPage)
 router.post("/addCoupon", adminAuth, coupenController.addCopen)
-router.get("/deleteCoupon", adminAuth, coupenController.deleteCoupon)
-router.post("/editCoupon", adminAuth, coupenController.editCoupon)
+router.delete("/coupon/:couponId", adminAuth, coupenController.deleteCoupon)
+router.patch("/coupon/:couponId", adminAuth, coupenController.editCoupon)
 
 // sale report Order Filtering
 router.get("/filterOrder", adminAuth, saleReportController.saleFilter)

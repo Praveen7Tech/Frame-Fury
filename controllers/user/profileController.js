@@ -396,16 +396,22 @@ const deleteAddress = async (req, res) => {
         const findAddress = await Address.findOne({ "address._id": addressId });
 
         if (!findAddress) {
-            return res.status(STATUS_CODE.NOT_FOUND).send(MESSAGES.ADDRESS_NOT_FOUND_ALT)
+            return res.status(STATUS_CODE.NOT_FOUND).json({
+                success: false,
+                message: MESSAGES.ADDRESS_NOT_FOUND_ALT
+            });
         }
 
         await Address.updateOne({ "address._id": addressId },
             { $pull: { address: { _id: addressId } } }
         )
-        res.redirect("/userProfile")
+        res.status(STATUS_CODE.OK).json({ success: true });
     } catch (error) {
         console.error("Error in delete address", error);
-        res.redirect("/pageNotFound")
+        res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
+            success: false,
+            message: MESSAGES.SERVER_ERROR
+        });
     }
 }
 

@@ -29,6 +29,19 @@ const addProducts = async (req, res) => {
         const productExist = await Product.findOne({ productName: products.productName });
 
         if (!productExist) {
+            if (!products.category) {
+                return res.status(STATUS_CODE.BAD_REQUEST).json("Please select a category.");
+            }
+
+            const categoryId = await Category.findOne({
+                name: products.category,
+                isListed: true
+            });
+
+            if (!categoryId) {
+                return res.status(STATUS_CODE.BAD_REQUEST).json("Please select a valid listed category.");
+            }
+
             const images = [];
             if (req.files && req.files.length > 0) {
                 for (let i = 0; i < req.files.length; i++) {
@@ -38,17 +51,6 @@ const addProducts = async (req, res) => {
                     await sharp(originalImagePath).resize({ width: 440, height: 440 }).toFile(resizedImagePath);
                     images.push(req.files[i].filename);
                 }
-            }
-
-            console.log("Category from frontend:", products.category);
-
-            // Case-insensitive query for category matching
-            const categoryId = await Category.findOne({ name: products.category });
-
-            console.log("Category Found:", categoryId);
-
-            if (!categoryId) {
-                return res.status(STATUS_CODE.BAD_REQUEST).json(MESSAGES.INVALID_CATEGORY_NAME);
             }
 
             const newProduct = new Product({
@@ -275,14 +277,14 @@ const editOffer = async (req, res) => {
 const removeOffer = async (req, res) => {
     try {
         const productId = req.params.id;
-        console.log("product id --", productId)
-
         const product = await Product.findById(productId)
-        console.log("pro-", product)
+        if (!product) {
+            return res.status(STATUS_CODE.NOT_FOUND).json({ success: false, message: "Product not found" });
+        }
 
         product.offer = 0;
         product.offerAmount = 0;
-        product.save();
+        await product.save();
 
         res.status(STATUS_CODE.OK).json({ success: true, message: MESSAGES.PRODUCT_OFFER_REMOVED_SUCCESSFULLY })
         console.log("product offer removed successfull")
@@ -308,4 +310,3 @@ module.exports = {
     editOffer,
     removeOffer
 };
-

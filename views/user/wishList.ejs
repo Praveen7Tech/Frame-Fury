@@ -184,11 +184,19 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Accept': 'application/json',
                     },
                     body: JSON.stringify({ productId: productId }),
                 })
-                    .then((response) => response.json())
                     .then((response) => {
+                        if (response.status === 401) {
+                            window.location.href = "/login";
+                            return null;
+                        }
+                        return response.json();
+                    })
+                    .then((response) => {
+                        if (!response) return;
                         console.log("response :", response);
                         if (response.success) {
                             // dynamically showing cart count
@@ -239,7 +247,9 @@
                 })
                     .then((result) => {
                         if (result.isConfirmed) {
-                            fetch(`/removeFromWishList/?productId=${productId}`)
+                            fetch(`/removeFromWishList/?productId=${encodeURIComponent(productId)}`, {
+                                method: "DELETE"
+                            })
                                 .then((response) => response.json())
                                 .then((response) => {
                                     if (response.success) {

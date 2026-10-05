@@ -279,11 +279,19 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Accept': 'application/json',
                     },
                     body: JSON.stringify({ productId: productId }),
                 })
-                    .then((response) => response.json())
                     .then((response) => {
+                        if (response.status === 401) {
+                            window.location.href = "/login";
+                            return null;
+                        }
+                        return response.json();
+                    })
+                    .then((response) => {
+                        if (!response) return;
                         console.log("response :", response);
                         if (response.success) {
                             // dynamically showing cart count
@@ -328,12 +336,20 @@
                 fetch("/addToWishlist", {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
                     },
                     body: JSON.stringify({ productId })
                 })
-                    .then(response => response.json())
+                    .then(response => {
+                        if (response.status === 401) {
+                            window.location.href = "/login";
+                            return null;
+                        }
+                        return response.json();
+                    })
                     .then(data => {
+                        if (!data) return;
                         if (data.success) {
                             //dynamically changing wishList count
                             const wishlistCountElement = document.querySelector(".wishList")

@@ -289,7 +289,9 @@
                     confirmButtonText: "YES Remove it"
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        fetch(`/removeFromCart/?productId=${productId}`)
+                        fetch(`/removeFromCart/?productId=${encodeURIComponent(productId)}`, {
+                            method: "DELETE"
+                        })
                             .then((response) => response.json())
                             .then((response) => {
                                 if (response.success) {

@@ -59,6 +59,11 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                <% if (coupon.length === 0) { %>
+                                    <tr>
+                                        <td colspan="7">No coupons found.</td>
+                                    </tr>
+                                <% } %>
                                 <% coupon.forEach(coupon=> { %>
                                     <!-- Dynamically add coupon rows here -->
                                     <tr>
@@ -98,6 +103,38 @@
                                     <%})%>
                             </tbody>
                         </table>
+                        <nav aria-label="Coupon pages">
+                            <ul class="pagination justify-content-center mb-0">
+                                <% if (currentPage > 1) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="/admin/coupon?page=<%= currentPage - 1 %>"
+                                            aria-label="Previous page">Previous</a>
+                                    </li>
+                                <% } else { %>
+                                    <li class="page-item disabled">
+                                        <span class="page-link" aria-disabled="true">Previous</span>
+                                    </li>
+                                <% } %>
+                                <% for (let page = 1; page <= totalPages; page++) { %>
+                                    <li class="page-item <%= page === currentPage ? 'active' : '' %>">
+                                        <a class="page-link" href="/admin/coupon?page=<%= page %>"
+                                            <%= page === currentPage ? 'aria-current="page"' : '' %>>
+                                            <%= page %>
+                                        </a>
+                                    </li>
+                                <% } %>
+                                <% if (currentPage < totalPages) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="/admin/coupon?page=<%= currentPage + 1 %>"
+                                            aria-label="Next page">Next</a>
+                                    </li>
+                                <% } else { %>
+                                    <li class="page-item disabled">
+                                        <span class="page-link" aria-disabled="true">Next</span>
+                                    </li>
+                                <% } %>
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             </div>
@@ -177,7 +214,7 @@
             document.addEventListener('DOMContentLoaded', setMinDate);
 
             // Delete coupon function
-            function deleteCoupon(couponId) {
+            async function deleteCoupon(couponId) {
                 Swal.fire({
                     title: "Are You Sure..!",
                     text: "Permenetly delete this Coupen..",
@@ -186,12 +223,22 @@
                     confirButtonColor: '#d33',
                     cancelButtonColor: '#3085d6',
                     confirmButtonText: "Delet it.."
-                })
-                    .then(result => {
-                        if (result.isConfirmed) {
-                            window.location.href = `/admin/deleteCoupon/?couponId=${couponId}`
+                }).then(async result => {
+                    if (result.isConfirmed) {
+                        try {
+                            const response = await fetch(`/admin/coupon/${encodeURIComponent(couponId)}`, {
+                                method: "DELETE"
+                            });
+                            if (!response.ok) {
+                                throw new Error("Unable to delete coupon.");
+                            }
+                            location.reload();
+                        } catch (error) {
+                            console.error("Error deleting coupon:", error);
+                            Swal.fire("Error", "Unable to delete this coupon.", "error");
                         }
-                    })
+                    }
+                });
             }
 
             // Edit Coupon function
@@ -257,8 +304,8 @@
                     if (result.isConfirmed) {
                         const { couponId, DiscountAmount, expiryDate, minPurchase, UsageLimit } = result.value;
 
-                        fetch("/admin/editCoupon", {
-                            method: "POST",
+                        fetch(`/admin/coupon/${encodeURIComponent(couponId)}`, {
+                            method: "PATCH",
                             headers: {
                                 "Content-Type": "application/json",
                             },

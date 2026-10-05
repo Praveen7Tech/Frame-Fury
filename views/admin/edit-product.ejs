@@ -350,7 +350,7 @@
 
                 $.ajax({
                     url: "/admin/deleteImage",
-                    method: "post",
+                    method: "delete",
                     data: { imageNameToServer: ImageId, productIdToServer: productId },
                     success: ((response) => {
                         if (response.status === true) {
